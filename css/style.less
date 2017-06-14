@@ -1,0 +1,117 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #111;
+  font: 16px/18px "Courier New", Courier, mono;
+  color: #fff;
+}
+
+div.wrap {
+  width: 900px;
+  margin: 100px auto 0;
+}
+
+a {
+  text-decoration: none;
+  color: #fff;
+}
+
+h1, a {
+  font: 16px/18px "Courier New", Courier, mono;
+  color: #999;
+}
+
+a:hover {
+  text-decoration-line: underline;
+}
+
+ul {
+  list-style: none;
+  margin-left: 30px;
+}
+
+.user {
+  color: lawngreen;
+}
+
+.user-end {
+  color: #aaa;
+}
+
+@keyframes blink {
+  0% {
+    font-size: 16px;
+    color: #aaa;
+  }
+  50% {
+    font-size: 16px;
+    color: #aaa;
+  }
+  50.01% {
+    font-size: 16px;
+    color: #111;
+  }
+  99.99% {
+    font-size: 16px;
+    color: #111;
+  }
+  100% {
+    font-size: 16px;
+    color: #111;
+  }
+}
+
+@keyframes load {
+  0% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+
+@keyframes hidden {
+  0% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: hidden;
+  }
+}
+
+@time: 13;
+.span-loop (@i) when (@i >= 0) {
+  .step-@{i} {
+    animation-delay: 0s, ~"@{i}s";
+    animation-duration: ~"@{i}s", 2s;
+    animation-name: hidden, load;
+  }
+  .blink-@{i} {
+    color: #111;
+    font-size: 0;
+    animation-duration: .5s;
+    animation-delay: ~"@{i}s";
+    animation-name: blink;
+    animation-iteration-count: 2;
+
+  }
+  .blink2-@{i} {
+    color: #111;
+    font-size: 0;
+    animation-duration: .5s;
+    animation-delay: ~"@{i}s";
+    animation-name: blink;
+    animation-iteration-count: 4;
+  }
+  .span-loop(@i - 1);
+}
+
+.span-loop (@time);
+
+.blink {
+  color: #111;
+  animation: blink .50s linear ~"@{time}s" infinite;
+}
