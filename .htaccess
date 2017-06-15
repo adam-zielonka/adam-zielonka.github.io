@@ -1,0 +1,4 @@
+Options +FollowSymLinks
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^www.adamzielonka.pro$ [NC]
+RewriteRule ^(.*)$ https://adamzielonka.pro/$1 [R=301,L]
