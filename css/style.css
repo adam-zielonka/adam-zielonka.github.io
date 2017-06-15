@@ -31,23 +31,15 @@ ul {
 }
 @keyframes blink {
   0% {
-    font-size: 16px;
     color: #aaa;
   }
   50% {
-    font-size: 16px;
     color: #aaa;
   }
   50.01% {
-    font-size: 16px;
-    color: #111;
-  }
-  99.99% {
-    font-size: 16px;
     color: #111;
   }
   100% {
-    font-size: 16px;
     color: #111;
   }
 }
@@ -67,172 +59,174 @@ ul {
     visibility: hidden;
   }
 }
+.step-0 {
+  animation-delay: 0s, 0s;
+  animation-duration: 0s, 2s;
+  animation-name: hidden, load;
+}
+.blink-0 {
+  color: #111;
+  animation: blink 0.5s linear 0s 2;
+}
+.blink2-0 {
+  color: #111;
+  animation: blink 0.5s linear 0s 4;
+}
+.step-1 {
+  animation-delay: 0s, 1s;
+  animation-duration: 1s, 2s;
+  animation-name: hidden, load;
+}
+.blink-1 {
+  color: #111;
+  animation: blink 0.5s linear 1s 2;
+}
+.blink2-1 {
+  color: #111;
+  animation: blink 0.5s linear 1s 4;
+}
 .step-2 {
   animation-delay: 0s, 2s;
   animation-duration: 2s, 2s;
   animation-name: hidden, load;
+}
+.blink-2 {
+  color: #111;
+  animation: blink 0.5s linear 2s 2;
+}
+.blink2-2 {
+  color: #111;
+  animation: blink 0.5s linear 2s 4;
 }
 .step-3 {
   animation-delay: 0s, 3s;
   animation-duration: 3s, 2s;
   animation-name: hidden, load;
 }
+.blink-3 {
+  color: #111;
+  animation: blink 0.5s linear 3s 2;
+}
+.blink2-3 {
+  color: #111;
+  animation: blink 0.5s linear 3s 4;
+}
 .step-4 {
   animation-delay: 0s, 4s;
   animation-duration: 4s, 2s;
   animation-name: hidden, load;
+}
+.blink-4 {
+  color: #111;
+  animation: blink 0.5s linear 4s 2;
+}
+.blink2-4 {
+  color: #111;
+  animation: blink 0.5s linear 4s 4;
 }
 .step-5 {
   animation-delay: 0s, 5s;
   animation-duration: 5s, 2s;
   animation-name: hidden, load;
 }
+.blink-5 {
+  color: #111;
+  animation: blink 0.5s linear 5s 2;
+}
+.blink2-5 {
+  color: #111;
+  animation: blink 0.5s linear 5s 4;
+}
 .step-6 {
   animation-delay: 0s, 6s;
   animation-duration: 6s, 2s;
   animation-name: hidden, load;
+}
+.blink-6 {
+  color: #111;
+  animation: blink 0.5s linear 6s 2;
+}
+.blink2-6 {
+  color: #111;
+  animation: blink 0.5s linear 6s 4;
 }
 .step-7 {
   animation-delay: 0s, 7s;
   animation-duration: 7s, 2s;
   animation-name: hidden, load;
 }
+.blink-7 {
+  color: #111;
+  animation: blink 0.5s linear 7s 2;
+}
+.blink2-7 {
+  color: #111;
+  animation: blink 0.5s linear 7s 4;
+}
 .step-8 {
   animation-delay: 0s, 8s;
   animation-duration: 8s, 2s;
   animation-name: hidden, load;
+}
+.blink-8 {
+  color: #111;
+  animation: blink 0.5s linear 8s 2;
+}
+.blink2-8 {
+  color: #111;
+  animation: blink 0.5s linear 8s 4;
 }
 .step-9 {
   animation-delay: 0s, 9s;
   animation-duration: 9s, 2s;
   animation-name: hidden, load;
 }
+.blink-9 {
+  color: #111;
+  animation: blink 0.5s linear 9s 2;
+}
+.blink2-9 {
+  color: #111;
+  animation: blink 0.5s linear 9s 4;
+}
 .step-10 {
   animation-delay: 0s, 10s;
   animation-duration: 10s, 2s;
   animation-name: hidden, load;
+}
+.blink-10 {
+  color: #111;
+  animation: blink 0.5s linear 10s 2;
+}
+.blink2-10 {
+  color: #111;
+  animation: blink 0.5s linear 10s 4;
 }
 .step-11 {
   animation-delay: 0s, 11s;
   animation-duration: 11s, 2s;
   animation-name: hidden, load;
 }
+.blink-11 {
+  color: #111;
+  animation: blink 0.5s linear 11s 2;
+}
+.blink2-11 {
+  color: #111;
+  animation: blink 0.5s linear 11s 4;
+}
 .step-12 {
   animation-delay: 0s, 12s;
   animation-duration: 12s, 2s;
   animation-name: hidden, load;
 }
-.blink-2 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 2s;
-  animation-name: blink;
-  animation-iteration-count: 2;
-}
-.blink-3 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 3s;
-  animation-name: blink;
-  animation-iteration-count: 2;
-}
-.blink-4 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 4s;
-  animation-name: blink;
-  animation-iteration-count: 2;
-}
-.blink-5 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 5s;
-  animation-name: blink;
-  animation-iteration-count: 2;
-}
-.blink-6 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 6s;
-  animation-name: blink;
-  animation-iteration-count: 2;
-}
-.blink-7 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 7s;
-  animation-name: blink;
-  animation-iteration-count: 2;
-}
-.blink-8 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 8s;
-  animation-name: blink;
-  animation-iteration-count: 2;
-}
-.blink-9 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 9s;
-  animation-name: blink;
-  animation-iteration-count: 2;
-}
-.blink-10 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 10s;
-  animation-name: blink;
-  animation-iteration-count: 2;
-}
-.blink-11 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 11s;
-  animation-name: blink;
-  animation-iteration-count: 2;
-}
 .blink-12 {
   color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 12s;
-  animation-name: blink;
-  animation-iteration-count: 2;
+  animation: blink 0.5s linear 12s 2;
 }
-.blink2-0 {
+.blink2-12 {
   color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 0s;
-  animation-name: blink;
-  animation-iteration-count: 4;
-}
-.blink2-4 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 4s;
-  animation-name: blink;
-  animation-iteration-count: 4;
-}
-.blink2-8 {
-  color: #111;
-  font-size: 0;
-  animation-duration: .5s;
-  animation-delay: 8s;
-  animation-name: blink;
-  animation-iteration-count: 4;
+  animation: blink 0.5s linear 12s 4;
 }
 .blink {
   color: #111;

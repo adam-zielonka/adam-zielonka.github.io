@@ -42,23 +42,15 @@ ul {
 
 @keyframes blink {
   0% {
-    font-size: @font-size;
     color: @text-color;
   }
   50% {
-    font-size: @font-size;
     color: @text-color;
   }
   50.01% {
-    font-size: @font-size;
-    color: @background-color;
-  }
-  99.99% {
-    font-size: @font-size;
     color: @background-color;
   }
   100% {
-    font-size: @font-size;
     color: @background-color;
   }
 }
@@ -81,43 +73,26 @@ ul {
   }
 }
 
-.step-loop (@i) when (@i <= 12) {
+@time: 13;
+.step-loop (@i) when (@i < @time) {
   .step-@{i} {
     animation-delay: 0s, ~"@{i}s";
     animation-duration: ~"@{i}s", 2s;
     animation-name: hidden, load;
   }
+  .blink-@{i} {
+    color: @background-color;
+    animation: blink .50s linear ~"@{i}s" 2;
+
+  }
+  .blink2-@{i} {
+    color: @background-color;
+    animation: blink .50s linear ~"@{i}s" 4;
+  }
   .step-loop(@i + 1);
 }
 
-.blink-loop (@i) when (@i <= 12) {
-  .blink-@{i} {
-    color: @background-color;
-    font-size: 0;
-    animation-duration: .5s;
-    animation-delay: ~"@{i}s";
-    animation-name: blink;
-    animation-iteration-count: 2;
-  }
-  .blink-loop(@i + 1);
-}
-
-.blink2-loop (@i) when (@i <= 8) {
-  .blink2-@{i} {
-    color: @background-color;
-    font-size: 0;
-    animation-duration: .5s;
-    animation-delay: ~"@{i}s";
-    animation-name: blink;
-    animation-iteration-count: 4;
-  }
-  .blink2-loop(@i + 4);
-}
-
-@time: 13;
-.step-loop(2);
-.blink-loop(2);
-.blink2-loop(0);
+.step-loop(0);
 
 .blink {
   color: @background-color;
