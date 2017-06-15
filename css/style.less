@@ -73,26 +73,33 @@ ul {
   }
 }
 
-@time: 13;
+@time: 6;
 .step-loop (@i) when (@i < @time) {
   .step-@{i} {
     animation-delay: 0s, ~"@{i}s";
     animation-duration: ~"@{i}s", 2s;
     animation-name: hidden, load;
   }
-  .blink-@{i} {
-    color: @background-color;
-    animation: blink .50s linear ~"@{i}s" 2;
-
-  }
-  .blink2-@{i} {
-    color: @background-color;
-    animation: blink .50s linear ~"@{i}s" 4;
+  @j: @i + 0.5;
+  .step-@{i}-5 {
+    animation-delay: 0s, ~"@{j}s";
+    animation-duration: ~"@{j}s", 2s;
+    animation-name: hidden, load;
   }
   .step-loop(@i + 1);
 }
 
 .step-loop(0);
+
+.blink2-0 {
+  color: @background-color;
+  animation: blink .50s linear 0s 4;
+
+}
+.blink-2 {
+  color: @background-color;
+  animation: blink .50s linear 2s 2;
+}
 
 .blink {
   color: @background-color;
