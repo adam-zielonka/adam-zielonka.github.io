@@ -73,7 +73,7 @@ ul {
   }
 }
 
-@time: 6;
+@time: 9;
 .step-loop (@i) when (@i < @time) {
   .step-@{i} {
     animation-delay: 0s, ~"@{i}s";
@@ -99,6 +99,16 @@ ul {
 .blink-2 {
   color: @background-color;
   animation: blink .50s linear 2s 2;
+}
+
+.blink-5-5 {
+  color: @background-color;
+  animation: blink .50s linear 5.5s 2;
+
+}
+.blink-6-5 {
+  color: @background-color;
+  animation: blink .50s linear 6.5s 2;
 }
 
 .blink {

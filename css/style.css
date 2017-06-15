@@ -119,6 +119,36 @@ ul {
   animation-duration: 5.5s, 2s;
   animation-name: hidden, load;
 }
+.step-6 {
+  animation-delay: 0s, 6s;
+  animation-duration: 6s, 2s;
+  animation-name: hidden, load;
+}
+.step-6-5 {
+  animation-delay: 0s, 6.5s;
+  animation-duration: 6.5s, 2s;
+  animation-name: hidden, load;
+}
+.step-7 {
+  animation-delay: 0s, 7s;
+  animation-duration: 7s, 2s;
+  animation-name: hidden, load;
+}
+.step-7-5 {
+  animation-delay: 0s, 7.5s;
+  animation-duration: 7.5s, 2s;
+  animation-name: hidden, load;
+}
+.step-8 {
+  animation-delay: 0s, 8s;
+  animation-duration: 8s, 2s;
+  animation-name: hidden, load;
+}
+.step-8-5 {
+  animation-delay: 0s, 8.5s;
+  animation-duration: 8.5s, 2s;
+  animation-name: hidden, load;
+}
 .blink2-0 {
   color: #111;
   animation: blink .50s linear 0s 4;
@@ -127,7 +157,15 @@ ul {
   color: #111;
   animation: blink .50s linear 2s 2;
 }
+.blink-5-5 {
+  color: #111;
+  animation: blink .50s linear 5.5s 2;
+}
+.blink-6-5 {
+  color: #111;
+  animation: blink .50s linear 6.5s 2;
+}
 .blink {
   color: #111;
-  animation: blink 0.5s linear 6s infinite;
+  animation: blink 0.5s linear 9s infinite;
 }
