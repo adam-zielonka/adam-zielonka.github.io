@@ -43,14 +43,6 @@ ul {
     color: #111;
   }
 }
-@keyframes load {
-  0% {
-    visibility: hidden;
-  }
-  100% {
-    visibility: visible;
-  }
-}
 @keyframes hidden {
   0% {
     visibility: hidden;
@@ -60,94 +52,58 @@ ul {
   }
 }
 .step-0 {
-  animation-delay: 0s, 0s;
-  animation-duration: 0s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 0s;
 }
 .step-0-5 {
-  animation-delay: 0s, 0.5s;
-  animation-duration: 0.5s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 0.5s;
 }
 .step-1 {
-  animation-delay: 0s, 1s;
-  animation-duration: 1s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 1s;
 }
 .step-1-5 {
-  animation-delay: 0s, 1.5s;
-  animation-duration: 1.5s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 1.5s;
 }
 .step-2 {
-  animation-delay: 0s, 2s;
-  animation-duration: 2s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 2s;
 }
 .step-2-5 {
-  animation-delay: 0s, 2.5s;
-  animation-duration: 2.5s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 2.5s;
 }
 .step-3 {
-  animation-delay: 0s, 3s;
-  animation-duration: 3s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 3s;
 }
 .step-3-5 {
-  animation-delay: 0s, 3.5s;
-  animation-duration: 3.5s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 3.5s;
 }
 .step-4 {
-  animation-delay: 0s, 4s;
-  animation-duration: 4s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 4s;
 }
 .step-4-5 {
-  animation-delay: 0s, 4.5s;
-  animation-duration: 4.5s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 4.5s;
 }
 .step-5 {
-  animation-delay: 0s, 5s;
-  animation-duration: 5s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 5s;
 }
 .step-5-5 {
-  animation-delay: 0s, 5.5s;
-  animation-duration: 5.5s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 5.5s;
 }
 .step-6 {
-  animation-delay: 0s, 6s;
-  animation-duration: 6s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 6s;
 }
 .step-6-5 {
-  animation-delay: 0s, 6.5s;
-  animation-duration: 6.5s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 6.5s;
 }
 .step-7 {
-  animation-delay: 0s, 7s;
-  animation-duration: 7s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 7s;
 }
 .step-7-5 {
-  animation-delay: 0s, 7.5s;
-  animation-duration: 7.5s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 7.5s;
 }
 .step-8 {
-  animation-delay: 0s, 8s;
-  animation-duration: 8s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 8s;
 }
 .step-8-5 {
-  animation-delay: 0s, 8.5s;
-  animation-duration: 8.5s, 2s;
-  animation-name: hidden, load;
+  animation: hidden 8.5s;
 }
 .blink2-0 {
   color: #111;

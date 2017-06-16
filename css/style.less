@@ -55,15 +55,6 @@ ul {
   }
 }
 
-@keyframes load {
-  0% {
-    visibility: hidden;
-  }
-  100% {
-    visibility: visible;
-  }
-}
-
 @keyframes hidden {
   0% {
     visibility: hidden;
@@ -76,15 +67,11 @@ ul {
 @time: 9;
 .step-loop (@i) when (@i < @time) {
   .step-@{i} {
-    animation-delay: 0s, ~"@{i}s";
-    animation-duration: ~"@{i}s", 2s;
-    animation-name: hidden, load;
+    animation: hidden ~"@{i}s";
   }
   @j: @i + 0.5;
   .step-@{i}-5 {
-    animation-delay: 0s, ~"@{j}s";
-    animation-duration: ~"@{j}s", 2s;
-    animation-name: hidden, load;
+    animation: hidden ~"@{j}s";
   }
   .step-loop(@i + 1);
 }
@@ -96,6 +83,7 @@ ul {
   animation: blink .50s linear 0s 4;
 
 }
+
 .blink-2 {
   color: @background-color;
   animation: blink .50s linear 2s 2;
@@ -106,6 +94,7 @@ ul {
   animation: blink .50s linear 5.5s 2;
 
 }
+
 .blink-6-5 {
   color: @background-color;
   animation: blink .50s linear 6.5s 2;
