@@ -2,20 +2,10 @@
 @text-color: #aaa;
 @user-color: lawngreen;
 @font-size: 16px;
-* {
-  margin: 0;
-  padding: 0;
-}
-
-body, h1 {
+body {
   background: @background-color;
   font: @font-size/18px "Courier New", Courier, mono;
   color: @text-color;
-}
-
-div.wrap {
-  width: 900px;
-  margin: 100px auto 0;
 }
 
 a {
@@ -29,7 +19,6 @@ a:hover {
 
 ul {
   list-style: none;
-  margin-left: 30px;
 }
 
 .user {
@@ -78,7 +67,7 @@ ul {
 
 .step-loop(0);
 
-.blink2-0 {
+.blink2 {
   color: @background-color;
   animation: blink .50s linear 0s 4;
 
@@ -89,13 +78,12 @@ ul {
   animation: blink .50s linear 2s 2;
 }
 
-.blink-5-5 {
+.blink-5 {
   color: @background-color;
-  animation: blink .50s linear 5.5s 2;
-
+  animation: blink .50s linear 5.5s 1;
 }
 
-.blink-6-5 {
+.blink-6 {
   color: @background-color;
   animation: blink .50s linear 6.5s 2;
 }

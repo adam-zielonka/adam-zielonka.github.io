@@ -1,16 +1,7 @@
-* {
-  margin: 0;
-  padding: 0;
-}
-body,
-h1 {
+body {
   background: #111;
   font: 16px/18px "Courier New", Courier, mono;
   color: #aaa;
-}
-div.wrap {
-  width: 900px;
-  margin: 100px auto 0;
 }
 a {
   text-decoration: none;
@@ -21,7 +12,6 @@ a:hover {
 }
 ul {
   list-style: none;
-  margin-left: 30px;
 }
 .user {
   color: lawngreen;
@@ -105,7 +95,7 @@ ul {
 .step-8-5 {
   animation: hidden 8.5s;
 }
-.blink2-0 {
+.blink2 {
   color: #111;
   animation: blink .50s linear 0s 4;
 }
@@ -113,11 +103,11 @@ ul {
   color: #111;
   animation: blink .50s linear 2s 2;
 }
-.blink-5-5 {
+.blink-5 {
   color: #111;
-  animation: blink .50s linear 5.5s 2;
+  animation: blink .50s linear 5.5s 1;
 }
-.blink-6-5 {
+.blink-6 {
   color: #111;
   animation: blink .50s linear 6.5s 2;
 }
