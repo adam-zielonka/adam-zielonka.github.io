@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteBase /
+RewriteCond %{HTTP_HOST} ^adamzielonka.pro [NC]
+RewriteRule ^(.*)$ https://s.adamzielonka.pro/$1 [L,R=303]
+RedirectMatch 303 ^(.*)$ https://s.adamzielonka.pro/$1
