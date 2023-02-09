@@ -1,5 +1,5 @@
-import "./Caret.scss";
+import './caret.scss';
 
 export function Caret() {
-  return <span className="Caret">_</span>;
+	return <span className='Caret'>_</span>;
 }

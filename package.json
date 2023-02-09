@@ -3,10 +3,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && pnpm postbuild",
-    "postbuild": "pnpm ts-node --esm src/postBuild.ts",
+    "build": "tsc && vite build && pnpm post-build",
+    "post-build": "pnpm ts-node --esm src/post-build.ts",
     "preview": "vite preview",
-    "lint": "eslint './src/**/*.{js,jsx,ts,tsx}'"
+    "lint": "xo"
   },
   "dependencies": {
     "front-matter": "^4.0.2",
@@ -15,7 +15,8 @@
     "mobx-react-lite": "^3.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "replace-in-file": "^6.3.5"
+    "replace-in-file": "^6.3.5",
+    "xo": "^0.53.1"
   },
   "devDependencies": {
     "@types/marked": "^4.0.8",

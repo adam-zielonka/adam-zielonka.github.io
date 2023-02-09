@@ -1,39 +1,44 @@
-import { makeAutoObservable } from "mobx";
+import {makeAutoObservable} from 'mobx';
 
 export class History {
-  private history: string[] = [];
-  private position = 0;
-  private temporaryValue = "";
+	private readonly history: string[] = [];
+	private position = 0;
+	private temporaryValue = '';
 
-  constructor() {
-    makeAutoObservable(this);
-  }
+	constructor() {
+		makeAutoObservable(this);
+	}
 
-  get value(): string {
-    return this.history[this.position] || this.temporaryValue;
-  }
+	get value(): string {
+		return this.history[this.position] || this.temporaryValue;
+	}
 
-  get lastCommand(): string {
-    return this.history[this.history.length - 1] || "";
-  }
+	get lastCommand(): string {
+		return this.history[this.history.length - 1] || '';
+	}
 
-  set(value: string): void {
-    this.position = this.history.length;
-    this.temporaryValue = value;
-  }
+	set(value: string): void {
+		this.position = this.history.length;
+		this.temporaryValue = value;
+	}
 
-  add(): void {
-    if (this.value && this.value !== this.history[this.history.length - 1]) {
-      this.history.push(this.value);
-    }
-    this.set("");
-  }
+	add(): void {
+		if (this.value && this.value !== this.history[this.history.length - 1]) {
+			this.history.push(this.value);
+		}
 
-  up(): void {
-    this.position - 1 >= 0 && --this.position;
-  }
+		this.set('');
+	}
 
-  down(): void {
-    this.position + 1 <= this.history.length && ++this.position;
-  }
+	up(): void {
+		if (this.position - 1 >= 0) {
+			--this.position;
+		}
+	}
+
+	down(): void {
+		if (this.position + 1 <= this.history.length) {
+			++this.position;
+		}
+	}
 }
