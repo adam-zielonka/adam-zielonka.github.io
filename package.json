@@ -13,9 +13,7 @@
     "classnames": "^2.5.1",
     "front-matter": "^4.0.2",
     "lodash": "^4.17.21",
-    "marked": "^9.0.1",
-    "mobx": "^6.12.3",
-    "mobx-react-lite": "^4.0.7"
+    "marked": "^9.0.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.0",

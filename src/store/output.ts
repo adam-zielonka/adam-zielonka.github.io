@@ -1,13 +1,8 @@
-import { makeAutoObservable } from "mobx";
 import { CommandLine, OutputLine, TextLine } from "../types/line";
 import { sleep } from "../utils/sleep";
 import { store } from "./store";
 
 export class Output {
-  constructor() {
-    makeAutoObservable(this);
-  }
-
   push(...lines: OutputLine[]) {
     window.terminal.push(...lines);
   }

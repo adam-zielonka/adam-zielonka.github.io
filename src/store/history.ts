@@ -1,4 +1,3 @@
-import { makeAutoObservable } from "mobx";
 import escape from "lodash/escape";
 import unescape from "lodash/unescape";
 
@@ -6,10 +5,6 @@ export class History {
   private history: string[] = [];
   private position = 0;
   private temporaryValue = "";
-
-  constructor() {
-    makeAutoObservable(this);
-  }
 
   get value(): string {
     return unescape(this.history[this.position] || this.temporaryValue);

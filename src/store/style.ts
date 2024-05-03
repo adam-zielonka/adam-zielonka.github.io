@@ -1,12 +1,7 @@
-import { makeAutoObservable } from "mobx";
 import { isFontExist } from "../utils/font";
 
 export class Style {
   font = "";
-
-  constructor() {
-    makeAutoObservable(this);
-  }
 
   set(font: string): string[] {
     if (!isFontExist(font) && font) {

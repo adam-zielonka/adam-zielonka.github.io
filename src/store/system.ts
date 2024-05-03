@@ -1,14 +1,9 @@
-import { makeAutoObservable } from "mobx";
 import { store } from "./store";
 import { process } from "../utils/process";
 import escape from "lodash/escape";
 
 export class System {
   private state: "processing" | "shutdown" | "freeze" | "interrupted" | "" = "";
-
-  constructor() {
-    makeAutoObservable(this);
-  }
 
   get shutdown(): boolean {
     return this.state === "shutdown";

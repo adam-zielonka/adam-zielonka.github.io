@@ -1,4 +1,3 @@
-import { makeAutoObservable } from "mobx";
 import { CommandsLines, HelpProperties } from "../types/commands";
 import { ParsedLine } from "../types/parse";
 import { importCommands } from "../utils/commands";
@@ -8,7 +7,6 @@ export class Commands {
   private help: HelpProperties[] = [];
 
   constructor() {
-    makeAutoObservable(this);
     const { commands, help } = importCommands();
     this.commands = commands;
     this.help = help;

@@ -1,12 +1,7 @@
-import { makeAutoObservable } from "mobx";
 import { store } from "./store";
 
 export class Completion {
   index = -1;
-
-  constructor() {
-    makeAutoObservable(this);
-  }
 
   get list(): string[] {
     return store.commands.getCompletions(store.history.value);
