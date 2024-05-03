@@ -1,4 +1,5 @@
-import { Terminal } from "../main";
+import { Store } from "../store/store";
+import { Terminal } from "../terminal";
 
 export declare global {
   interface Window {

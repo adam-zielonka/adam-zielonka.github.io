@@ -6,7 +6,7 @@ import { Path } from "./path";
 import { Style } from "./style";
 import { System } from "./system";
 
-class Store {
+export class Store {
   commands = new Commands();
   completion = new Completion();
   history = new History();
@@ -17,3 +17,4 @@ class Store {
 }
 
 export const store = window.store = new Store();
+void store.system.start(["whoami"]);
