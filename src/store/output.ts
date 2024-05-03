@@ -4,25 +4,20 @@ import { sleep } from "../utils/sleep";
 import { store } from "./store";
 
 export class Output {
-  lines: OutputLine[] = [];
-
   constructor() {
     makeAutoObservable(this);
   }
 
-  push(...line: OutputLine[]): number {
-    const number = this.lines.push(...line);
-    return number;
+  push(...lines: OutputLine[]) {
+    window.terminal.push(...lines);
   }
 
   clear(): void {
-    this.lines.splice(0, this.lines.length);
+    window.terminal.clear();
   }
 
   updateLast(line: OutputLine): void {
-    if (this.lines.length) {
-      this.lines[this.lines.length - 1] = line;
-    }
+    window.terminal.updateLast(line);
   }
 
   async processLine(line: TextLine, animate = false): Promise<void> {

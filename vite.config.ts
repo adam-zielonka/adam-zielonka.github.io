@@ -1,11 +1,10 @@
 import { defineConfig } from "vitest/config";
-import react from "@vitejs/plugin-react-swc";
 import { markdownProcessor } from "./src/plugins/markdown-processor";
 import { noScript } from "./src/plugins/no-script";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [noScript, react(), markdownProcessor],
+  plugins: [noScript, markdownProcessor],
   test: {
     environment: "happy-dom",
   },
