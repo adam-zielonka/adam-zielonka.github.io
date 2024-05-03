@@ -1,3 +1,4 @@
+import { Input } from "./components/input";
 import { Line } from "./components/line";
 import { Shutdown } from "./components/shutdown";
 import { OutputLine } from "./types/line";
@@ -11,6 +12,7 @@ export class Terminal {
 
     this.lines = document.createElement("ul");
     this.root.appendChild(this.lines);
+    this.lines.appendChild(Input());
   }
 
   push(...lines: OutputLine[]) {

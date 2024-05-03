@@ -1,15 +1,21 @@
-import { observer } from "mobx-react-lite";
-import { useEffect, useRef } from "react";
 import { store } from "../store/store";
-import { LinePrefix } from "./line-prefix";
 import { InputText } from "./input-text";
-import { usePosition } from "../hooks/use-position";
+import { LinePrefix } from "./line-prefix";
 
-export const Input = observer(() => {
+export const Input = () => {
   const { history, path, system, completion } = store;
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [position, updatePosition] = usePosition(inputRef);
+  const prefix = LinePrefix({path: path.value});
+  const inputText = InputText({value: history.value, start: 0, end: 0});
+  const input = document.createElement("input");
+
+  const updatePosition = () => {
+    inputText.innerHTML = InputText({
+      value: input.value, 
+      start: input.selectionStart ?? 0, 
+      end: input.selectionEnd ?? 0,
+    }).innerHTML;
+  };
 
   function keydown(event: KeyboardEvent): void {
     switch (event.key) {
@@ -44,38 +50,39 @@ export const Input = observer(() => {
         break;
     }
 
-    inputRef.current?.focus();
+    input.value = history.value;
+    input.focus();
     updatePosition();
   }
 
   function click(): void {
-    inputRef.current?.focus();
+    input.focus();
     updatePosition();
   }
 
-  useEffect(() => {
-    document.addEventListener("keydown", keydown);
-    document.addEventListener("click", click);
+  // useEffect(() => {
+  document.addEventListener("keydown", keydown);
+  document.addEventListener("click", click);
 
-    return () => {
-      document.removeEventListener("keydown", keydown);
-      document.removeEventListener("click", click);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("keydown", keydown);
+  //     document.removeEventListener("click", click);
+  //   };
+  // }, []);
 
-  return <li className="Input">
-    <LinePrefix path={path.value}/> <InputText value={history.value} start={position.start} end={position.end}/>
-    <input
-      ref={inputRef}
-      value={history.value}
-      onSelect={updatePosition}
-      onKeyUp={updatePosition}
-      onKeyDown={updatePosition}
-      onChange={updatePosition}
-      onInput={e => {
-        history.set(e.currentTarget.value);
-        updatePosition();
-      }}
-    />
-  </li>;
-});
+  input.onselect = updatePosition;
+  input.onkeyup = updatePosition;
+  input.onkeydown = updatePosition;
+  input.onchange = updatePosition;
+  input.oninput = () => {
+    history.set(input.value);
+    updatePosition();
+  };
+  
+  const li = document.createElement("li");
+  li.className = "Input";
+  li.appendChild(prefix);
+  li.appendChild(inputText);
+  li.appendChild(input);
+  return li;
+};
