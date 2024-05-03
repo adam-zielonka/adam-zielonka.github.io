@@ -4,8 +4,21 @@ type Prefix = {
   path?: string
 }
 
-export function LinePrefix({user = "root", domain = "adamzielonka.pro", path = "~"}: Prefix) {
-  return <span className="LinePrefix">
-    <span className="user">{user}@{domain}</span>:<span className="path">{path}</span>#
-  </span>;
+export function LinePrefix({user = "root", domain = "adamzielonka.pro", path = "~"}: Prefix = {}) {
+  const prefixSpan = document.createElement("span");
+  prefixSpan.className = "LinePrefix";
+
+  const userSpan = document.createElement("span");
+  userSpan.className = "user";
+  userSpan.innerHTML = `${user}@${domain}`;
+  prefixSpan.appendChild(userSpan);
+
+  const pathSpan = document.createElement("span");
+  pathSpan.className = "path";
+  pathSpan.innerHTML = path;
+  prefixSpan.appendChild(pathSpan);
+  
+  prefixSpan.append("# ");
+
+  return prefixSpan;
 }

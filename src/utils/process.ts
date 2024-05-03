@@ -1,4 +1,3 @@
-import { CSSProperties } from "react";
 import { sleep } from "../utils/sleep";
 import { store } from "../store/store";
 
@@ -8,7 +7,7 @@ export async function process(commandArgs: string): Promise<void> {
     return;
   }
 
-  const style: CSSProperties = {};
+  const style: Partial<CSSStyleDeclaration> = {};
 
   main: for (const line of store.commands.getLines(command)) {
     let animate = false;
@@ -41,7 +40,7 @@ export async function process(commandArgs: string): Promise<void> {
   }
 }
 
-function css(key: string, value: string): CSSProperties {
+function css(key: string, value: string): Partial<CSSStyleDeclaration> {
   const newKey = key.replace(/-([a-z])/g, g => g[1].toUpperCase());
   return { [newKey]: value };
 }

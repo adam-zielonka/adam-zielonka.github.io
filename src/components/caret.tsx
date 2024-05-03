@@ -1,3 +1,6 @@
 export function Caret() {
-  return <span className="Caret">_</span>;
+  const span = document.createElement("span");
+  span.className = "Caret";
+  span.innerHTML = "_";
+  return span;
 }

@@ -1,20 +1,28 @@
-import { useEffect } from "react";
 import { LinePrefix } from "./line-prefix";
 import { Caret } from "./caret";
 import { OutputLine } from "../types/line";
 import { isCommandLine } from "../utils/line";
 
 export function Line({line}: {line: OutputLine}) {
-  useEffect(() => window.scrollTo(0, document.body.scrollHeight));
+  const li = document.createElement("li");
+  li.className = "Line";
+  setTimeout(() => window.scrollTo(0, document.body.scrollHeight));
 
   if (isCommandLine(line)) {
-    return <li className='Line'>
-      <LinePrefix path={line.path}/> {line.value}
-      {line.blink && <Caret/>}
-    </li>;
+    const prefix = LinePrefix({path: line.path});
+    li.appendChild(prefix);
+    li.append(line.value);
+    if (line.blink) {
+      li.appendChild(Caret());
+    }
+    return li;
   }
 
-  return <li className='Line' style={{...line.style}} 
-    dangerouslySetInnerHTML={{ __html: line.value }} />;
+  for (const [key, value] of Object.entries(line.style)) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    li.style[key] = value;
+  }
+  li.innerHTML = line.value;
+  return li;
 }
-

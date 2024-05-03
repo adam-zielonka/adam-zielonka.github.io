@@ -44,6 +44,7 @@ export class System {
 
   setShutdown(): void {
     this.state = "shutdown";
+    window.terminal.shutdown();
   }
 
   setFreeze(): void {

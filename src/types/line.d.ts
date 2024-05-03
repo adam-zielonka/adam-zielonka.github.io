@@ -1,8 +1,6 @@
-import { CSSProperties } from "react";
-
 export type TextLine = {
   value: string
-  style: CSSProperties
+  style: Partial<CSSStyleDeclaration>
 }
 
 export type CommandLine = {

@@ -1,3 +1,5 @@
+import { Line } from "./components/line";
+import { Shutdown } from "./components/shutdown";
 import { OutputLine } from "./types/line";
 
 export class Terminal {
@@ -13,10 +15,7 @@ export class Terminal {
 
   push(...lines: OutputLine[]) {
     for (const line of lines) {
-      const li = document.createElement("li");
-      li.className = "Line";
-      li.innerHTML = line.value;
-      this.lines.appendChild(li);
+      this.lines.appendChild(Line({line}));
     }
   }
 
@@ -26,8 +25,12 @@ export class Terminal {
 
   updateLast(line: OutputLine) {
     if (this.lines.lastElementChild) {
-      this.lines.lastElementChild.innerHTML = line.value;
+      this.lines.lastElementChild.innerHTML = Line({line}).innerHTML;
     }
+  }
+
+  shutdown() {
+    this.root.outerHTML = Shutdown().outerHTML;
   }
 }
 
