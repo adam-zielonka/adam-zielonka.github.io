@@ -2,11 +2,13 @@ import { LinePrefix } from "./line-prefix";
 import { Caret } from "./caret";
 import { OutputLine } from "../types/line";
 import { isCommandLine } from "../utils/line";
+import { useScrollDown } from "../hooks/use-scroll-down";
 
 export function Line({line}: {line: OutputLine}) {
+  useScrollDown();
+  
   const li = document.createElement("li");
   li.className = "Line";
-  setTimeout(() => window.scrollTo(0, document.body.scrollHeight));
 
   if (isCommandLine(line)) {
     const prefix = LinePrefix({path: line.path});
