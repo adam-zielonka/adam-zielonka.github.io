@@ -32,6 +32,10 @@ export class Terminal {
   shutdown() {
     this.root.outerHTML = Shutdown().outerHTML;
   }
+
+  font(font: string) {
+    this.root.style.fontFamily = font;
+  }
 }
 
 export const terminal = window.terminal = new Terminal(document.getElementById("root")!);
