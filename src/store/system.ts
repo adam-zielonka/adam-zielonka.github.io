@@ -2,8 +2,25 @@ import { store } from "./store";
 import { process } from "../utils/process";
 import escape from "lodash/escape";
 
+type SystemState = "processing" | "shutdown" | "freeze" | "interrupted" | "";
+
 export class System {
-  private state: "processing" | "shutdown" | "freeze" | "interrupted" | "" = "";
+  private state: SystemState = "";
+
+  constructor() {
+    let state = "";
+    Object.defineProperty(this, "state", {
+      set: (newState: SystemState) => {
+        state = newState;
+        if (this.isInputAllowed) {
+          window.terminal.showInput(); 
+        } else {
+          window.terminal.hideInput();
+        }
+      },
+      get: () => state,
+    });
+  }
 
   get shutdown(): boolean {
     return this.state === "shutdown";

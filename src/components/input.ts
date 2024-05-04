@@ -1,13 +1,15 @@
 import { store } from "../store/store";
+import { Completion } from "./completion";
 import { InputText } from "./input-text";
 import { LinePrefix } from "./line-prefix";
 
-export const Input = () => {
+export function Input() {
   const { history, path, system, completion } = store;
 
   const prefix = LinePrefix({path: path.value});
   const inputText = InputText({value: history.value, start: 0, end: 0});
   const input = document.createElement("input");
+  const completionList = Completion();
 
   const updatePosition = () => {
     inputText.innerHTML = InputText({
@@ -15,6 +17,7 @@ export const Input = () => {
       start: input.selectionStart ?? 0, 
       end: input.selectionEnd ?? 0,
     }).innerHTML;
+    completionList.innerHTML = Completion().innerHTML;
   };
 
   function keydown(event: KeyboardEvent): void {
@@ -60,15 +63,13 @@ export const Input = () => {
     updatePosition();
   }
 
-  // useEffect(() => {
   document.addEventListener("keydown", keydown);
   document.addEventListener("click", click);
 
-  //   return () => {
-  //     document.removeEventListener("keydown", keydown);
-  //     document.removeEventListener("click", click);
-  //   };
-  // }, []);
+  function destroy() {
+    document.removeEventListener("keydown", keydown);
+    document.removeEventListener("click", click);
+  }
 
   input.onselect = updatePosition;
   input.onkeyup = updatePosition;
@@ -78,11 +79,16 @@ export const Input = () => {
     history.set(input.value);
     updatePosition();
   };
-  
+
   const li = document.createElement("li");
   li.className = "Input";
   li.appendChild(prefix);
   li.appendChild(inputText);
   li.appendChild(input);
-  return li;
-};
+
+  return {
+    element: li,
+    completion: completionList,
+    destroy,
+  };
+}

@@ -1,22 +1,21 @@
-import cx from "classnames";
-import { observer } from "mobx-react-lite";
 import { store } from "../store/store";
 import { useScrollDown } from "../hooks/use-scroll-down";
 
-export const Completion = observer(() => {
+export function Completion() {
+  useScrollDown();
+  const li = document.createElement("li");
+  li.className = "Completion";
+
   if (!store.completion.isVisible) {
-    return null;
+    return li;
   }
 
-  return <li className="Completion">
-    {store.completion.list.map(completion => <Element key={completion} value={completion}/> )}
-  </li>;
-});
+  for (const element of store.completion.list) {
+    const div = document.createElement("div");
+    div.className = store.completion.selected === element ? "active" : "";
+    div.innerText = element;
+    li.appendChild(div);
+  }
 
-const Element = observer(({ value }:{ value: string }) => {
-  useScrollDown();
-
-  return <div className={cx({active: store.completion.selected === value})}>
-    {value}
-  </div>;
-});
+  return li;
+}

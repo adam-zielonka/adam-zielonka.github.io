@@ -13,26 +13,15 @@ export function InputText({ value, start, end }: InputTextProps) {
   const text = newValue.slice(start, newEnd) || "\u00a0";
   const afterText = newValue.slice(newEnd);
 
-
-  // return <span className="InputText">
-  //   {beforeText}<span className={isSelection ? "selection" : "caret"}>{text}</span>{afterText}
-  // </span>;
-
   const span = document.createElement("span");
   span.className = "InputText";
+  span.append(beforeText);
 
-  const beforeSpan = document.createElement("span");
-  beforeSpan.innerHTML = beforeText;
-  span.appendChild(beforeSpan);
+  const selection = document.createElement("span");
+  selection.className = isSelection ? "selection" : "caret";
+  selection.innerHTML = text;
+  span.append(selection);
 
-  const selectionSpan = document.createElement("span");
-  selectionSpan.className = "selection";
-  selectionSpan.innerHTML = text;
-  span.appendChild(selectionSpan);
-
-  const afterSpan = document.createElement("span");
-  afterSpan.innerHTML = afterText;
-  span.appendChild(afterSpan);
-
+  span.append(afterText);
   return span;
 }
