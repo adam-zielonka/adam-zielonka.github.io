@@ -11,8 +11,7 @@ export function Line({line}: {line: OutputLine}) {
   li.className = "Line";
 
   if (isCommandLine(line)) {
-    const prefix = LinePrefix({path: line.path});
-    li.appendChild(prefix);
+    li.appendChild(LinePrefix({path: line.path}));
     li.append(line.value);
     if (line.blink) {
       li.appendChild(Caret());
