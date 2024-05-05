@@ -47,3 +47,7 @@ In December 2021, My friend told me that Svelte is something nicer to use, so he
 On 5th February 2023, I just wanna switch back to React in this project. And I did it. I didn't look to my older react code, but I focus to rewrite components that I wrote in Svelte. And it wasn't difficult. One day was enough to do it.
 
 But I just can't stop. I just move my experience from work to this project and try new staf like dynamic imports. I hope that my journey with rewriting this project again and again never stops.
+
+## Goodbye React, goodbye Mobx
+
+It is finally there, on 5th of May, JS version of my website. I just rewrite components using `createElement`.
