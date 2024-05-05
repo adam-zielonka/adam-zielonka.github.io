@@ -26,7 +26,7 @@ Server Status: [Source](https://github.com/adam-zielonka/server-status), [Demo](
 Unit Converter: [Source](https://github.com/adam-zielonka/unit-converter)
 paintAZ: [Source](https://github.com/adam-zielonka/paintaz)  
 mobx-example: [Source](https://github.com/adam-zielonka/mobx-example), [Demo](https://mobx-example.adamzielonka.pro/)  
-svelte-example: [Source](https://github.com/adam-zielonka/svelte-example), [Demo](https://svelte-example.adamzielonka.pro/)
+svelte-example: [Source](https://github.com/adam-zielonka/svelte-example), [Demo](https://adam-zielonka.github.io/svelte-example/)
 tiles: [Source](https://github.com/adam-zielonka/tiles), [Run](https://adam-zielonka.github.io/tiles/)
 
 **[GAMES]**  
