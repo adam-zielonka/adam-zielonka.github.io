@@ -1,0 +1,13 @@
+diff --git a/lib/marked.d.ts b/lib/marked.d.ts
+index c26b2dbf4877d606039e8e747a656b924a2e32e5..0492979ce13e0a31a35dfbbd67c9a567bd9f9893 100644
+--- a/lib/marked.d.ts
++++ b/lib/marked.d.ts
+@@ -615,7 +615,7 @@ export declare function marked(src: string, options: MarkedOptions & {
+  * @param options Optional hash of options
+  * @return String of compiled HTML. Will be a Promise of string if async is set to true by any extensions.
+  */
+-export declare function marked(src: string, options?: MarkedOptions): string | Promise<string>;
++export declare function marked(src: string, options?: MarkedOptions): string;
+ export declare namespace marked {
+ 	var options: (options: MarkedOptions) => typeof marked;
+ 	var setOptions: (options: MarkedOptions) => typeof marked;
