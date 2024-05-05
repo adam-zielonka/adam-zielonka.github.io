@@ -30,8 +30,8 @@ svelte-example: [Source](https://github.com/adam-zielonka/svelte-example), [Demo
 tiles: [Source](https://github.com/adam-zielonka/tiles), [Run](https://adam-zielonka.github.io/tiles/)
 
 **[GAMES]**  
-Deska: [Source](https://github.com/adam-zielonka/deska), [Play](https://deska.adamzielonka.pro/)  
-Saper: [Source](https://github.com/adam-zielonka/saper), [Play](https://saper.adamzielonka.pro/)  
+Deska: [Source](https://github.com/adam-zielonka/deska), [Play](https://adam-zielonka.github.io/deska/)  
+Saper: [Source](https://github.com/adam-zielonka/saper), [Play](https://adam-zielonka.github.io/saper/)  
 Tetris: [Source](https://github.com/adam-zielonka/tetris)  
 Ships: [Source](https://github.com/adam-zielonka/statki), [Play](https://statki.adamzielonka.pro/)  
 GameOfLife: [Source](https://github.com/adam-zielonka/game-of-life), [Play](https://game-of-life.adamzielonka.pro/)  
