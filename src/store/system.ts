@@ -5,21 +5,19 @@ import escape from "lodash/escape";
 type SystemState = "processing" | "shutdown" | "freeze" | "interrupted" | "";
 
 export class System {
-  private state: SystemState = "";
+  private _state: SystemState = "";
 
-  constructor() {
-    let state = "";
-    Object.defineProperty(this, "state", {
-      set: (newState: SystemState) => {
-        state = newState;
-        if (this.isInputAllowed) {
-          window.terminal.showInput(); 
-        } else {
-          window.terminal.hideInput();
-        }
-      },
-      get: () => state,
-    });
+  set state(newState: SystemState) {
+    this._state = newState;
+    if (this.isInputAllowed) {
+      window.terminal.showInput(); 
+    } else {
+      window.terminal.hideInput();
+    }
+  }
+
+  get state(): SystemState {
+    return this._state;
   }
 
   get shutdown(): boolean {
