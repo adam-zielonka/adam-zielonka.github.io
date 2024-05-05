@@ -1,6 +1,6 @@
 import { store } from "./store";
 import { process } from "../utils/process";
-import escape from "lodash/escape";
+import { escape } from "../utils/escape";
 
 type SystemState = "processing" | "shutdown" | "freeze" | "interrupted" | "";
 

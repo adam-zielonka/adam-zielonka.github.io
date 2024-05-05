@@ -1,5 +1,4 @@
-import escape from "lodash/escape";
-import unescape from "lodash/unescape";
+import { escape, unescape } from "../utils/escape";
 
 export class History {
   private history: string[] = [];
