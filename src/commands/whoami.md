@@ -22,7 +22,7 @@ Adam Zielonka
 **[APPS]**  
 adamzielonka.pro: [Source](https://github.com/adam-zielonka/adamzielonka.pro), [Run](https://adamzielonka.pro/)  
 Questions: [Source](https://github.com/adam-zielonka/questions), [Run](https://questions.adamzielonka.pro/)  
-Server Status: [Source](https://github.com/adam-zielonka/server-status), [Demo](https://fake-status.adamzielonka.pro/)  
+Server Status: [Source](https://github.com/adam-zielonka/server-status), [Demo](https://adam-zielonka.github.io/server-status/)  
 Unit Converter: [Source](https://github.com/adam-zielonka/unit-converter)
 paintAZ: [Source](https://github.com/adam-zielonka/paintaz)  
 mobx-example: [Source](https://github.com/adam-zielonka/mobx-example), [Demo](https://adam-zielonka.github.io/mobx-example/)  
