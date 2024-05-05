@@ -3,7 +3,6 @@ env:
   es2021: true
 extends:
   - eslint:recommended
-  - plugin:react/recommended
   - plugin:@typescript-eslint/recommended-type-checked
   - plugin:@typescript-eslint/stylistic-type-checked
 overrides: []
@@ -13,11 +12,7 @@ parserOptions:
   sourceType: module
   project: true
 plugins:
-  - react
   - '@typescript-eslint'
-settings:
-  react:
-    version: detect
 rules:
   indent: off
   "@typescript-eslint/indent": 
@@ -32,7 +27,6 @@ rules:
   semi:
     - error
     - always
-  react/react-in-jsx-scope: off
   max-len:
     - error
     - 120
