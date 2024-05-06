@@ -6,7 +6,7 @@ help: information about me
 [](sleep:500)
 Adam Zielonka
 
-[](sleep:1000)
+[](sleep:700)
 **[EMAIL]**  
 [root@adamzielonka.pro](mailto:root@adamzielonka.pro)
 
