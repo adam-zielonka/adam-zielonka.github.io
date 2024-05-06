@@ -16,18 +16,18 @@ Adam Zielonka
 **[YouTube]**  
 [Code in the Machine](https://www.youtube.com/channel/UC9ndsm1I60DjsIqEh1XITRQ)
 
-**[PCz Trening]**
+**[PCz Trening]**  
 [Frontend tutorial](https://adam-zielonka.github.io/frontend-tutorial/)
 
 **[APPS]**  
-adamzielonka.pro: [Source](https://github.com/adam-zielonka/adamzielonka.pro), [Run](https://adamzielonka.pro/)  
+adam-zielonka.github.io: [Source](https://github.com/adam-zielonka/adam-zielonka.github.io), [Run](https://adam-zielonka.github.io/)  
 Questions: [Source](https://github.com/adam-zielonka/questions), [Run](https://adam-zielonka.github.io/questions/)  
 Server Status: [Source](https://github.com/adam-zielonka/server-status), [Demo](https://adam-zielonka.github.io/server-status/)  
-Unit Converter: [Source](https://github.com/adam-zielonka/unit-converter)
+Unit Converter: [Source](https://github.com/adam-zielonka/unit-converter)  
 paintAZ: [Source](https://github.com/adam-zielonka/paintaz)  
 mobx-example: [Source](https://github.com/adam-zielonka/mobx-example), [Demo](https://adam-zielonka.github.io/mobx-example/)  
-svelte-example: [Source](https://github.com/adam-zielonka/svelte-example), [Demo](https://adam-zielonka.github.io/svelte-example/)
-tiles: [Source](https://github.com/adam-zielonka/tiles), [Run](https://adam-zielonka.github.io/tiles/)
+svelte-example: [Source](https://github.com/adam-zielonka/svelte-example), [Demo](https://adam-zielonka.github.io/svelte-example/)  
+tiles: [Source](https://github.com/adam-zielonka/tiles), [Run](https://adam-zielonka.github.io/tiles/)  
 
 **[GAMES]**  
 Deska: [Source](https://github.com/adam-zielonka/deska), [Play](https://adam-zielonka.github.io/deska/)  
