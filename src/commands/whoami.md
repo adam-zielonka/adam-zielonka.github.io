@@ -21,7 +21,7 @@ Adam Zielonka
 
 **[APPS]**  
 adamzielonka.pro: [Source](https://github.com/adam-zielonka/adamzielonka.pro), [Run](https://adamzielonka.pro/)  
-Questions: [Source](https://github.com/adam-zielonka/questions), [Run](https://questions.adamzielonka.pro/)  
+Questions: [Source](https://github.com/adam-zielonka/questions), [Run](https://adam-zielonka.github.io/questions/)  
 Server Status: [Source](https://github.com/adam-zielonka/server-status), [Demo](https://adam-zielonka.github.io/server-status/)  
 Unit Converter: [Source](https://github.com/adam-zielonka/unit-converter)
 paintAZ: [Source](https://github.com/adam-zielonka/paintaz)  
@@ -33,8 +33,8 @@ tiles: [Source](https://github.com/adam-zielonka/tiles), [Run](https://adam-ziel
 Deska: [Source](https://github.com/adam-zielonka/deska), [Play](https://adam-zielonka.github.io/deska/)  
 Saper: [Source](https://github.com/adam-zielonka/saper), [Play](https://adam-zielonka.github.io/saper/)  
 Tetris: [Source](https://github.com/adam-zielonka/tetris)  
-Ships: [Source](https://github.com/adam-zielonka/statki), [Play](https://statki.adamzielonka.pro/)  
-GameOfLife: [Source](https://github.com/adam-zielonka/game-of-life), [Play](https://game-of-life.adamzielonka.pro/)  
-Pan: [Source](https://github.com/adam-zielonka/pan), [Play](https://pan.adamzielonka.pro/)  
-Chińczyk: [Source](https://github.com/adam-zielonka/chinczyk), [Play](https://chinczyk.adamzielonka.pro/)  
+Ships: [Source](https://github.com/adam-zielonka/statki), [Play](https://adam-zielonka.github.io/statki/)  
+GameOfLife: [Source](https://github.com/adam-zielonka/game-of-life), [Play](https://adam-zielonka.github.io/game-of-life/)  
+Pan: [Source](https://github.com/adam-zielonka/pan), [Play](https://adam-zielonka.github.io/pan/)  
+Chińczyk: [Source](https://github.com/adam-zielonka/chinczyk), [Play](https://adam-zielonka.github.io/chinczyk/)  
 [](sleep:400)

@@ -5,6 +5,7 @@ import { noScript } from "./src/plugins/no-script";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [noScript, markdownProcessor],
+  base: "./",
   test: {
     environment: "happy-dom",
   },
