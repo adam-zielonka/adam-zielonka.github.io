@@ -23,7 +23,7 @@ function splitMap(text: string, fn: (letter: string) => string): string {
 function renderLinePrefix(): string {
   return (
     splitMap(
-      "root@adamzielonka.pro",
+      "root@adam-zielonka",
       letter =>
         `<div class="user" style="animation: hidden ${clock()}ms;">${letter}</div>` +
         `<div class="hidden">${randomLetter()}</div>`,

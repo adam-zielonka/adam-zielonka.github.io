@@ -1,8 +1,8 @@
-# [adamzielonka.pro](https://adamzielonka.pro)
+# [adam-zielonka.github.io](https://adam-zielonka.github.io/)
 
 ## How to use
 
-1. Go to website [adamzielonka.pro](https://adamzielonka.pro)
+1. Go to website [adam-zielonka.github.io](https://adam-zielonka.github.io/)
 2. Wait for start scripts ends.
 3. Type something.
 4. Press Enter key.

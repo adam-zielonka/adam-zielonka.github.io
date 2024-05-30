@@ -8,7 +8,7 @@ Adam Zielonka
 
 [](sleep:700)
 **[EMAIL]**  
-[root@adamzielonka.pro](mailto:root@adamzielonka.pro)
+[code.unstitch760@passfwd.com](mailto:code.unstitch760@passfwd.com)
 
 **[REPO]**  
 [github.com/adam-zielonka](https://github.com/adam-zielonka)   

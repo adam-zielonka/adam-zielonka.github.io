@@ -1,5 +1,5 @@
 {
-  "name": "adamzielonka.pro",
+  "name": "portfolio-cli",
   "type": "module",
   "scripts": {
     "dev": "vite",
