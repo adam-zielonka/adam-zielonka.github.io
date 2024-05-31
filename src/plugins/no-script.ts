@@ -12,23 +12,13 @@ function createClock(clock = 0): [Clock, ResetClock] {
   ];
 }
 
-function randomLetter(): string {
-  return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
-}
-
 function splitMap(text: string, fn: (letter: string) => string): string {
   return text.split("").map(fn).join("");
 }
 
 function renderLinePrefix(): string {
-  return (
-    splitMap(
-      "root@adam-zielonka",
-      letter =>
-        `<div class="user" style="animation: hidden ${clock()}ms;">${letter}</div>` +
-        `<div class="hidden">${randomLetter()}</div>`,
-    ) + `<div class="user-end" style="animation: hidden ${clock()}ms;">:~#&nbsp;</div>`
-  );
+  return `<div class="user" style="animation: hidden ${clock()}ms;">root@adam-zielonka</div>`
+    + `<div class="user-end" style="animation: hidden ${clock()}ms;">:~#&nbsp;</div>`;
 }
 
 function calculateBlinkCount(startTime: number, endTime: number): number {
