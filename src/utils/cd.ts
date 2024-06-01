@@ -13,8 +13,7 @@ export function cd(dir: string, newDir: string): string {
       return dir.split("/").slice(0, -1).join("/") || "/";
     default: 
       return (newDir.startsWith("/") ? newDir : `${dir}/${newDir}`)
-        .replace(/\/\//, "/")  
-        .replace(/\/$/, "")
+        .replace(/\/+/g, "/")  
         .replace(/^\/root/, "~");
   }
 }
