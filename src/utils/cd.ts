@@ -1,5 +1,4 @@
 export function cd(dir: string, newDir: string): string {
-  console.log(dir, newDir);
   switch (newDir) {
     case "/":
       return "/";
