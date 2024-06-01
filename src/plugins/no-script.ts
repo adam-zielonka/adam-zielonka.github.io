@@ -17,8 +17,9 @@ function splitMap(text: string, fn: (letter: string) => string): string {
 }
 
 function renderLinePrefix(): string {
-  return `<div class="user" style="animation: hidden ${clock()}ms;">root@adam-zielonka</div>`
-    + `<div class="user-end" style="animation: hidden ${clock()}ms;">:~#&nbsp;</div>`;
+  return ""
+    + `<div class="path" style="animation: hidden ${clock()}ms;">~&nbsp;</div>` 
+    + `<div class="user" style="animation: hidden ${clock()}ms;">&gt;&nbsp;</div>`;
 }
 
 function calculateBlinkCount(startTime: number, endTime: number): number {
