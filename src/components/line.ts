@@ -20,8 +20,7 @@ export function Line({line}: {line: OutputLine}) {
   }
 
   for (const [key, value] of Object.entries(line.style)) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error: no existed css property won't crash app
     li.style[key] = value;
   }
   li.innerHTML = line.value;
