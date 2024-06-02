@@ -51,3 +51,9 @@ But I just can't stop. I just move my experience from work to this project and t
 ## Goodbye React, goodbye Mobx
 
 It is finally there, on 5th of May, JS version of my website. I just rewrite components using `createElement`. And more, there is no libraries on the builded version of app.
+
+## Goodbye my own domain
+
+In the end of May 2024, I decided to stop using my domain at all, GitHub Pages is a good place for my code experiments.
+
+![](./img/2024-06-02.png)
