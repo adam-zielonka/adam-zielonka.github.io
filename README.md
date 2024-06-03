@@ -35,6 +35,7 @@ You can also use special links, that will be affected to the app:
 - `const:` - this links will be replaced with:
   - `:command` - name of command
   - `:args` - arguments of command
+  - `:pwd` - working directory name
 - `ui:` - adjust way to process line
   - `:animate` - animate text
   - `:hide` - skip processing 

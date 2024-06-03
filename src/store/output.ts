@@ -23,8 +23,8 @@ export class Output {
     const [command, ...args] = store.history.lastCommand.split(" ");
     const value = line.value
       .replace(/<a.*const:command.*<\/a>/, command)
-      .replace(/<a.*const:args.*>(.*)<\/a>/, args.join(" ") || "$1");
-
+      .replace(/<a.*const:args.*>(.*)<\/a>/, args.join(" ") || "$1")
+      .replace(/<a.*const:pwd.*<\/a>/, store.path.pwd);
 
     const textLine: TextLine = {
       ...line,

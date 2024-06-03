@@ -61,8 +61,6 @@ function system(sysCommand: string, args: string[]): string[] {
     case "cd":
       store.path.cd(args.join(" "));
       return [];
-    case "pwd":
-      return [store.path.pwd];
     case "help":
       return store.commands.helpLines;
     default:
