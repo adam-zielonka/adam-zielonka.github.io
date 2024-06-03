@@ -56,8 +56,6 @@ function system(sysCommand: string, args: string[]): string[] {
     case "freeze":
       store.system.setFreeze();
       return [];
-    case "echo":
-      return [args.join(" ")];
     case "font":
       return store.style.set(args.join(" "));
     case "cd":

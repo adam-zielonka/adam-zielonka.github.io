@@ -31,7 +31,6 @@ You can also use special links, that will be affected to the app:
   - `:clear` - clear standard output
   - `:shutdown` - shutdown the machine
   - `:freeze` - freeze the machine
-  - `:echo` - print args
   - `:help` - print available instruction
 - `const:` - this links will be replaced with:
   - `:command` - name of command
