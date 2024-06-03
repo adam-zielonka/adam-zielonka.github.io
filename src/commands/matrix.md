@@ -12,7 +12,7 @@ help: enter the matrix
 [](sleep:500)
 
 [](ui:animate)
-Wake up, Neo...
+Wake up, [Neo](const:args)...
 [](sleep:2000)
 [](system:clear)
 
@@ -27,7 +27,7 @@ Follow the white rabbit.
 [](system:clear)
 
 [](sleep:100)
-Knock, knock, Neo.
+Knock, knock, [Neo](const:args).
 [](sleep:2000)
 [](system:clear)
 [](sleep:500)
