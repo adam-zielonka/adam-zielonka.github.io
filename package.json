@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "front-matter": "^4.0.2",
-    "marked": "^12.0.2"
+    "marked": "^15.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
@@ -24,10 +24,5 @@
     "typescript-eslint": "^8.15.0",
     "vite": "^5.4.11",
     "vitest": "^2.1.5"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "marked@12.0.2": "patches/marked@12.0.2.patch"
-    }
   }
 }
