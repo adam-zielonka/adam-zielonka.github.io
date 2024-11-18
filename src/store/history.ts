@@ -26,10 +26,10 @@ export class History {
   }
 
   up(): void {
-    this.position - 1 >= 0 && --this.position;
+    if (this.position - 1 >= 0) --this.position;
   }
 
   down(): void {
-    this.position + 1 <= this.history.length && ++this.position;
+    if (this.position + 1 <= this.history.length) ++this.position;
   }
 }
