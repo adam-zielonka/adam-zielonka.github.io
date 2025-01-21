@@ -13,9 +13,6 @@ Adam Zielonka
 **[REPO]**  
 [github.com/adam-zielonka](https://github.com/adam-zielonka)   
 
-**[YouTube]**  
-[Code in the Machine](https://www.youtube.com/channel/UC9ndsm1I60DjsIqEh1XITRQ)
-
 **[PCz Trening]**  
 [Frontend tutorial](https://adam-zielonka.github.io/frontend-tutorial/)
 
