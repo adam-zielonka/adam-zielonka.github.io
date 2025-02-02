@@ -7,9 +7,6 @@ help: information about me
 Adam Zielonka
 
 [](sleep:700)
-**[EMAIL]**  
-[code.unstitch760@passfwd.com](mailto:code.unstitch760@passfwd.com)
-
 **[REPO]**  
 [github.com/adam-zielonka](https://github.com/adam-zielonka)   
 
