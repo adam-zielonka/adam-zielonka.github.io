@@ -11,18 +11,18 @@
   },
   "dependencies": {
     "front-matter": "^4.0.2",
-    "marked": "^15.0.1"
+    "marked": "^16.2.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.15.0",
-    "@vitest/coverage-v8": "^2.1.5",
-    "eslint": "^9.15.0",
-    "globals": "^15.12.0",
-    "happy-dom": "^15.11.6",
-    "sass": "^1.81.0",
-    "typescript": "^5.6.3",
-    "typescript-eslint": "^8.15.0",
-    "vite": "^5.4.11",
-    "vitest": "^2.1.5"
+    "@eslint/js": "^9.35.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.35.0",
+    "globals": "^16.3.0",
+    "happy-dom": "^18.0.1",
+    "sass": "^1.92.1",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.43.0",
+    "vite": "^7.1.5",
+    "vitest": "^3.2.4"
   }
 }

@@ -9,13 +9,6 @@ export default defineConfig({
   test: {
     environment: "happy-dom",
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: "modern-compiler",
-      }
-    }
-  },
   build: {
     sourcemap: true,
     rollupOptions: {
