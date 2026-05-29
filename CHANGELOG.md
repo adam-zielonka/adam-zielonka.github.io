@@ -1,59 +1,59 @@
-# Change log
+# Changelog
 
-## Beginning - Static Website
+## 2017 - Static beginnings
 
-In June 2017, my friend show me his website and after I sew, I realized that I want have the own website. So I copied his website, and rebuild for myself:
+In June 2017 a friend showed me his website. It made me want a place of my own on the web, so I started by recreating the idea and then quickly moved toward something that felt more personal.
 
-![](./img/2017-06-12.png)
+![First contact-card layout](./img/2017-06-12.png)
 
-But creating the same website like friend isn't fair to the friend, so I rewrite again. My idea was to create website that looks like terminal.
+The next step was the first terminal-inspired version. It was still simple, but the direction of the project was already clear.
 
-![](./img/2017-06-12.2.png)
-![](./img/2017-06-14.png)
-![](./img/2017-06-15.png)
-![](./img/2017-06-15.2.png)
-![](./img/2017-06-18.png)
+![First terminal-style layout](./img/2017-06-12.2.png)
+![Early terminal iteration](./img/2017-06-14.png)
+![Terminal layout refinement](./img/2017-06-15.png)
+![Terminal layout refinement with command flow](./img/2017-06-15.2.png)
+![Refined static terminal landing page](./img/2017-06-18.png)
 
-Website was very empty, no project that can promote me, so in October 2017, I add my first projects:
+By October 2017 I finally had projects worth linking to, so the website started to feel like a portfolio instead of an empty shell.
 
-![](./img/2017-10-06.png)
+![First projects added to the portfolio](./img/2017-10-06.png)
 
-Website wasn't presenting information, so on beginning of 2018 I rebuild the whoami layout.
+## 2018 - A clearer `whoami`
 
-![](./img/2018-01-17.png)
-![](./img/2018-01-28.png)
-![](./img/2018-02-04.png)
+At the start of 2018 I reworked the `whoami` layout so the site could present more structured information: contact details, repositories, apps, and games.
 
-When autumn 2018 came, I did last correction.
+![Expanded whoami layout](./img/2018-01-17.png)
+![Layout cleanup and spacing update](./img/2018-01-28.png)
+![Further refinement of the terminal portfolio](./img/2018-02-04.png)
 
-![](./img/2018-09-23.png)
+By autumn 2018 the static version had reached its final major polish pass.
 
-## React - Interaction Website
+![Late static terminal version](./img/2018-09-23.png)
 
-In March 2019, I decided to move website React.js and I did it. Static website was put in noscript section. Yea. But it wasn't very good code to edit, so page look very similar to the static website. One different was animation, but it think it is possible to get the same effect using css.
+## 2019 - React and interaction
 
-In August 2019, I had the breakdown. I rewrite the terminal code, that me allow to add interaction. I also rewrite the animation form no-script version of website, so no differences between static and react version.
+In March 2019 I moved the website to React. The static version stayed available as the `noscript` fallback, but the first React version still looked very close to the old site.
 
-![](./img/2019-08-17.png)
+In August 2019 I rewrote the terminal code to support richer interaction and aligned the animation with the non-JavaScript version so both experiences felt consistent.
 
-## Svelte
+![Interactive React version of the portfolio](./img/2019-08-17.png)
 
-In December 2021, My friend told me that Svelte is something nicer to use, so here we are, and the new version of this website is base on Svelte. I need to admit that styles, html and scripts in one file look attractive for me. And it works pretty well for me. But stores, needs from me some efforts to understand similar but different approach like in Mobx, but in the end in three days I rewrote app to new technology.
+## 2021 - Svelte rewrite
 
-![](./img/2021-12-26.3.png)
+In December 2021 a friend convinced me to try Svelte, and the site was rewritten again. Keeping markup, styles, and logic together felt great, and the rewrite took only a few days once the structure clicked.
 
-## Back to React
+![Svelte version of the terminal portfolio](./img/2021-12-26.3.png)
 
-On 5th February 2023, I just wanna switch back to React in this project. And I did it. I didn't look to my older react code, but I focus to rewrite components that I wrote in Svelte. And it wasn't difficult. One day was enough to do it.
+## 2023 - Back to React
 
-But I just can't stop. I just move my experience from work to this project and try new staf like dynamic imports. I hope that my journey with rewriting this project again and again never stops.
+On 5 February 2023 I moved the project back to React. I did not look at the old React code; I just rewrote the Svelte components again, this time with the benefit of everything I had learned in the meantime.
 
-## Goodbye React, goodbye Mobx
+## 2024 - Goodbye React, goodbye MobX
 
-It is finally there, on 5th of May, JS version of my website. I just rewrite components using `createElement`. And more, there is no libraries on the builded version of app.
+On 5 May 2024 I rewrote the components with `createElement` and removed framework/runtime dependencies from the built version of the app.
 
-## Goodbye my own domain
+## 2024 - Goodbye custom domain
 
-In the end of May 2024, I decided to stop using my domain at all, GitHub Pages is a good place for my code experiments.
+At the end of May 2024 I decided to retire the custom domain. GitHub Pages is enough for this project and a better fit for a portfolio that doubles as a playground for experiments.
 
-![](./img/2024-06-02.png)
+![GitHub Pages version after the domain change](./img/2024-06-02.png)
