@@ -1,4 +1,8 @@
-# [adam-zielonka.github.io](https://adam-zielonka.github.io/)
+# adam-zielonka.github.io
+
+Interactive terminal-style portfolio website, published at [adam-zielonka.github.io](https://adam-zielonka.github.io/).
+
+![Current terminal-style portfolio UI](./img/2024-06-02.png)
 
 ## How to use
 
@@ -7,42 +11,33 @@
 3. Type something.
 4. Press Enter key.
 5. Enjoy ;-)
+## Development
 
-## Command file
+1. `pnpm install`
+2. `pnpm dev`
+3. `pnpm build`
+4. `pnpm test`
+5. `pnpm lint`
 
-This app interpreted a markdown file with attributes section written in yaml. You can see my files in repo: [./src/commands/](./src/commands/).
+## Command files
 
-### Attributes
+Commands live in [`src/commands`](./src/commands/) as Markdown files with YAML front matter.
 
-In optional yaml section, you can set:
+### Front matter
 
-- `command` - name, that will be use to execute command by user
-- `alias` - table of aliases, that can by used also to execute command by user
-- `help` - text, that will be shown in help command
+- `command` - command name
+- `alias` - optional list of aliases
+- `help` - description shown by the `help` command
 
 ### Body
 
-All line in markdown section will be printed line by line, with links interpretations.
+The Markdown body is rendered line by line. Regular links stay clickable, and special action links control the terminal behavior:
 
-You can also use special links, that will be affected to the app:
-
-- `sleep:` - wait before print next line
-- `system:` - system instruction, applies to next line
-  - `:clear` - clear standard output
-  - `:shutdown` - shutdown the machine
-  - `:freeze` - freeze the machine
-  - `:help` - print available instruction
-- `const:` - this links will be replaced with:
-  - `:command` - name of command
-  - `:args` - arguments of command
-  - `:pwd` - working directory name
-- `ui:` - adjust way to process line
-  - `:animate` - animate text
-  - `:hide` - skip processing 
-- `css:` - adjust appearance with css, e.g:
-  - `:color` - set color
-  - `:font-weight` - set font weight
-  - `:font-size` - set font size
+- `sleep:` pause before rendering the next line, for example `[](sleep:500)`
+- `system:` trigger built-in actions such as `clear`, `shutdown`, `freeze`, `help`, `font`, or `cd`
+- `const:` inject runtime values such as `command`, `args`, and `pwd`
+- `ui:` control rendering with `animate` or `hide`
+- `css:` apply inline styles with CSS property names such as `color`, `font-weight`, `font-size`, or `margin-top`
 
 ## License
 
