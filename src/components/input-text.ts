@@ -1,8 +1,8 @@
 type InputTextProps = {
-  value: string
-  start: number
-  end: number
-}
+  value: string;
+  start: number;
+  end: number;
+};
 
 export function InputText({ value, start, end }: InputTextProps) {
   const isSelection = start !== end;

@@ -10,7 +10,7 @@ export class System {
   set state(newState: SystemState) {
     this._state = newState;
     if (this.isInputAllowed) {
-      window.terminal.showInput(); 
+      window.terminal.showInput();
     } else {
       window.terminal.hideInput();
     }

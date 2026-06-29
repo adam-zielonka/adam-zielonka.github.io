@@ -2,14 +2,11 @@ import fs from "fs";
 import { parseLines } from "../utils/parse";
 import { PluginOption } from "vite";
 
-type Clock = (delay?: number) => number
-type ResetClock = () => void
+type Clock = (delay?: number) => number;
+type ResetClock = () => void;
 
 function createClock(clock = 0): [Clock, ResetClock] {
-  return [
-    (delay = 0) => (clock += delay),
-    () => (clock = 0),
-  ];
+  return [(delay = 0) => (clock += delay), () => (clock = 0)];
 }
 
 function splitMap(text: string, fn: (letter: string) => string): string {
@@ -17,9 +14,11 @@ function splitMap(text: string, fn: (letter: string) => string): string {
 }
 
 function renderLinePrefix(): string {
-  return ""
-    + `<div class="path" style="animation: hidden ${clock()}ms;">~&nbsp;</div>` 
-    + `<div class="user" style="animation: hidden ${clock()}ms;">&gt;&nbsp;</div>`;
+  return (
+    "" +
+    `<div class="path" style="animation: hidden ${clock()}ms;">~&nbsp;</div>` +
+    `<div class="user" style="animation: hidden ${clock()}ms;">&gt;&nbsp;</div>`
+  );
 }
 
 function calculateBlinkCount(startTime: number, endTime: number): number {
@@ -91,12 +90,17 @@ export const noScript: PluginOption = {
   name: "no-script-section",
   transformIndexHtml(html) {
     resetClock();
-    return html.replace(/<links \/>/g, formatHtml(
-      "<ul>" +
-        renderCommand("whoami") +
-        renderCommandLine("") +
-        renderLines("panic") +
-      "</ul>"
-    )).replace(/\n\s*\n/g, "\n");
+    return html
+      .replace(
+        /<links \/>/g,
+        formatHtml(
+          "<ul>" +
+            renderCommand("whoami") +
+            renderCommandLine("") +
+            renderLines("panic") +
+            "</ul>",
+        ),
+      )
+      .replace(/\n\s*\n/g, "\n");
   },
 };

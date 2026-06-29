@@ -20,7 +20,7 @@ export class Terminal {
 
   push(...lines: OutputLine[]) {
     for (const line of lines) {
-      this.lines.appendChild(Line({line}));
+      this.lines.appendChild(Line({ line }));
     }
   }
 
@@ -30,7 +30,7 @@ export class Terminal {
 
   updateLast(line: OutputLine) {
     if (this.lines.lastElementChild) {
-      this.lines.lastElementChild.innerHTML = Line({line}).innerHTML;
+      this.lines.lastElementChild.innerHTML = Line({ line }).innerHTML;
     }
   }
 
@@ -60,4 +60,6 @@ export class Terminal {
   }
 }
 
-export const terminal = window.terminal = new Terminal(document.getElementById("root")!);
+export const terminal = (window.terminal = new Terminal(
+  document.getElementById("root")!,
+));

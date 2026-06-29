@@ -20,7 +20,11 @@ export function parseLines(body: string): ParsedLine[] {
     }
   }
 
-  lines[lines.length - 1]?.actions.push({ namespace: "ui", key: "hide", value: "" });
+  lines[lines.length - 1]?.actions.push({
+    namespace: "ui",
+    key: "hide",
+    value: "",
+  });
 
   return lines;
 }

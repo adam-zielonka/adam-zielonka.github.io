@@ -10,9 +10,9 @@ export function cd(dir: string, newDir: string): string {
       return dir;
     case "..":
       return dir.split("/").slice(0, -1).join("/") || "/";
-    default: 
+    default:
       return (newDir.startsWith("/") ? newDir : `${dir}/${newDir}`)
-        .replace(/\/+/g, "/")  
+        .replace(/\/+/g, "/")
         .replace(/^\/root/, "~");
   }
 }

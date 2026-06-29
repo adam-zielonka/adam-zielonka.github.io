@@ -8,7 +8,7 @@ Adam Zielonka
 
 [](sleep:700)
 **[REPO]**  
-[github.com/adam-zielonka](https://github.com/adam-zielonka)   
+[github.com/adam-zielonka](https://github.com/adam-zielonka)
 
 **[PCz Trening]**  
 [Frontend tutorial](https://adam-zielonka.github.io/frontend-tutorial/)
@@ -21,7 +21,7 @@ Unit Converter: [Source](https://github.com/adam-zielonka/unit-converter)
 paintAZ: [Source](https://github.com/adam-zielonka/paintaz)  
 mobx-example: [Source](https://github.com/adam-zielonka/mobx-example), [Demo](https://adam-zielonka.github.io/mobx-example/)  
 svelte-example: [Source](https://github.com/adam-zielonka/svelte-example), [Demo](https://adam-zielonka.github.io/svelte-example/)  
-tiles: [Source](https://github.com/adam-zielonka/tiles), [Run](https://adam-zielonka.github.io/tiles/)  
+tiles: [Source](https://github.com/adam-zielonka/tiles), [Run](https://adam-zielonka.github.io/tiles/)
 
 **[GAMES]**  
 Deska: [Source](https://github.com/adam-zielonka/deska), [Play](https://adam-zielonka.github.io/deska/)  

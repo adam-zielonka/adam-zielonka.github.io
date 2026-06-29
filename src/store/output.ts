@@ -48,7 +48,7 @@ export class Output {
 
   async processCommandLine(command: string, animate = false): Promise<void> {
     if (!store.system.isProcessing) return;
-    
+
     const commandLine: CommandLine = {
       value: command,
       blink: false,

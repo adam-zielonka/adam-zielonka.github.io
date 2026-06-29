@@ -14,7 +14,8 @@ export class Commands {
 
   get helpLines(): string[] {
     return this.help.map(
-      ({ command, alias, help }) => `<b>${[command, ...alias].join(" | ")}</b> - ${help}`,
+      ({ command, alias, help }) =>
+        `<b>${[command, ...alias].join(" | ")}</b> - ${help}`,
     );
   }
 
@@ -23,6 +24,8 @@ export class Commands {
   }
 
   getCompletions(command: string): string[] {
-    return Object.keys(this.commands).filter(c => c.startsWith(command) && c !== command);
+    return Object.keys(this.commands).filter(
+      c => c.startsWith(command) && c !== command,
+    );
   }
 }

@@ -31,7 +31,7 @@ export class Completion {
     if (!this.list.length) {
       return this.reset();
     }
-    
+
     this.index = (this.index + 1) % this.list.length;
   }
 }

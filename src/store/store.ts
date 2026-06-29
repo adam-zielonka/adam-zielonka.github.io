@@ -16,4 +16,4 @@ export class Store {
   system = new System();
 }
 
-export const store = window.store = new Store();
+export const store = (window.store = new Store());

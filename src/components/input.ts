@@ -6,15 +6,15 @@ import { LinePrefix } from "./line-prefix";
 export function Input() {
   const { history, path, system, completion } = store;
 
-  const prefix = LinePrefix({path: path.value});
-  const inputText = InputText({value: history.value, start: 0, end: 0});
+  const prefix = LinePrefix({ path: path.value });
+  const inputText = InputText({ value: history.value, start: 0, end: 0 });
   const input = document.createElement("input");
   const completionList = Completion();
 
   const updatePosition = () => {
     inputText.innerHTML = InputText({
-      value: input.value, 
-      start: input.selectionStart ?? 0, 
+      value: input.value,
+      start: input.selectionStart ?? 0,
       end: input.selectionEnd ?? 0,
     }).innerHTML;
     completionList.innerHTML = Completion().innerHTML;
@@ -48,7 +48,7 @@ export function Input() {
           history.set(completion.theOne + " ");
           completion.reset();
         } else {
-          completion.next(); 
+          completion.next();
         }
         break;
     }
