@@ -45,3 +45,7 @@ The Markdown body is rendered line by line. Regular links remain clickable, whil
 ## License
 
 MIT
+
+## Development
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for the current runtime, builds and checks.
