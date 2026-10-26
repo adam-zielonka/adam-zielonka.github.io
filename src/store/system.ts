@@ -53,7 +53,7 @@ export class System {
     );
     if (button) {
       button.setAttribute("aria-pressed", String(this.animations));
-      button.textContent = `Animacje: ${this.animations ? "wł." : "wył."}`;
+      button.textContent = `Animations: ${this.animations ? "on" : "off"}`;
     }
   }
 
@@ -130,15 +130,13 @@ export class System {
       console.error("Command failed", error);
       store.output.push({
         value:
-          '<span class="Error">Ta komenda nie mogła zostać wykonana. Spróbuj ponownie lub wpisz <code>help</code>.</span>',
+          '<span class="Error">Could not run this command. Try again or type <code>help</code>.</span>',
         style: {},
       });
     } finally {
       if (["processing", "interrupted"].includes(this.state)) this.state = "";
       window.terminal.announce(
-        this.state === ""
-          ? `Zakończono: ${command}`
-          : "Sesja terminala zakończona.",
+        this.state === "" ? `Finished: ${command}` : "Terminal session ended.",
       );
     }
   }

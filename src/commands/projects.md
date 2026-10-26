@@ -1,6 +1,6 @@
 ---
 command: projects
-help: wszystkie projekty
+help: browse all projects
 ---
 
 [](system:projects)

@@ -1,6 +1,6 @@
 ---
 command: about
-help: kilka słów o mnie i tej stronie
+help: about me and this site
 ---
 
 [](system:about)

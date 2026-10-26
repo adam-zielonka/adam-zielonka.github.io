@@ -1,9 +1,9 @@
 ---
 command: shutdown
 alias: [exit]
-help: zakończ sesję terminala
+help: end the terminal session
 ---
 
-Do zobaczenia!
+See you next time!
 [](sleep:500)
 [](system:shutdown)

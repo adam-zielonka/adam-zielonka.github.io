@@ -19,7 +19,7 @@ export class Path {
     ];
     if (!directories.includes(next))
       return [
-        `<span class="Error">cd: nie ma katalogu „${escape(newDir)}”.</span> Wpisz <code>ls</code>, aby zobaczyć dostępne katalogi.`,
+        `<span class="Error">cd: no such directory: “${escape(newDir)}”.</span> Type <code>ls</code> to see available directories.`,
       ];
     this.value = next;
     return [];

@@ -68,3 +68,6 @@ The input now uses a native text field. Keyboard navigation, copying selected
 text, reduced motion, animation cancellation and escaped command output are
 covered by regression tests. Project descriptions remain available when scripts
 cannot run. Typography is self-hosted, and the layout adapts to smaller screens.
+
+English is the main language throughout the interface, project descriptions,
+terminal help, status messages, accessibility labels and page metadata.

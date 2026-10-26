@@ -11,35 +11,35 @@ export function commandLink(
 }
 
 function projectRow(project: Project, index: number): string {
-  return `<article class="ProjectRow"><span class="ProjectNumber" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><div class="ProjectInfo"><span class="ProjectCategory">${escape(project.category)}</span><h3><a href="#project/${project.id}" data-command="project ${project.id}">${escape(project.name)}<span aria-hidden="true"> ↗</span></a></h3><p>${escape(project.summary)}</p><span class="ProjectStack">${project.stack.map(escape).join(" / ")}</span></div><a class="ProjectOpen" href="#project/${project.id}" data-command="project ${project.id}" aria-label="Poznaj projekt ${escape(project.name)}"><span aria-hidden="true">↗</span></a></article>`;
+  return `<article class="ProjectRow"><span class="ProjectNumber" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><div class="ProjectInfo"><span class="ProjectCategory">${escape(project.category)}</span><h3><a href="#project/${project.id}" data-command="project ${project.id}">${escape(project.name)}<span aria-hidden="true"> ↗</span></a></h3><p>${escape(project.summary)}</p><span class="ProjectStack">${project.stack.map(escape).join(" / ")}</span></div><a class="ProjectOpen" href="#project/${project.id}" data-command="project ${project.id}" aria-label="Explore project ${escape(project.name)}"><span aria-hidden="true">↗</span></a></article>`;
 }
 
 export function renderHome(): string {
-  return `<section class="HomeOutput"><div class="OutputHeading"><h2>Wybrane projekty<span class="Count">03</span></h2><span class="OutputNote">z pomysłu do przeglądarki</span></div><div class="ProjectList">${projects
+  return `<section class="HomeOutput"><div class="OutputHeading"><h2>Selected projects<span class="Count">03</span></h2><span class="OutputNote">from idea to browser</span></div><div class="ProjectList">${projects
     .filter(project => project.featured)
     .map(projectRow)
     .join(
       "",
-    )}</div><div class="OutputActions">${commandLink("projects", "Wszystkie projekty →")}${commandLink("help", "Co potrafi ten terminal?")}</div></section>`;
+    )}</div><div class="OutputActions">${commandLink("projects", "All projects →")}${commandLink("help", "What can this terminal do?")}</div></section>`;
 }
 
 export function renderProjects(): string {
-  return `<section><div class="OutputHeading"><h2>Katalog projektów<span class="Count">${projects.length}</span></h2></div><p class="OutputIntro">Narzędzia, aplikacje, gry i eksperymenty. Wybierz projekt albo wpisz <code>project server-status</code>.</p><div class="ProjectList ProjectList--compact">${projects.map(projectRow).join("")}</div></section>`;
+  return `<section><div class="OutputHeading"><h2>Project catalog<span class="Count">${projects.length}</span></h2></div><p class="OutputIntro">Tools, apps, games and experiments. Choose a project or type <code>project server-status</code>.</p><div class="ProjectList ProjectList--compact">${projects.map(projectRow).join("")}</div></section>`;
 }
 
 export function renderProject(id: string): string {
   const project = findProject(id);
   if (!project)
-    return `<p class="Error">Nie ma projektu „${escape(id)}”.</p><p>${commandLink("projects", "Pokaż dostępne projekty →")}</p>`;
-  return `<article class="ProjectDetail"><div class="DetailBreadcrumb">${commandLink("projects", "projects")}<span aria-hidden="true"> / </span><span>${escape(project.id)}</span></div><span class="ProjectCategory">${escape(project.category)}</span><h2>${escape(project.name)}</h2><p class="DetailSummary">${escape(project.summary)}</p><p class="ProjectStack">${project.stack.map(escape).join(" / ")}</p>${project.idea ? `<h3>Pomysł</h3><p>${escape(project.idea)}</p>` : ""}${project.decisions ? `<h3>Jak to działa</h3><p>${escape(project.decisions)}</p>` : ""}<div class="DetailLinks">${project.demo ? `<a class="PrimaryLink" href="${project.demo}" target="_blank" rel="noopener noreferrer">${project.category === "Gra" ? "Zagraj" : "Otwórz demo"} <span aria-hidden="true">↗</span></a>` : ""}<a href="${project.source}" target="_blank" rel="noopener noreferrer">Kod na GitHubie <span aria-hidden="true">↗</span></a><a href="#project/${project.id}" data-copy-link="${project.id}">Kopiuj link <span aria-hidden="true">⤴</span></a></div>${project.id === "game-of-life" ? '<p class="OutputNote">Symulacja zawiera ruchome, zmieniające się wzory.</p>' : ""}</article>`;
+    return `<p class="Error">Project “${escape(id)}” not found.</p><p>${commandLink("projects", "Browse projects →")}</p>`;
+  return `<article class="ProjectDetail"><div class="DetailBreadcrumb">${commandLink("projects", "projects")}<span aria-hidden="true"> / </span><span>${escape(project.id)}</span></div><span class="ProjectCategory">${escape(project.category)}</span><h2>${escape(project.name)}</h2><p class="DetailSummary">${escape(project.summary)}</p><p class="ProjectStack">${project.stack.map(escape).join(" / ")}</p>${project.idea ? `<h3>The idea</h3><p>${escape(project.idea)}</p>` : ""}${project.decisions ? `<h3>How it works</h3><p>${escape(project.decisions)}</p>` : ""}<div class="DetailLinks">${project.demo ? `<a class="PrimaryLink" href="${project.demo}" target="_blank" rel="noopener noreferrer">${project.category === "Game" ? "Play" : "Try the demo"} <span aria-hidden="true">↗</span></a>` : ""}<a href="${project.source}" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">↗</span></a><a href="#project/${project.id}" data-copy-link="${project.id}">Copy link <span aria-hidden="true">⤴</span></a></div>${project.id === "game-of-life" ? '<p class="OutputNote">The simulation contains moving, changing patterns.</p>' : ""}</article>`;
 }
 
 export function renderAbout(): string {
-  return `<section class="TextOutput"><span class="ProjectCategory">Cześć, jestem Adam</span><h2>Lubię wiedzieć, jak to działa.</h2><p>Tworzę aplikacje webowe, narzędzia i gry. W tych projektach jest miejsce zarówno na praktyczne rozwiązania, jak i na eksperymenty z interfejsem, stanem aplikacji czy prostymi regułami symulacji.</p><p>Pracuję m.in. z TypeScriptem, Reactem i Go. Dzielę się też wiedzą w materiałach o budowaniu frontendu z React i MobX.</p><h3>Ta strona też jest eksperymentem</h3><p>Pierwsza wersja powstała w 2017 roku. Później były React i Svelte, a dziś terminal działa na natywnym DOM i TypeScripcie. Komendy są zapisane w Markdown.</p><div class="OutputActions">${commandLink("project frontend-tutorial", "Zobacz materiały →")}${commandLink("project portfolio", "O tym portfolio →")}${commandLink("contact", "Kontakt →")}</div></section>`;
+  return `<section class="TextOutput"><span class="ProjectCategory">Hi, I'm Adam</span><h2>I like understanding how things work.</h2><p>I build web apps, tools and games. Some solve practical problems; others explore interfaces, application state or the simple rules behind a simulation.</p><p>I work with TypeScript, React and Go, among other tools. I also share what I learn through materials on building frontends with React and MobX.</p><h3>This site is an experiment, too</h3><p>The first version went online in 2017. After React and Svelte, this terminal now runs on native DOM APIs and TypeScript. Its commands are written in Markdown.</p><div class="OutputActions">${commandLink("project frontend-tutorial", "Explore the tutorial →")}${commandLink("project portfolio", "About this portfolio →")}${commandLink("contact", "Get in touch →")}</div></section>`;
 }
 
 export function renderContact(): string {
-  return `<section class="TextOutput"><span class="ProjectCategory">Porozmawiajmy o kodzie</span><h2>Znajdziesz mnie na GitHubie.</h2><p>Chcesz zapytać o projekt, zgłosić błąd albo zaproponować usprawnienie? Najlepiej zacząć od jego repozytorium.</p><div class="DetailLinks"><a class="PrimaryLink" href="https://github.com/adam-zielonka" target="_blank" rel="noopener noreferrer">Profil na GitHubie <span aria-hidden="true">↗</span></a>${commandLink("projects", "Wybierz repozytorium →")}</div></section>`;
+  return `<section class="TextOutput"><span class="ProjectCategory">Let’s talk about code</span><h2>Find me on GitHub.</h2><p>Have a question about a project, found a bug or have an idea for an improvement? Its repository is a good place to start.</p><div class="DetailLinks"><a class="PrimaryLink" href="https://github.com/adam-zielonka" target="_blank" rel="noopener noreferrer">GitHub profile <span aria-hidden="true">↗</span></a>${commandLink("projects", "Choose a repository →")}</div></section>`;
 }
 
 export function renderDirectory(path: string): string {

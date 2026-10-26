@@ -6,7 +6,7 @@ export function Input() {
   const { history, path, system, completion } = store;
   const form = document.createElement("form");
   form.className = "Input";
-  form.setAttribute("aria-label", "Wpisz komendę terminala");
+  form.setAttribute("aria-label", "Enter a terminal command");
   const row = document.createElement("div");
   row.className = "InputRow";
   const input = document.createElement("input");
@@ -16,14 +16,14 @@ export function Input() {
   input.autocapitalize = "off";
   input.spellcheck = false;
   input.enterKeyHint = "send";
-  input.setAttribute("aria-label", "Komenda terminala");
+  input.setAttribute("aria-label", "Terminal command");
   input.setAttribute("aria-describedby", "terminal-hint");
-  input.placeholder = "Wpisz help lub wybierz projekt…";
+  input.placeholder = "Type help or choose a project…";
   input.value = history.value;
   const submit = document.createElement("button");
   submit.type = "submit";
   submit.className = "SubmitCommand";
-  submit.setAttribute("aria-label", "Uruchom komendę");
+  submit.setAttribute("aria-label", "Run command");
   submit.innerHTML = '<span aria-hidden="true">↵</span>';
   const completionList = document.createElement("div");
   completionList.className = "CompletionHost";

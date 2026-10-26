@@ -35,7 +35,7 @@ export const noScript: PluginOption = {
           `<section id="project/${project.id}">${renderProject(project.id)}</section>`,
       )
       .join("");
-    const content = `<div class="FallbackContent"><section id="home">${renderHome()}</section><p class="OutputIntro">Terminal wymaga JavaScriptu. Wszystkie projekty i kontakt są również dostępne poniżej.</p><section id="projects">${renderProjects()}</section><section id="about">${renderAbout()}</section><section id="contact">${renderContact()}</section>${details}</div>`;
+    const content = `<div class="FallbackContent"><section id="home">${renderHome()}</section><p class="OutputIntro">The terminal needs JavaScript. You can still browse every project and find contact links below.</p><section id="projects">${renderProjects()}</section><section id="about">${renderAbout()}</section><section id="contact">${renderContact()}</section>${details}</div>`;
     return html.replace("<portfolio-fallback />", staticContent(content));
   },
 };

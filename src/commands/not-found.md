@@ -2,5 +2,5 @@
 command: not-found
 ---
 
-Nie znam komendy **„[nazwa](const:command)”**.
-Wpisz **help** lub wybierz skrót nad terminalem.
+Command **“[name](const:command)”** not found.
+Type **help** or choose a shortcut above the terminal.

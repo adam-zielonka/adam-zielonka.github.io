@@ -1,7 +1,7 @@
 ---
 command: whoami
 alias: [home]
-help: wybrane projekty i strona główna
+help: selected projects and home page
 ---
 
 [](system:home)

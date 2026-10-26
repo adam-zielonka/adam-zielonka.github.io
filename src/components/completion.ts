@@ -3,7 +3,7 @@ import { store } from "../store/store";
 export function Completion() {
   const list = document.createElement("div");
   list.className = "Completion";
-  list.setAttribute("aria-label", "Podpowiedzi komend");
+  list.setAttribute("aria-label", "Command suggestions");
   if (!store.completion.isVisible) return list;
   for (const command of store.completion.list) {
     const button = document.createElement("button");

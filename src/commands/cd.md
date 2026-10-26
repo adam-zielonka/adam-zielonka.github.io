@@ -1,6 +1,6 @@
 ---
 command: cd
-help: zmień katalog, np. cd projects
+help: change directory, e.g. cd projects
 ---
 
 [](system:cd)

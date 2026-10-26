@@ -4,7 +4,7 @@ import { escape } from "../utils/escape";
 export class Style {
   set(font: string): string[] {
     if (!isFontExist(font) && font) {
-      return [`Czcionka <b>„${escape(font)}”</b> nie jest zainstalowana.`];
+      return [`Font <b>“${escape(font)}”</b> is not installed.`];
     }
 
     window.terminal.font(

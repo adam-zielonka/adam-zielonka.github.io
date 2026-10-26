@@ -1,8 +1,8 @@
 ---
 command: help
-help: dostępne komendy i skróty
+help: available commands and shortcuts
 ---
 
-**Komendy terminala**
+**Terminal commands**
 
 [](system:help)

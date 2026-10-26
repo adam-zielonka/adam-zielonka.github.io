@@ -5,7 +5,7 @@
   align-items: center;
 }
 .InputHost[data-busy="true"]::after {
-  content: "Wykonuję komendę…";
+  content: "Running command…";
   color: var(--muted);
   font: 11px var(--mono);
   padding: 22px 28px;

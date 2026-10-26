@@ -18,7 +18,7 @@ export class Terminal {
     this.output.className = "TerminalOutput";
     this.output.tabIndex = 0;
     this.output.setAttribute("role", "region");
-    this.output.setAttribute("aria-label", "Wynik komend terminala");
+    this.output.setAttribute("aria-label", "Terminal output");
     this.output.append(this.lines);
     this.inputHost.className = "InputHost";
     this.root.append(this.output, this.inputHost);

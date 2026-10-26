@@ -1,6 +1,6 @@
 ---
 command: project
-help: opis projektu, np. project server-status
+help: project details, e.g. project server-status
 ---
 
 [](system:project)

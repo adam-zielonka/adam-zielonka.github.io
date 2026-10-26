@@ -25,7 +25,7 @@ const enter = async (text: string) => {
 
 beforeAll(async () => {
   document.body.innerHTML =
-    '<button data-toggle-motion></button><button data-skip-animation hidden></button><nav class="SiteNav"><a href="#about" data-command="about">O mnie</a></nav><div id="root"></div><p id="command-status"></p>';
+    '<button data-toggle-motion></button><button data-skip-animation hidden></button><nav class="SiteNav"><a href="#about" data-command="about">About</a></nav><div id="root"></div><p id="command-status"></p>';
   localStorage.setItem("portfolio-animations", "false");
   await import("../main");
   store = window.store;
@@ -112,7 +112,7 @@ describe("interactive terminal", () => {
     document.querySelector<HTMLAnchorElement>(".SiteNav a")!.click();
     await vi.waitFor(() => expect(store.system.state).toBe(""));
     expect(output().querySelector("h2")?.textContent).toContain(
-      "Lubię wiedzieć",
+      "I like understanding",
     );
     expect(
       document.querySelector(".SiteNav a")?.getAttribute("aria-current"),
@@ -121,9 +121,9 @@ describe("interactive terminal", () => {
 
   test("unknown commands cannot resolve inherited object properties", async () => {
     await store.system.addCommand("__proto__");
-    expect(output().textContent).toContain("Nie znam komendy");
+    expect(output().textContent).toContain("not found");
     expect(document.getElementById("command-status")?.textContent).toContain(
-      "Zakończono",
+      "Finished",
     );
   });
 
@@ -138,7 +138,7 @@ describe("interactive terminal", () => {
     await store.system.addCommand("cd '<svg onload=alert(1)>'");
     expect(store.path.value).toBe("~/projects/server-status");
     expect(output().querySelector("svg")).toBeNull();
-    expect(output().textContent).toContain("nie ma katalogu");
+    expect(output().textContent).toContain("no such directory");
   });
 
   test("keeps literal entities and avoids duplicate history entries", async () => {

@@ -1,6 +1,6 @@
 ---
 command: echo
-help: wyświetl wpisany tekst
+help: print the text you enter
 ---
 
 [](const:args)

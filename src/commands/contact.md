@@ -1,6 +1,6 @@
 ---
 command: contact
-help: kontakt i repozytoria
+help: contact and repositories
 ---
 
 [](system:contact)

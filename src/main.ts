@@ -35,8 +35,8 @@ document.addEventListener("click", event => {
     event.preventDefault();
     const showAddress = () => {
       window.history.replaceState(null, "", copy.hash);
-      copy.textContent = "Link w pasku adresu ↑";
-      window.terminal.announce("Skopiuj link do projektu z paska adresu.");
+      copy.textContent = "Link in address bar ↑";
+      window.terminal.announce("Copy the project link from the address bar.");
     };
     if (!navigator.clipboard?.writeText) {
       showAddress();
@@ -47,8 +47,8 @@ document.addEventListener("click", event => {
     void navigator.clipboard
       .writeText(url)
       .then(() => {
-        copy.textContent = "Link skopiowany ✓";
-        window.terminal.announce("Link do projektu skopiowany.");
+        copy.textContent = "Link copied ✓";
+        window.terminal.announce("Project link copied.");
       })
       .catch(showAddress);
     return;

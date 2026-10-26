@@ -1,6 +1,6 @@
 ---
 command: ls
-help: zawartość bieżącego katalogu
+help: list the current directory
 ---
 
 [](system:ls)

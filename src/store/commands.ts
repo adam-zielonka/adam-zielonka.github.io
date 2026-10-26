@@ -17,9 +17,9 @@ export class Commands {
 
   get helpLines(): string[] {
     return [
-      '<p class="OutputIntro">Wybierz komendę lub wpisz ją poniżej. Tab uzupełnia wpisaną nazwę; Shift+Tab pozwala opuścić pole.</p>',
+      '<p class="OutputIntro">Choose a command or type one below. Tab completes a name; Shift+Tab moves out of the input.</p>',
       `<div class="HelpList">${this.help.map(({ command, alias, help }) => `<div>${commandLink(command, command)}<span>${escape(help)}${alias.length ? ` <small>(${alias.map(escape).join(", ")})</small>` : ""}</span></div>`).join("")}</div>`,
-      '<p class="OutputNote">↑ ↓ historia · Ctrl+C przerwij · Escape zamknij podpowiedzi. Spróbuj też: <code>cd projects</code>, a potem <code>ls</code>.</p>',
+      '<p class="OutputNote">↑ ↓ history · Ctrl+C interrupt · Escape dismiss suggestions. Also try: <code>cd projects</code>, then <code>ls</code>.</p>',
     ];
   }
 

@@ -1,6 +1,6 @@
 ---
 command: font
-help: zmień czcionkę, np. font monospace
+help: change font, e.g. font monospace
 ---
 
 [](system:font)

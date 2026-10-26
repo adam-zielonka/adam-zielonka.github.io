@@ -1,7 +1,7 @@
 ---
 command: clear
 alias: [cls]
-help: wyczyść wynik terminala
+help: clear terminal output
 ---
 
 [](system:clear)
