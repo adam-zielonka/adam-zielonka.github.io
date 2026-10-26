@@ -1,5 +1,5 @@
 import { cd } from "../utils/cd";
-import { projects } from "../data/projects";
+import { directories } from "../utils/filesystem";
 import { escape } from "../utils/escape";
 
 export class Path {
@@ -11,12 +11,6 @@ export class Path {
 
   cd(newDir: string): string[] {
     const next = cd(this.value, newDir);
-    const directories = [
-      "/",
-      "~",
-      "~/projects",
-      ...projects.map(project => `~/projects/${project.id}`),
-    ];
     if (!directories.includes(next))
       return [
         `<span class="Error">cd: no such directory: “${escape(newDir)}”.</span> Type <code>ls</code> to see available directories.`,

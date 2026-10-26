@@ -137,12 +137,84 @@ describe("interactive terminal", () => {
     expect(store.path.value).toBe("~/projects/server-status");
     await store.system.addCommand("ls");
     expect(
-      output().querySelector('[data-command="project server-status"]'),
+      output().querySelector('[data-command="cat README.md"]'),
     ).not.toBeNull();
     await store.system.addCommand("cd '<svg onload=alert(1)>'");
     expect(store.path.value).toBe("~/projects/server-status");
     expect(output().querySelector("svg")).toBeNull();
     expect(output().textContent).toContain("no such directory");
+  });
+
+  test("reads several quoted, absolute and home-relative files in order", async () => {
+    await enter(
+      'cat "./about.md" /root/contact.md "~/projects/server-status/README.md"',
+    );
+    expect(
+      [...output().querySelectorAll("h2")].map(heading => heading.textContent),
+    ).toEqual([
+      "I like understanding how things work.",
+      "Find me on GitHub.",
+      "Server Status",
+    ]);
+    expect(store.path.value).toBe("~");
+  });
+
+  test("reads a README from the current project and from its sibling", async () => {
+    await store.system.addCommand("cd projects/questions");
+    await enter("cat ./README.md ../server-status/README.md");
+    expect(
+      [...output().querySelectorAll(".ProjectDetail h2")].map(
+        heading => heading.textContent,
+      ),
+    ).toEqual(["Questions", "Server Status"]);
+    expect(store.path.value).toBe("~/projects/questions");
+  });
+
+  test("cat explains missing arguments and rejects directories and missing files safely", async () => {
+    await enter("cat");
+    expect(output().textContent).toContain("Usage: cat <file> [file ...]");
+    await enter(
+      'cat projects missing.md "<svg onload=alert(1)>" README.md/ contact.md',
+    );
+    expect(output().textContent).toContain("Is a directory");
+    expect(output().textContent).toContain("No such file or directory");
+    expect(output().textContent).toContain("Not a directory");
+    expect(output().querySelector("svg")).toBeNull();
+    expect(output().querySelector(".TextOutput h2")?.textContent).toBe(
+      "Find me on GitHub.",
+    );
+    expect(store.path.value).toBe("~");
+  });
+
+  test("Tab completes a cat path and Enter opens the project", async () => {
+    input().value = "cat projects/ser";
+    input().dispatchEvent(new Event("input", { bubbles: true }));
+    input().dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Tab",
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+    expect(input().value).toBe("cat projects/server-status/README.md ");
+    await enter(input().value);
+    expect(output().querySelector(".ProjectDetail h2")?.textContent).toBe(
+      "Server Status",
+    );
+    expect(store.commands.getCompletions("cat about.md cont")).toEqual([
+      "cat about.md contact.md",
+    ]);
+  });
+
+  test("files shown by ls can be clicked to run cat", async () => {
+    await store.system.addCommand("ls");
+    output()
+      .querySelector<HTMLButtonElement>('[data-command="cat about.md"]')!
+      .click();
+    await vi.waitFor(() => expect(store.system.isInputAllowed).toBe(true));
+    expect(output().querySelector(".TextOutput h2")?.textContent).toContain(
+      "I like understanding",
+    );
   });
 
   test("keeps literal entities and avoids duplicate history entries", async () => {

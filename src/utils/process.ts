@@ -7,6 +7,7 @@ import {
   renderAbout,
   renderContact,
   renderDirectory,
+  renderCat,
 } from "./portfolio";
 
 export async function process(commandArgs: string): Promise<void> {
@@ -87,6 +88,8 @@ function system(sysCommand: string, args: string[]): string[] {
       return [renderContact()];
     case "ls":
       return [renderDirectory(store.path.value)];
+    case "cat":
+      return renderCat(store.path.value, args);
     default:
       return [];
   }

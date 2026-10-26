@@ -4,7 +4,7 @@ export class Completion {
   index = -1;
 
   get list(): string[] {
-    return store.commands.getCompletions(store.history.value);
+    return store.commands.getCompletions(store.history.value, store.path.value);
   }
 
   get isVisible(): boolean {

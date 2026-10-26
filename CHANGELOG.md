@@ -76,3 +76,8 @@ The `neo` / `matrix` sequence and `exit` / `shutdown` now cover the browser
 viewport. The shutdown screen restores the classic orange Windows 95 message on
 black. Matrix preserves the portfolio behind it and supports Escape, Ctrl+C and
 a static view when animations are disabled.
+
+The terminal now supports `cat` for the home files and each project README,
+including relative, home and absolute paths, multiple files and Tab completion.
+Directory listings use the same file catalog and let visitors open files by
+clicking their names.

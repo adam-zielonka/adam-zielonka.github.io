@@ -18,6 +18,8 @@ Click a project or navigation shortcut, or enter a command:
 | `about` | About the author and the portfolio |
 | `contact` | GitHub profile and project repositories |
 | `ls` | Current directory contents |
+| `cat about.md` | Read a file from the home directory |
+| `cat projects/server-status/README.md` | Read a project description by path |
 | `cd projects` | Open the project directory |
 | `cd server-status` | Open a project directory from `~/projects` |
 | `pwd` | Current path |
@@ -27,6 +29,12 @@ Click a project or navigation shortcut, or enter a command:
 | `exit` / `shutdown` | Classic Windows 95 shutdown screen |
 
 Use Enter to execute, ↑/↓ for history, and Tab to complete a command or project name. Shift+Tab leaves the input; Tab also leaves it when the prompt is empty. Ctrl+C interrupts a running command without interfering with copying selected text.
+
+The home directory contains `README.md`, `about.md`, `contact.md` and `projects/`.
+Every project directory has its own `README.md`. `cat` accepts relative paths,
+`~/` and `/root/` paths, and several files at once, such as
+`cat about.md contact.md`. Tab completes file paths, and clicking a filename in
+`ls` reads it. File contents are displayed using the portfolio's existing layout.
 
 Animation preferences can be changed in the terminal toolbar. Reduced-motion preferences are respected by default, and an ongoing animation can be skipped.
 
@@ -68,7 +76,7 @@ Commands are Markdown files in [src/commands](src/commands/) with YAML front mat
 The body is rendered line by line. Regular Markdown links stay clickable. Special action links control the terminal:
 
 - `sleep:` pauses before the next line, for example `[](sleep:500)`
-- `system:` runs built-in actions such as `clear`, `shutdown`, `help`, `font`, `cd`, `ls`, `home`, `projects`, `project`, `about` and `contact`
+- `system:` runs built-in actions such as `clear`, `shutdown`, `help`, `font`, `cd`, `ls`, `cat`, `home`, `projects`, `project`, `about` and `contact`
 - `const:` inserts escaped runtime text: `command`, `args` or `pwd`
 - `ui:` supports `animate` and `hide`
 - `css:` applies styles, for example `[#6CA391](css:color)`

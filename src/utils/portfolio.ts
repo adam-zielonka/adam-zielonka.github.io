@@ -1,6 +1,8 @@
 import { projects, findProject } from "../data/projects.ts";
 import type { Project } from "../data/projects.ts";
 import { escape } from "./escape.ts";
+import { cd } from "./cd.ts";
+import { directories, findFile, listDirectory } from "./filesystem.ts";
 
 export function commandLink(
   command: string,
@@ -43,13 +45,42 @@ export function renderContact(): string {
 }
 
 export function renderDirectory(path: string): string {
-  if (path === "/") return commandLink("cd /root", "root/", "DirectoryLink");
-  if (path === "~")
-    return `<div class="DirectoryList">${commandLink("cd projects", "projects/", "DirectoryLink")}${commandLink("about", "about.md", "DirectoryLink")}${commandLink("contact", "contact.md", "DirectoryLink")}</div>`;
-  if (path === "~/projects")
-    return `<div class="DirectoryList">${projects.map(project => commandLink(`cd ${project.id}`, `${project.id}/`, "DirectoryLink")).join("")}</div>`;
   const project = findProject(path.split("/").at(-1) ?? "");
-  return project
-    ? `<p>${escape(project.summary)}</p>${commandLink(`project ${project.id}`, "README.md →", "DirectoryLink")}`
-    : "";
+  return `${project ? `<p>${escape(project.summary)}</p>` : ""}<div class="DirectoryList">${listDirectory(
+    path,
+  )
+    .map(entry =>
+      commandLink(
+        `${entry.directory ? "cd" : "cat"} ${entry.name}`,
+        `${entry.name}${entry.directory ? "/" : ""}`,
+        "DirectoryLink",
+      ),
+    )
+    .join("")}</div>`;
+}
+
+export function renderCat(cwd: string, args: string[]): string[] {
+  if (!args.length || (args.length === 1 && args[0] === "--help"))
+    return [
+      '<p>Usage: <code>cat &lt;file&gt; [file ...]</code></p><p class="OutputNote">Try <code>cat about.md</code>, <code>cat ~/contact.md</code> or <code>cat projects/server-status/README.md</code>. Use <code>ls</code> to find files.</p>',
+    ];
+  return args.map(name => {
+    const path = cd(cwd, name);
+    const error = (message: string) =>
+      `<p class="Error">cat: “${escape(name)}”: ${message}</p>`;
+    if (name && directories.includes(path)) return error("Is a directory");
+    const file = name ? findFile(path) : undefined;
+    if (!file) return error("No such file or directory");
+    if (name.endsWith("/")) return error("Not a directory");
+    switch (file.page) {
+      case "home":
+        return renderHome();
+      case "about":
+        return renderAbout();
+      case "contact":
+        return renderContact();
+      case "project":
+        return renderProject(file.projectId);
+    }
+  });
 }
