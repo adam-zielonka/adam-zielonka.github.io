@@ -2,6 +2,9 @@ export function Shutdown() {
   const div = document.createElement("div");
   div.className = "Shutdown";
   div.innerHTML =
-    '<p>Session ended.<br />See you in the next project.</p><a href="">Restart terminal →</a>';
+    '<h2 id="experience-title">It\'s now safe to turn off<br />your computer.</h2><button type="button" class="ExperienceRestart">Restart terminal</button>';
+  div
+    .querySelector("button")!
+    .addEventListener("click", () => window.location.reload());
   return div;
 }

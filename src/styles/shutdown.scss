@@ -1,17 +1,82 @@
+body.has-experience {
+  overflow: hidden;
+}
+.Experience {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #000;
+  color: #6ca391;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.Experience::backdrop {
+  background: #000;
+}
+.Experience:focus {
+  outline: none;
+}
+.MatrixOutput {
+  margin: 0;
+  padding: clamp(70px, 12vh, 130px) clamp(24px, 6vw, 90px) 90px;
+  list-style: none;
+  font: 400 clamp(18px, 3vw, 30px)/1.65 var(--mono);
+}
+.MatrixOutput .Line {
+  white-space: pre-wrap;
+}
+.MatrixOutput .Line + .Line {
+  margin-top: 16px;
+}
+.ExperienceClose,
+.ExperienceRestart {
+  position: absolute;
+  padding: 12px;
+  background: transparent;
+  border-radius: 0;
+  font: 11px/1.5 var(--mono);
+  color: #83a596;
+}
+.ExperienceClose {
+  top: 14px;
+  right: 16px;
+}
+.ExperienceClose:hover {
+  color: #b9e7d2;
+}
 .Shutdown {
-  min-height: 340px;
+  min-height: 100%;
   display: grid;
-  place-content: center;
+  place-items: center;
+  padding: 60px 24px 100px;
   text-align: center;
-  padding: 32px;
 }
-.Shutdown p {
-  color: var(--accent);
-  font: 16px/1.8 var(--mono);
+.Shutdown h2 {
+  margin: 0;
+  color: #ff8d22;
+  font:
+    700 clamp(24px, 4.8vw, 68px)/1.2 "MS Sans Serif",
+    Tahoma,
+    var(--sans);
+  letter-spacing: 0;
 }
-.Shutdown a {
-  margin-top: 18px;
-  color: var(--muted);
-  font-size: 12px;
-  text-decoration: underline;
+.ExperienceRestart {
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #888;
+  white-space: nowrap;
+}
+.ExperienceRestart:hover {
+  color: #ff8d22;
+}
+.Experience--shutdown :focus-visible {
+  outline-color: #ff8d22;
 }

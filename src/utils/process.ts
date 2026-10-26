@@ -63,6 +63,9 @@ function system(sysCommand: string, args: string[]): string[] {
     case "shutdown":
       store.system.setShutdown();
       return [];
+    case "matrix":
+      window.terminal.enterMatrix();
+      return [];
     case "freeze":
       store.system.setFreeze();
       return [];

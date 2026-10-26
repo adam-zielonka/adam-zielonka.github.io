@@ -1,13 +1,10 @@
 ---
 command: matrix
 alias: [neo]
-help: a small nod to The Matrix
+help: a full-screen nod to The Matrix
 ---
 
-[#6CA391](css:color)
-[bold](css:font-weight)
-[30px](css:font-size)
-[20px](css:margin-top)
+[](system:matrix)
 [](system:clear)
 [](sleep:500)
 

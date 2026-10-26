@@ -126,6 +126,16 @@ export class System {
     try {
       await store.output.processCommandLine(command, options.startup);
       if (this.isProcessing) await process(command);
+      // Reduced motion shows every message at once, until the visitor dismisses it.
+      if (this.isProcessing && window.terminal.isStaticMatrix) {
+        await new Promise<void>(resolve => {
+          if (this.controller.signal.aborted) resolve();
+          else
+            this.controller.signal.addEventListener("abort", () => resolve(), {
+              once: true,
+            });
+        });
+      }
     } catch (error) {
       console.error("Command failed", error);
       store.output.push({
@@ -134,6 +144,7 @@ export class System {
         style: {},
       });
     } finally {
+      window.terminal.finishExperience();
       if (["processing", "interrupted"].includes(this.state)) this.state = "";
       window.terminal.announce(
         this.state === "" ? `Finished: ${command}` : "Terminal session ended.",

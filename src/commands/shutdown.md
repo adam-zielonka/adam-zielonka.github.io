@@ -1,9 +1,7 @@
 ---
 command: shutdown
 alias: [exit]
-help: end the terminal session
+help: the classic Windows 95 shutdown screen
 ---
 
-See you next time!
-[](sleep:500)
 [](system:shutdown)

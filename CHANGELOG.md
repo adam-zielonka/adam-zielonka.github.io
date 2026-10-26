@@ -71,3 +71,8 @@ cannot run. Typography is self-hosted, and the layout adapts to smaller screens.
 
 English is the main language throughout the interface, project descriptions,
 terminal help, status messages, accessibility labels and page metadata.
+
+The `neo` / `matrix` sequence and `exit` / `shutdown` now cover the browser
+viewport. The shutdown screen restores the classic orange Windows 95 message on
+black. Matrix preserves the portfolio behind it and supports Escape, Ctrl+C and
+a static view when animations are disabled.

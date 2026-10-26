@@ -40,7 +40,11 @@ beforeEach(() => {
   window.terminal.hideInput();
   window.terminal.showInput();
 });
-afterEach(() => vi.useRealTimers());
+afterEach(async () => {
+  if (store.system.isProcessing) await store.system.break();
+  vi.useRealTimers();
+  await vi.waitFor(() => expect(store.system.state).not.toBe("interrupted"));
+});
 
 describe("interactive terminal", () => {
   test("executes a typed command and renders HTML-like input as text", async () => {
@@ -182,7 +186,7 @@ describe("interactive terminal", () => {
       bubbles: true,
       cancelable: true,
     });
-    document.querySelector(".TerminalOutput")!.dispatchEvent(event);
+    document.querySelector("dialog.Experience--matrix")!.dispatchEvent(event);
     expect(event.defaultPrevented).toBe(true);
     await task;
     expect(store.system.state).toBe("");
@@ -199,5 +203,88 @@ describe("interactive terminal", () => {
     await task;
     expect(store.system.state).toBe("");
     expect(input()).not.toBeNull();
+  });
+
+  test.each(["neo", "matrix"])(
+    "%s opens a modal above the portfolio and Escape restores it",
+    async command => {
+      await store.system.addCommand("whoami", { route: false });
+      vi.useFakeTimers();
+      store.system.animations = true;
+      input().focus();
+      const task = store.system.addCommand(command, { focus: true });
+      await vi.advanceTimersByTimeAsync(600);
+      expect(store.system.isProcessing).toBe(true);
+      const dialog = document.querySelector<HTMLDialogElement>(
+        "dialog.Experience--matrix",
+      )!;
+      expect(dialog.open).toBe(true);
+      expect(dialog.parentElement).toBe(document.body);
+      expect(document.activeElement).toBe(dialog);
+      expect(document.body.classList.contains("has-experience")).toBe(true);
+      expect(output().querySelectorAll(".ProjectRow")).toHaveLength(3);
+      const cancel = new Event("cancel", { cancelable: true });
+      dialog.dispatchEvent(cancel);
+      await task;
+      expect(cancel.defaultPrevented).toBe(true);
+      expect(document.querySelector("dialog")).toBeNull();
+      expect(document.body.classList.contains("has-experience")).toBe(false);
+      expect(output().querySelectorAll(".ProjectRow")).toHaveLength(3);
+      expect(document.activeElement).toBe(input());
+    },
+  );
+
+  test("finishing the movie restores the portfolio without clearing its content", async () => {
+    await store.system.addCommand("about", { route: false });
+    vi.useFakeTimers();
+    store.system.animations = true;
+    const task = store.system.addCommand("neo");
+    await vi.runAllTimersAsync();
+    await task;
+    expect(document.querySelector("dialog")).toBeNull();
+    expect(store.system.isInputAllowed).toBe(true);
+    expect(output().querySelector("h2")?.textContent).toContain(
+      "I like understanding",
+    );
+  });
+
+  test("reduced motion keeps all movie messages readable until dismissed", async () => {
+    const task = store.system.addCommand('neo "<b>Trinity</b>"');
+    await vi.waitFor(() =>
+      expect(document.querySelector(".MatrixOutput")?.textContent).toContain(
+        "Knock, knock",
+      ),
+    );
+    const dialog = document.querySelector<HTMLDialogElement>("dialog")!;
+    expect(dialog.open).toBe(true);
+    expect(dialog.querySelectorAll(".Line")).toHaveLength(4);
+    expect(dialog.textContent).toContain("Wake up, <b>Trinity</b>...");
+    expect(dialog.querySelector("b")).toBeNull();
+    dialog.querySelector<HTMLButtonElement>(".ExperienceClose")!.click();
+    await task;
+    expect(document.querySelector("dialog")).toBeNull();
+    expect(store.system.isInputAllowed).toBe(true);
+  });
+
+  test("exit shows the persistent Windows shutdown message on a separate screen", async () => {
+    await store.system.addCommand("whoami", { route: false });
+    await store.system.addCommand("exit");
+    const dialog = document.querySelector<HTMLDialogElement>(
+      "dialog.Experience--shutdown",
+    )!;
+    expect(dialog.open).toBe(true);
+    expect(dialog.querySelector("h2")?.textContent).toBe(
+      "It's now safe to turn offyour computer.",
+    );
+    expect(dialog.querySelector("h2 br")).not.toBeNull();
+    expect(dialog.querySelector(".ExperienceRestart")?.textContent).toBe(
+      "Restart terminal",
+    );
+    expect(output().querySelectorAll(".ProjectRow")).toHaveLength(3);
+    expect(store.system.shutdown).toBe(true);
+    expect(document.activeElement).toBe(dialog);
+    expect(store.commands.getLines("shutdown")).toEqual(
+      store.commands.getLines("exit"),
+    );
   });
 });
