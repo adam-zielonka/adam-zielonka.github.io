@@ -1,5 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { completeFiles, listDirectory } from "../utils/filesystem";
+import {
+  completeDirectories,
+  completeFiles,
+  listDirectory,
+} from "../utils/filesystem";
 
 describe("portfolio files", () => {
   test("lists the home files and the root directory", () => {
@@ -39,4 +43,39 @@ describe("portfolio files", () => {
     expect(completeFiles("~", "missing/")).toEqual([]);
     expect(completeFiles("~", "about.md/")).toEqual([]);
   });
+});
+
+describe("directory completion", () => {
+  test("offers directories rather than files", () => {
+    expect(completeDirectories("~", "")).toEqual(["projects/"]);
+    expect(completeDirectories("~", "pro")).toEqual(["projects/"]);
+    expect(completeDirectories("~", "about")).toEqual([]);
+    expect(completeDirectories("~/projects/questions", "")).toEqual([]);
+  });
+
+  test("completes nested and parent-relative paths", () => {
+    expect(completeDirectories("~", "projects/ser")).toEqual([
+      "projects/server-status/",
+    ]);
+    expect(completeDirectories("~/projects/questions", "../ser")).toEqual([
+      "../server-status/",
+    ]);
+  });
+
+  test("completes absolute and home-relative paths", () => {
+    expect(completeDirectories("~", "/ro")).toEqual(["/root/"]);
+    expect(completeDirectories("~/projects/questions", "~/pro")).toEqual([
+      "~/projects/",
+    ]);
+    expect(completeDirectories("~", "/etc/")).toEqual([]);
+  });
+
+  test.each(["~", ".", ".."])(
+    "adds a slash to %s so completion can continue",
+    path => {
+      expect(completeDirectories("~/projects/questions", path)).toEqual([
+        `${path}/`,
+      ]);
+    },
+  );
 });

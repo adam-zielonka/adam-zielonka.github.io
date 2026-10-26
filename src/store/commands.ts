@@ -4,7 +4,7 @@ import { importCommands } from "../utils/commands";
 import { commandLink } from "../utils/portfolio";
 import { escape } from "../utils/escape";
 import { projects } from "../data/projects";
-import { completeFiles } from "../utils/filesystem";
+import { completeDirectories, completeFiles } from "../utils/filesystem";
 
 export class Commands {
   private commands: CommandsLines;
@@ -31,6 +31,8 @@ export class Commands {
   }
 
   getCompletions(value: string, cwd = "~"): string[] {
+    const cd = value.match(/^(cd\s+)(\S*)$/);
+    if (cd) return completeDirectories(cwd, cd[2]).map(path => cd[1] + path);
     const cat = value.match(/^(cat\s+(?:\S+\s+)*)(\S*)$/);
     if (cat)
       return completeFiles(cwd, cat[2])

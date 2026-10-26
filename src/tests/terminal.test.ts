@@ -186,6 +186,73 @@ describe("interactive terminal", () => {
     expect(store.path.value).toBe("~");
   });
 
+  test("cd completion continues into subdirectories without inserting a space", async () => {
+    input().value = "cd pro";
+    input().dispatchEvent(new Event("input", { bubbles: true }));
+    input().dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Tab",
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+    expect(input().value).toBe("cd projects/");
+    input().value += "ser";
+    input().dispatchEvent(new Event("input", { bubbles: true }));
+    input().dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Tab",
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+    expect(input().value).toBe("cd projects/server-status/");
+    await enter(input().value);
+    expect(store.path.value).toBe("~/projects/server-status");
+  });
+
+  test("Enter accepts a directory choice without prematurely executing cd", async () => {
+    input().value = "cd projects/s";
+    input().dispatchEvent(new Event("input", { bubbles: true }));
+    input().dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Tab",
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+    expect(
+      document.querySelectorAll(".Completion button").length,
+    ).toBeGreaterThan(1);
+    input().form!.dispatchEvent(
+      new Event("submit", { bubbles: true, cancelable: true }),
+    );
+    expect(input().value).toBe("cd projects/saper/");
+    expect(store.path.value).toBe("~");
+    await enter(input().value);
+    expect(store.path.value).toBe("~/projects/saper");
+  });
+
+  test("clicking a directory suggestion keeps its trailing slash", async () => {
+    input().value = "cd projects/s";
+    input().dispatchEvent(new Event("input", { bubbles: true }));
+    input().dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Tab",
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+    document
+      .querySelector<HTMLButtonElement>(
+        '[data-complete="cd projects/statki/"]',
+      )!
+      .click();
+    expect(input().value).toBe("cd projects/statki/");
+    await enter(input().value);
+    expect(store.path.value).toBe("~/projects/statki");
+  });
+
   test("Tab completes a cat path and Enter opens the project", async () => {
     input().value = "cat projects/ser";
     input().dispatchEvent(new Event("input", { bubbles: true }));

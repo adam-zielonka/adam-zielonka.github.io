@@ -28,7 +28,7 @@ Click a project or navigation shortcut, or enter a command:
 | `neo` / `matrix` | Full-screen Matrix sequence |
 | `exit` / `shutdown` | Classic Windows 95 shutdown screen |
 
-Use Enter to execute, ↑/↓ for history, and Tab to complete a command or project name. Shift+Tab leaves the input; Tab also leaves it when the prompt is empty. Ctrl+C interrupts a running command without interfering with copying selected text.
+Use Enter to execute, ↑/↓ for history, and Tab to complete commands, project names and paths. Directory suggestions for `cd` end with `/`, so you can keep typing a nested path without an extra space. Shift+Tab leaves the input; Tab also leaves it when the prompt is empty. Ctrl+C interrupts a running command without interfering with copying selected text.
 
 The home directory contains `README.md`, `about.md`, `contact.md` and `projects/`.
 Every project directory has its own `README.md`. `cat` accepts relative paths,

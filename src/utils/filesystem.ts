@@ -62,3 +62,15 @@ export function completeFiles(cwd: string, value: string): string[] {
     .filter(path => path.startsWith(value))
     .sort();
 }
+
+export function completeDirectories(cwd: string, value: string): string[] {
+  if (["~", ".", ".."].includes(value)) return [`${value}/`];
+  const base = value.slice(0, value.lastIndexOf("/") + 1);
+  const directory = cd(cwd, base || ".");
+  if (!directories.includes(directory)) return [];
+  return listDirectory(directory)
+    .filter(entry => entry.directory)
+    .map(entry => `${base}${entry.name}/`)
+    .filter(path => path.startsWith(value))
+    .sort();
+}

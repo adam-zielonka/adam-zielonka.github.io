@@ -33,13 +33,16 @@ export function Input() {
     input.setSelectionRange(input.value.length, input.value.length);
     updateCompletion();
   };
+  const acceptCompletion = (value: string) => {
+    history.set(value.endsWith("/") ? value : value + " ");
+    completion.reset();
+    sync();
+  };
 
   form.addEventListener("submit", event => {
     event.preventDefault();
     if (completion.selected) {
-      history.set(completion.selected + " ");
-      completion.reset();
-      sync();
+      acceptCompletion(completion.selected);
       return;
     }
     void system.addCommand(input.value, {
@@ -65,10 +68,11 @@ export function Input() {
           return;
         event.preventDefault();
         if (completion.theOne) {
-          history.set(completion.theOne + " ");
-          completion.reset();
-        } else completion.next();
-        sync();
+          acceptCompletion(completion.theOne);
+        } else {
+          completion.next();
+          sync();
+        }
         break;
       case "Escape":
         completion.reset();
@@ -94,9 +98,7 @@ export function Input() {
         ? event.target.closest<HTMLButtonElement>("[data-complete]")
         : null;
     if (!target) return;
-    history.set(target.dataset.complete + " ");
-    completion.reset();
-    sync();
+    acceptCompletion(target.dataset.complete!);
     input.focus({ preventScroll: true });
   });
   row.append(LinePrefix({ path: path.value }), input, submit);
