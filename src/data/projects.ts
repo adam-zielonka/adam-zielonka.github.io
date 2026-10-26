@@ -1,8 +1,12 @@
+import { projectArt } from "./project-art.ts";
+import type { ProjectArt } from "./project-art.ts";
+
 export type Project = {
   id: string;
   name: string;
   category: "Tool" | "App" | "Game" | "Experiment" | "Learning";
   summary: string;
+  art: ProjectArt;
   stack: string[];
   source: string;
   demo?: string;
@@ -17,6 +21,7 @@ const pages = "https://adam-zielonka.github.io";
 export const projects: Project[] = [
   {
     id: "server-status",
+    art: projectArt["server-status"],
     name: "Server Status",
     category: "Tool",
     summary: "Server health, metrics and history in one dashboard.",
@@ -30,6 +35,7 @@ export const projects: Project[] = [
   },
   {
     id: "questions",
+    art: projectArt["questions"],
     name: "Questions",
     category: "App",
     summary: "Custom question sets, exam practice and saved progress.",
@@ -43,6 +49,7 @@ export const projects: Project[] = [
   },
   {
     id: "game-of-life",
+    art: projectArt["game-of-life"],
     name: "Game of Life",
     category: "Experiment",
     summary: "Simple rules. Complex behavior. Conway's cellular automaton.",
@@ -56,6 +63,7 @@ export const projects: Project[] = [
   },
   {
     id: "portfolio",
+    art: projectArt["portfolio"],
     name: "This portfolio",
     category: "Experiment",
     summary: "The interactive terminal you are exploring right now.",
@@ -67,6 +75,7 @@ export const projects: Project[] = [
   },
   {
     id: "frontend-tutorial",
+    art: projectArt["frontend-tutorial"],
     name: "Frontend tutorial",
     category: "Learning",
     summary: "Learning materials on building apps with React and MobX.",
@@ -76,6 +85,7 @@ export const projects: Project[] = [
   },
   {
     id: "unit-converter",
+    art: projectArt["unit-converter"],
     name: "Unit Converter",
     category: "Tool",
     summary: "A unit conversion tool.",
@@ -84,6 +94,7 @@ export const projects: Project[] = [
   },
   {
     id: "paintaz",
+    art: projectArt["paintaz"],
     name: "paintAZ",
     category: "App",
     summary: "A drawing application.",
@@ -92,6 +103,7 @@ export const projects: Project[] = [
   },
   {
     id: "tiles",
+    art: projectArt["tiles"],
     name: "Tiles",
     category: "Experiment",
     summary: "An experiment with a tile-based interface.",
@@ -101,6 +113,7 @@ export const projects: Project[] = [
   },
   {
     id: "mobx-example",
+    art: projectArt["mobx-example"],
     name: "MobX example",
     category: "Learning",
     summary: "An example of managing application state with MobX.",
@@ -110,6 +123,7 @@ export const projects: Project[] = [
   },
   {
     id: "svelte-example",
+    art: projectArt["svelte-example"],
     name: "Svelte example",
     category: "Learning",
     summary: "An experiment in building an interface with Svelte.",
@@ -119,6 +133,7 @@ export const projects: Project[] = [
   },
   {
     id: "deska",
+    art: projectArt["deska"],
     name: "Deska",
     category: "Game",
     summary: "A game you can play directly in your browser.",
@@ -128,6 +143,7 @@ export const projects: Project[] = [
   },
   {
     id: "saper",
+    art: projectArt["saper"],
     name: "Saper",
     category: "Game",
     summary: "Classic minesweeping in your browser.",
@@ -137,6 +153,7 @@ export const projects: Project[] = [
   },
   {
     id: "tetris",
+    art: projectArt["tetris"],
     name: "Tetris",
     category: "Game",
     summary: "A take on the classic falling-block puzzle.",
@@ -145,6 +162,7 @@ export const projects: Project[] = [
   },
   {
     id: "statki",
+    art: projectArt["statki"],
     name: "Ships",
     category: "Game",
     summary: "A browser-based version of Battleship.",
@@ -154,6 +172,7 @@ export const projects: Project[] = [
   },
   {
     id: "pan",
+    art: projectArt["pan"],
     name: "Pan",
     category: "Game",
     summary: "A card game project.",
@@ -163,6 +182,7 @@ export const projects: Project[] = [
   },
   {
     id: "chinczyk",
+    art: projectArt["chinczyk"],
     name: "Chińczyk",
     category: "Game",
     summary: "A classic board game, playable in your browser.",

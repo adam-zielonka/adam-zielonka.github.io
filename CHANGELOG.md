@@ -81,3 +81,8 @@ The terminal now supports `cat` for the home files and each project README,
 including relative, home and absolute paths, multiple files and Tab completion.
 Directory listings use the same file catalog and let visitors open files by
 clicking their names.
+
+Every project now has an ASCII illustration based on its purpose. Project lists
+show compact drawings, while project details and README views show a larger
+version. The drawings include accessible descriptions and remain available
+without JavaScript.

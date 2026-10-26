@@ -67,6 +67,12 @@ pnpm preview
 
 [src/data/projects.ts](src/data/projects.ts) is the shared project catalog for the interactive interface and the static HTML fallback. Set `featured: true` on the three projects displayed on the home screen. Longer project descriptions use the optional `idea` and `decisions` fields.
 
+Each project has an original ASCII illustration in
+[src/data/project-art.ts](src/data/project-art.ts). The same drawing appears as a
+thumbnail in project lists and at a larger size in project details, including
+`cat README.md` and the static HTML fallback. Keep drawings in plain ASCII;
+`description` provides the accessible image label.
+
 Commands are Markdown files in [src/commands](src/commands/) with YAML front matter:
 
 - `command` — command name
