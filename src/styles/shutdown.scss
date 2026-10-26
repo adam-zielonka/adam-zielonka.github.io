@@ -27,7 +27,10 @@ body.has-experience {
   margin: 0;
   padding: clamp(70px, 12vh, 130px) clamp(24px, 6vw, 90px) 90px;
   list-style: none;
-  font: 400 clamp(18px, 3vw, 30px)/1.65 var(--mono);
+  font:
+    700 clamp(18px, 3vw, 30px)/1.65 "Courier New",
+    Courier,
+    monospace;
 }
 .MatrixOutput .Line {
   white-space: pre-wrap;
