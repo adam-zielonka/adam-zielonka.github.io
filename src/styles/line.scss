@@ -1,10 +1,23 @@
 li.Line {
-  a {
-    text-decoration: none;
-    color: deepskyblue;
-  }
-
-  a:hover {
-    text-decoration-line: underline;
-  }
+  overflow-wrap: anywhere;
+}
+li.Line + li.CommandLine {
+  margin-top: 26px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+li.CommandLine {
+  color: var(--muted);
+  margin-bottom: 24px;
+  font-size: 12px;
+}
+li.Line > a {
+  color: var(--accent);
+}
+li.Line > a:hover {
+  text-decoration: underline;
+}
+code {
+  font: 0.95em var(--mono);
+  color: var(--text);
 }

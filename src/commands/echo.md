@@ -1,7 +1,6 @@
 ---
 command: echo
-help: write arguments to the standard output
+help: wyświetl wpisany tekst
 ---
 
-[](sleep:50)
 [](const:args)

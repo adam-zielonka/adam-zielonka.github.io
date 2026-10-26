@@ -1,8 +1,9 @@
 import { CommandLine, OutputLine, TextLine } from "../types/line";
-import { sleep } from "../utils/sleep";
 import { store } from "./store";
+import { resolveConstants } from "../utils/constants";
 
 export class Output {
+  context = { command: "", args: [] as string[], pwd: "/root" };
   push(...lines: OutputLine[]) {
     window.terminal.push(...lines);
   }
@@ -17,21 +18,14 @@ export class Output {
 
   async processLine(line: TextLine, animate = false): Promise<void> {
     if (!store.system.isProcessing) return;
-    await sleep(20);
-    if (!store.system.isProcessing) return;
-
-    const [command, ...args] = store.history.lastCommand.split(" ");
-    const value = line.value
-      .replace(/<a.*const:command.*<\/a>/, command)
-      .replace(/<a.*const:args.*>(.*)<\/a>/, args.join(" ") || "$1")
-      .replace(/<a.*const:pwd.*<\/a>/, store.path.pwd);
+    const value = resolveConstants(line.value, this.context);
 
     const textLine: TextLine = {
       ...line,
       value,
     };
 
-    if (!animate) {
+    if (!animate || !store.system.shouldAnimate || value.includes("<")) {
       this.push(textLine);
       return;
     }
@@ -39,8 +33,13 @@ export class Output {
     textLine.value = "";
     this.push(textLine);
     for (const letter of value) {
-      await sleep(100);
+      await store.system.wait(35);
       if (!store.system.isProcessing) return;
+      if (!store.system.shouldAnimate) {
+        textLine.value = value;
+        this.updateLast(textLine);
+        return;
+      }
       textLine.value += letter;
       this.updateLast(textLine);
     }
@@ -55,7 +54,7 @@ export class Output {
       path: store.path.value,
     };
 
-    if (!animate) {
+    if (!animate || !store.system.shouldAnimate) {
       this.push(commandLine);
       return;
     }
@@ -64,12 +63,15 @@ export class Output {
     commandLine.blink = true;
     this.push(commandLine);
     for (const letter of command) {
-      await sleep(50);
+      await store.system.wait(25);
       if (!store.system.isProcessing) break;
+      if (!store.system.shouldAnimate) {
+        commandLine.value = command;
+        break;
+      }
       commandLine.value += letter;
       this.updateLast(commandLine);
     }
-    await sleep(1000);
     commandLine.blink = false;
     this.updateLast(commandLine);
   }

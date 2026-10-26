@@ -1,7 +1,7 @@
-import { PluginOption } from "vite";
+import type { PluginOption } from "vite";
 import frontMatter from "front-matter";
-import { FrontMatter } from "../types/commands";
-import { parseLines } from "../utils/parse";
+import type { FrontMatter } from "../types/commands";
+import { parseLines } from "../utils/parse.ts";
 
 export const markdownProcessor: PluginOption = {
   name: "markdown-processor",

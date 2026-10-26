@@ -1,18 +1,82 @@
-li.Input {
-  input {
-    width: 1px;
-    caret-color: #111;
-    color: #111;
-    border: none;
-    padding: 0;
-    background-color: #111;
-    &:focus {
-      outline: none;
-    }
-    &::selection {
-      background-color: #111;
-      color: #111;
-      caret-color: #111;
-    }
+.InputHost {
+  border-top: 1px solid var(--border);
+  min-height: 65px;
+  display: grid;
+  align-items: center;
+}
+.InputHost[data-busy="true"]::after {
+  content: "Wykonuję komendę…";
+  color: var(--muted);
+  font: 11px var(--mono);
+  padding: 22px 28px;
+}
+.Input {
+  width: 100%;
+  margin: 0;
+}
+.InputRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 22px 11px 28px;
+  min-height: 64px;
+}
+.InputRow .LinePrefix {
+  flex-shrink: 0;
+  max-width: 35%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.InputRow input {
+  min-width: 0;
+  width: 100%;
+  padding-block: 8px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  caret-color: var(--accent);
+  font: 13px/1.5 var(--mono);
+  border-radius: 0;
+}
+.InputRow input::placeholder {
+  color: var(--faint);
+  opacity: 1;
+  font-size: 11px;
+}
+.InputRow:focus-within {
+  box-shadow: inset 3px 0 var(--accent);
+  background: #192117;
+}
+.SubmitCommand {
+  width: 35px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 1px solid #3d4d34;
+  border-radius: 5px;
+  background: #25321e;
+  color: var(--accent);
+  font-size: 18px;
+}
+.SubmitCommand:hover {
+  background: #344a27;
+}
+@media (max-width: 600px) {
+  .InputRow {
+    padding: 10px 12px 10px 16px;
+    gap: 8px;
+  }
+  .InputRow input {
+    font-size: 16px;
+  }
+  .InputRow input::placeholder {
+    font-size: 10px;
+  }
+  .InputRow .LinePrefix {
+    font-size: 11px;
+  }
+  .InputHost[data-busy="true"]::after {
+    padding-inline: 16px;
   }
 }

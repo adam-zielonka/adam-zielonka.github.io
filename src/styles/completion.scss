@@ -1,10 +1,31 @@
-li.Completion {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  column-gap: 10px;
-
-  .active {
-    background-color: #aaa;
-    color: #111;
+.Completion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 28px;
+  border-bottom: 1px solid var(--border);
+  max-height: 165px;
+  overflow-y: auto;
+}
+.Completion:empty {
+  display: none;
+}
+.Completion button {
+  padding: 6px 9px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--muted);
+  font: 11px/1.5 var(--mono);
+  overflow-wrap: anywhere;
+}
+.Completion button.active,
+.Completion button:hover {
+  background: var(--accent);
+  color: var(--page);
+}
+@media (max-width: 600px) {
+  .Completion {
+    padding-inline: 16px;
   }
 }

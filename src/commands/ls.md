@@ -1,11 +1,6 @@
 ---
 command: ls
-help: list directory content
+help: zawartość bieżącego katalogu
 ---
 
-[](ui:animate)
-There is nothing.  
-[](sleep:500)
-[](ui:animate)
-Only warm, primordial blackness.  
-[](sleep:500)
+[](system:ls)

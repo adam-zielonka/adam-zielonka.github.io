@@ -1,94 +1,112 @@
 import { store } from "../store/store";
 import { Completion } from "./completion";
-import { InputText } from "./input-text";
 import { LinePrefix } from "./line-prefix";
 
 export function Input() {
   const { history, path, system, completion } = store;
-
-  const prefix = LinePrefix({ path: path.value });
-  const inputText = InputText({ value: history.value, start: 0, end: 0 });
+  const form = document.createElement("form");
+  form.className = "Input";
+  form.setAttribute("aria-label", "Wpisz komendę terminala");
+  const row = document.createElement("div");
+  row.className = "InputRow";
   const input = document.createElement("input");
-  const completionList = Completion();
-
-  const updatePosition = () => {
-    inputText.innerHTML = InputText({
-      value: input.value,
-      start: input.selectionStart ?? 0,
-      end: input.selectionEnd ?? 0,
-    }).innerHTML;
-    completionList.innerHTML = Completion().innerHTML;
+  input.type = "text";
+  input.name = "command";
+  input.autocomplete = "off";
+  input.autocapitalize = "off";
+  input.spellcheck = false;
+  input.enterKeyHint = "send";
+  input.setAttribute("aria-label", "Komenda terminala");
+  input.setAttribute("aria-describedby", "terminal-hint");
+  input.placeholder = "Wpisz help lub wybierz projekt…";
+  input.value = history.value;
+  const submit = document.createElement("button");
+  submit.type = "submit";
+  submit.className = "SubmitCommand";
+  submit.setAttribute("aria-label", "Uruchom komendę");
+  submit.innerHTML = '<span aria-hidden="true">↵</span>';
+  const completionList = document.createElement("div");
+  completionList.className = "CompletionHost";
+  const updateCompletion = () => completionList.replaceChildren(Completion());
+  const sync = () => {
+    input.value = history.value;
+    input.setSelectionRange(input.value.length, input.value.length);
+    updateCompletion();
   };
 
-  function keydown(event: KeyboardEvent): void {
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    if (completion.selected) {
+      history.set(completion.selected + " ");
+      completion.reset();
+      sync();
+      return;
+    }
+    void system.addCommand(input.value, {
+      focus: document.activeElement === input,
+    });
+  });
+
+  input.addEventListener("keydown", event => {
+    if (event.isComposing || event.ctrlKey || event.metaKey || event.altKey)
+      return;
     switch (event.key) {
-      case "Enter":
-        if (completion.selected) {
-          history.set(completion.selected + " ");
-          completion.reset();
-        } else {
-          completion.reset();
-          void system.addCommand(history.value);
-          history.add();
-        }
-        break;
       case "ArrowUp":
-        event.preventDefault();
-        history.up();
-        completion.reset();
-        break;
       case "ArrowDown":
         event.preventDefault();
-        history.down();
+        if (event.key === "ArrowUp") history.up();
+        else history.down();
         completion.reset();
+        sync();
         break;
       case "Tab":
+        // A second Tab previews choices; Shift+Tab and an empty prompt leave the input.
+        if (event.shiftKey || !input.value.trim() || !completion.list.length)
+          return;
         event.preventDefault();
         if (completion.theOne) {
           history.set(completion.theOne + " ");
           completion.reset();
-        } else {
-          completion.next();
-        }
+        } else completion.next();
+        sync();
+        break;
+      case "Escape":
+        completion.reset();
+        updateCompletion();
         break;
     }
-
-    input.value = history.value;
-    input.focus();
-    updatePosition();
-  }
-
-  function click(): void {
-    input.focus();
-    updatePosition();
-  }
-
-  document.addEventListener("keydown", keydown);
-  document.addEventListener("click", click);
-
-  function destroy() {
-    document.removeEventListener("keydown", keydown);
-    document.removeEventListener("click", click);
-  }
-
-  input.onselect = updatePosition;
-  input.onkeyup = updatePosition;
-  input.onkeydown = updatePosition;
-  input.onchange = updatePosition;
-  input.oninput = () => {
+  });
+  input.addEventListener("input", () => {
     history.set(input.value);
-    updatePosition();
-  };
-
-  const li = document.createElement("li");
-  li.className = "Input";
-  li.appendChild(prefix);
-  li.appendChild(inputText);
-  li.appendChild(input);
-
+    completion.reset();
+    updateCompletion();
+  });
+  input.addEventListener("blur", () => {
+    // Keep choices clickable until the click event has reached the document.
+    setTimeout(() => {
+      completion.reset();
+      updateCompletion();
+    }, 150);
+  });
+  completionList.addEventListener("click", event => {
+    const target =
+      event.target instanceof Element
+        ? event.target.closest<HTMLButtonElement>("[data-complete]")
+        : null;
+    if (!target) return;
+    history.set(target.dataset.complete + " ");
+    completion.reset();
+    sync();
+    input.focus({ preventScroll: true });
+  });
+  row.append(LinePrefix({ path: path.value }), input, submit);
+  form.append(completionList, row);
   return {
-    element: li,
-    completion: completionList,
-    destroy,
+    element: form,
+    focus: () => input.focus({ preventScroll: true }),
+    reset: () => {
+      completion.reset();
+      sync();
+    },
   };
 }

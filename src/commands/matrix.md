@@ -1,7 +1,7 @@
 ---
 command: matrix
 alias: [neo]
-help: enter the matrix
+help: mały ukłon w stronę Matrixa
 ---
 
 [#6CA391](css:color)

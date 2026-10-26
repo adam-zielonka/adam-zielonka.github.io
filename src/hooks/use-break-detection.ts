@@ -1,9 +1,17 @@
-export function useBreakDetection(callback: () => void) {
-  function detectBreak(e: KeyboardEvent) {
-    if (e.key === "c" && e.ctrlKey) {
+export function useBreakDetection(root: HTMLElement, callback: () => void) {
+  root.addEventListener("keydown", event => {
+    const input =
+      event.target instanceof HTMLInputElement ? event.target : null;
+    const hasInputSelection =
+      input && input.selectionStart !== input.selectionEnd;
+    if (
+      event.key === "c" &&
+      event.ctrlKey &&
+      !hasInputSelection &&
+      !window.getSelection()?.toString()
+    ) {
+      event.preventDefault();
       callback();
     }
-  }
-
-  document.addEventListener("keydown", detectBreak);
+  });
 }

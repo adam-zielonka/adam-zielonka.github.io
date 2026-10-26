@@ -1,17 +1,17 @@
-div.Shutdown {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: table;
-
-  p {
-    font-family: "MS PGothic", "MS Sans Serif", monospace;
-    font-weight: bold;
-    font-size: 6vw;
-    line-height: 100%;
-    color: orange;
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-  }
+.Shutdown {
+  min-height: 340px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 32px;
+}
+.Shutdown p {
+  color: var(--accent);
+  font: 16px/1.8 var(--mono);
+}
+.Shutdown a {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: underline;
 }

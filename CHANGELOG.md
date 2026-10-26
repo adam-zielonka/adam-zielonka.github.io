@@ -57,3 +57,14 @@ On 5 May 2024 I rewrote the components with `createElement` and removed framewor
 At the end of May 2024 I decided to retire the custom domain. GitHub Pages is enough for this project and a better fit for a portfolio that doubles as a playground for experiments.
 
 ![GitHub Pages version after the domain change](./img/2024-06-02.png)
+
+## 2026 - A portfolio you can click or type through
+
+The terminal stays, with a clearer introduction, three selected projects and a
+catalog with individual descriptions and direct links. Navigation works with
+clicks, touch or commands, including a real virtual `projects` directory.
+
+The input now uses a native text field. Keyboard navigation, copying selected
+text, reduced motion, animation cancellation and escaped command output are
+covered by regression tests. Project descriptions remain available when scripts
+cannot run. Typography is self-hosted, and the layout adapts to smaller screens.

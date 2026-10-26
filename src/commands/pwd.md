@@ -1,6 +1,6 @@
 ---
 command: pwd
-help: return working directory name
+help: ścieżka bieżącego katalogu
 ---
 
 [](const:pwd)

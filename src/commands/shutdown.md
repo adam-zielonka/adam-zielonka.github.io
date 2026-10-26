@@ -1,12 +1,9 @@
 ---
 command: shutdown
 alias: [exit]
-help: power-off the machine
+help: zakończ sesję terminala
 ---
 
-[](sleep:50)
-Wait ...
-[](sleep:1000)
-[](system:clear)
-[](sleep:1000)
+Do zobaczenia!
+[](sleep:500)
 [](system:shutdown)

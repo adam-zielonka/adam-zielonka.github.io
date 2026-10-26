@@ -1,12 +1,11 @@
 .LinePrefix {
-  span {
-    font-weight: bold;
-  }
-
-  .user {
-    color: lawngreen;
-  }
-  .path {
-    color: #f0f;
-  }
+  font-family: var(--mono);
+  margin-right: 6px;
+}
+.LinePrefix .path {
+  color: var(--muted);
+}
+.LinePrefix .user {
+  color: var(--accent);
+  margin-left: 6px;
 }

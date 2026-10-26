@@ -1,105 +1,149 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Adam Zielonka</title>
+    <meta name="theme-color" content="#101411" />
+    <title>Adam Zielonka — aplikacje, narzędzia i eksperymenty</title>
     <meta
-      name="keywords"
-      content="Adam Zielonka, kontakt, programista, informatyk, programmerman, computer scientist, IT specialist"
+      name="description"
+      content="Osobiste projekty Adama Zielonki. Aplikacje webowe, narzędzia i gry — poznaj projekty, uruchom demo i zajrzyj do kodu."
     />
-    <meta name="description" content="Człowiek programista. Informatyk" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta
+      property="og:title"
+      content="Adam Zielonka — ciekawość zapisana w kodzie"
+    />
+    <meta
+      property="og:description"
+      content="Aplikacje, narzędzia i eksperymenty. Portfolio, które możesz odkrywać jak terminal."
+    />
+    <meta property="og:url" content="https://adam-zielonka.github.io/" />
+    <link rel="canonical" href="https://adam-zielonka.github.io/" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="stylesheet" href="/src/styles/index.scss" />
   </head>
   <body>
-    <div id="noscript">
-      <style>
-        body {
-          background: #111;
-          font: 16px/18px 'Courier New', Courier, monospace;
-          color: #aaa;
+    <noscript
+      ><style>
+        .TerminalControls,
+        .QuickCommands button,
+        .TerminalHints,
+        .UnderTerminal {
+          display: none;
         }
-
-        div {
-          float: left;
-        }
-
-        a {
-          text-decoration: none;
-          color: deepskyblue;
-        }
-
-        a:hover {
-          text-decoration-line: underline;
-        }
-
-        ul {
-          list-style: none;
-        }
-
-        li {
-          clear: both;
-        }
-
-        .user {
-          color: lawngreen;
-          font-weight: bold;
-        }
-
-        .user-end {
-          color: #aaa;
-        }
-
-        .path {
-          color: #ff0;
-          font-weight: bold;
-        }
-
-        .blink {
-          color: #111;
-        }
-
-        @keyframes blink {
-          0% {
-            color: #aaa;
-          }
-
-          50% {
-            color: #aaa;
-          }
-
-          50.01% {
-            color: #111;
-          }
-
-          100% {
-            color: #111;
-          }
-        }
-
-        @keyframes hidden {
-          from {
-            width: 0;
-            height: 0;
-            overflow: hidden;
-          }
-
-          to {
-            width: 0;
-            height: 0;
-            overflow: hidden;
-          }
-        }
-
-        .hidden {
-          width: 0;
-          height: 0;
-          overflow: hidden;
-        }
-      </style>
-      <links />
+      </style></noscript
+    >
+    <a class="SkipLink" href="#terminal">Przejdź do terminala</a>
+    <div class="SiteShell">
+      <header class="SiteHeader">
+        <a
+          class="Brand"
+          href="#home"
+          data-command="whoami"
+          aria-label="Adam Zielonka — strona główna"
+          ><span class="BrandMark" aria-hidden="true">a<span>_</span></span
+          ><span>adam zielonka<span class="BrandSuffix"> /</span></span></a
+        >
+        <nav class="SiteNav" aria-label="Nawigacja główna">
+          <a href="#projects" data-command="projects">Projekty</a>
+          <a href="#about" data-command="about">O mnie</a>
+          <a href="#contact" data-command="contact">Kontakt</a>
+        </nav>
+        <a
+          class="HeaderGithub"
+          href="https://github.com/adam-zielonka"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub <span aria-hidden="true">↗</span></a
+        >
+      </header>
+      <main>
+        <section class="Hero" aria-labelledby="page-title">
+          <div>
+            <p class="Eyebrow">
+              <span aria-hidden="true">/</span> OSOBISTE PROJEKTY & EKSPERYMENTY
+            </p>
+            <h1 id="page-title">
+              Ciekawość<br /><span>zapisana w kodzie.</span>
+            </h1>
+          </div>
+          <div class="HeroAside">
+            <p>
+              Cześć, jestem Adam.<br />Tworzę aplikacje webowe, narzędzia i gry.
+              Lubię sprawdzać, co da się zbudować.
+            </p>
+            <a href="#projects" data-command="projects"
+              >Zobacz, nad czym pracowałem <span aria-hidden="true">↓</span></a
+            >
+          </div>
+        </section>
+        <section
+          class="TerminalWindow"
+          id="terminal"
+          aria-label="Interaktywne portfolio"
+          tabindex="-1"
+        >
+          <header class="TerminalBar">
+            <div class="WindowDots" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </div>
+            <span class="TerminalTitle">adam@portfolio <span>~</span></span>
+            <div class="TerminalControls">
+              <button type="button" data-skip-animation hidden>
+                Pomiń animację</button
+              ><button type="button" data-toggle-motion aria-pressed="true">
+                Animacje: wł.
+              </button>
+            </div>
+          </header>
+          <nav class="QuickCommands" aria-label="Skróty komend">
+            <span>spróbuj</span><a href="#home" data-command="whoami">whoami</a
+            ><a href="#projects" data-command="projects">projects</a
+            ><a href="#about" data-command="about">about</a
+            ><a href="#contact" data-command="contact">contact</a
+            ><button type="button" data-command="help">
+              help <span aria-hidden="true">?</span>
+            </button>
+          </nav>
+          <div id="fallback"><portfolio-fallback /></div>
+          <div id="root"></div>
+          <footer class="TerminalHints" id="terminal-hint">
+            <span
+              ><kbd>Enter</kbd> uruchom
+              <span class="HintDesktop"
+                >· <kbd>↑</kbd> <kbd>↓</kbd> historia ·
+                <kbd>Tab</kbd> uzupełnij</span
+              ></span
+            ><span class="LocalSession"
+              ><i aria-hidden="true"></i> lokalna sesja</span
+            >
+          </footer>
+        </section>
+        <p class="UnderTerminal">
+          <span class="SmallPrompt" aria-hidden="true">&gt;_</span> Możesz
+          klikać. Możesz pisać. Wybierz swój sposób.
+        </p>
+        <p
+          id="command-status"
+          class="VisuallyHidden"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        ></p>
+      </main>
+      <footer class="SiteFooter">
+        <span
+          >Adam Zielonka <span aria-hidden="true">/</span> w sieci od 2017</span
+        ><a
+          href="https://github.com/adam-zielonka/adam-zielonka.github.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Zajrzyj do kodu tej strony <span aria-hidden="true">↗</span></a
+        >
+      </footer>
     </div>
-    <div id="root"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

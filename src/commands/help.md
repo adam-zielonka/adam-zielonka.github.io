@@ -1,8 +1,8 @@
 ---
 command: help
-help: display information about builtin commands
+help: dostępne komendy i skróty
 ---
 
-**Commands list:**
+**Komendy terminala**
 
 [](system:help)

@@ -1,6 +1,6 @@
 ---
 command: font
-help: change the terminal font family
+help: zmień czcionkę, np. font monospace
 ---
 
 [](system:font)

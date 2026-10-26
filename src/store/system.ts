@@ -1,89 +1,150 @@
 import { store } from "./store";
 import { process } from "../utils/process";
-import { escape } from "../utils/escape";
+import { sleep } from "../utils/sleep";
+import { hashFromCommand } from "../utils/routes";
 
 type SystemState = "processing" | "shutdown" | "freeze" | "interrupted" | "";
 
 export class System {
   private _state: SystemState = "";
+  private controller = new AbortController();
+  private animationController = new AbortController();
+  private skipped = false;
+  private focusAfterCommand = false;
+  animations = !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+  constructor() {
+    try {
+      const saved = localStorage.getItem("portfolio-animations");
+      if (saved !== null) this.animations = saved === "true";
+    } catch {
+      /* Settings are optional when browser storage is unavailable. */
+    }
+    this.updateMotion();
+  }
 
   set state(newState: SystemState) {
     this._state = newState;
-    if (this.isInputAllowed) {
-      window.terminal.showInput();
-    } else {
-      window.terminal.hideInput();
-    }
+    window.terminal.setBusy(this.isProcessing);
+    if (this.isInputAllowed) window.terminal.showInput(this.focusAfterCommand);
+    else window.terminal.hideInput();
   }
 
-  get state(): SystemState {
+  get state() {
     return this._state;
   }
-
-  get shutdown(): boolean {
+  get shutdown() {
     return this.state === "shutdown";
   }
-
-  get isInputAllowed(): boolean {
+  get isInputAllowed() {
     return this.state === "";
   }
-
-  get isProcessing(): boolean {
+  get isProcessing() {
     return this.state === "processing";
   }
-
-  startProcessing(): void {
-    this.state = "processing";
+  get shouldAnimate() {
+    return this.animations && !this.skipped;
   }
 
-  stopProcessing(): void {
-    if (["processing", "interrupted"].includes(this.state)) {
-      this.state = "";
+  private updateMotion() {
+    document.documentElement.dataset.animations = String(this.animations);
+    const button = document.querySelector<HTMLButtonElement>(
+      "[data-toggle-motion]",
+    );
+    if (button) {
+      button.setAttribute("aria-pressed", String(this.animations));
+      button.textContent = `Animacje: ${this.animations ? "wł." : "wył."}`;
     }
+  }
+
+  toggleAnimations() {
+    this.animations = !this.animations;
+    if (!this.animations) this.skipAnimation();
+    try {
+      localStorage.setItem("portfolio-animations", String(this.animations));
+    } catch {
+      /* Optional preference. */
+    }
+    this.updateMotion();
+  }
+
+  skipAnimation() {
+    this.skipped = true;
+    this.animationController.abort();
+  }
+
+  wait(ms: number) {
+    return this.shouldAnimate
+      ? sleep(
+          ms,
+          AbortSignal.any([
+            this.controller.signal,
+            this.animationController.signal,
+          ]),
+        )
+      : Promise.resolve();
   }
 
   async break() {
-    if (this.state === "processing") {
+    if (this.isProcessing) {
       this.state = "interrupted";
-    } else if (this.state === "") {
-      const value = store.history.value;
+      this.controller.abort();
+    } else if (this.isInputAllowed) {
       store.history.set("");
-      await this.processNothing(value);
+      window.terminal.resetInput();
     }
   }
 
-  setShutdown(): void {
+  setShutdown() {
     this.state = "shutdown";
     window.terminal.shutdown();
   }
 
-  setFreeze(): void {
+  setFreeze() {
     this.state = "freeze";
   }
 
-  async addCommand(command: string): Promise<void> {
-    store.system.startProcessing();
-    await store.output.processCommandLine(command);
-    await process(escape(command));
-    store.system.stopProcessing();
-  }
-
-  async processNothing(command: string): Promise<void> {
-    store.system.startProcessing();
-    await store.output.processCommandLine(command);
-    await process("");
-    store.system.stopProcessing();
-  }
-
-  async start(startCommands: string[]): Promise<void> {
-    store.system.startProcessing();
-    for (const command of startCommands) {
-      store.history.set(command);
-      store.history.add();
-      await store.output.processCommandLine(command, true);
-      await process(command);
-      if (!store.system.isProcessing) break;
+  async addCommand(
+    command: string,
+    options: { focus?: boolean; startup?: boolean; route?: boolean } = {},
+  ) {
+    if (!this.isInputAllowed || !command.trim()) return;
+    this.focusAfterCommand = options.focus ?? false;
+    this.controller = new AbortController();
+    this.animationController = new AbortController();
+    this.skipped = false;
+    store.history.set(command);
+    store.history.add();
+    store.completion.reset();
+    this.state = "processing";
+    const hash = hashFromCommand(command);
+    if (hash && options.route !== false && location.hash !== hash) {
+      if (options.startup) window.history.replaceState(null, "", hash);
+      else window.history.pushState(null, "", hash);
     }
-    store.system.stopProcessing();
+    window.terminal.setRoute(hash);
+    try {
+      await store.output.processCommandLine(command, options.startup);
+      if (this.isProcessing) await process(command);
+    } catch (error) {
+      console.error("Command failed", error);
+      store.output.push({
+        value:
+          '<span class="Error">Ta komenda nie mogła zostać wykonana. Spróbuj ponownie lub wpisz <code>help</code>.</span>',
+        style: {},
+      });
+    } finally {
+      if (["processing", "interrupted"].includes(this.state)) this.state = "";
+      window.terminal.announce(
+        this.state === ""
+          ? `Zakończono: ${command}`
+          : "Sesja terminala zakończona.",
+      );
+    }
+  }
+
+  async start(commands: string[]) {
+    for (const command of commands)
+      await this.addCommand(command, { startup: true, route: false });
   }
 }

@@ -1,9 +1,10 @@
 import { isFontExist } from "../utils/font";
+import { escape } from "../utils/escape";
 
 export class Style {
   set(font: string): string[] {
     if (!isFontExist(font) && font) {
-      return [`Font family <b>'${font}'</b> is not installed`];
+      return [`Czcionka <b>„${escape(font)}”</b> nie jest zainstalowana.`];
     }
 
     window.terminal.font(

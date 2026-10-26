@@ -1,6 +1,6 @@
 import { defineConfig } from "vitest/config";
-import { markdownProcessor } from "./src/plugins/markdown-processor";
-import { noScript } from "./src/plugins/no-script";
+import { markdownProcessor } from "./src/plugins/markdown-processor.ts";
+import { noScript } from "./src/plugins/no-script.ts";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,16 +13,16 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          if (id.includes("node_modules")) {            
+        manualChunks: id => {
+          if (id.includes("node_modules")) {
             return "vendor";
           }
-        
+
           if (id.includes(".md")) {
             return "commands";
           }
-        }
+        },
       },
     },
-  }
+  },
 });

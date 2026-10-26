@@ -1,11 +1,20 @@
-import { sleep } from "../utils/sleep";
 import { store } from "../store/store";
+import { parseArgs } from "./args";
+import {
+  renderHome,
+  renderProjects,
+  renderProject,
+  renderAbout,
+  renderContact,
+  renderDirectory,
+} from "./portfolio";
 
 export async function process(commandArgs: string): Promise<void> {
   const [command, ...args] = parseArgs(commandArgs);
   if (!command) {
     return;
   }
+  store.output.context = { command, args, pwd: store.path.pwd };
 
   const style: Partial<CSSStyleDeclaration> = {};
 
@@ -17,7 +26,7 @@ export async function process(commandArgs: string): Promise<void> {
     for (const action of line.actions) {
       switch (action.namespace) {
         case "sleep":
-          await sleep(+action.key);
+          await store.system.wait(+action.key);
           continue;
         case "system":
           if (!store.system.isProcessing) return;
@@ -36,7 +45,8 @@ export async function process(commandArgs: string): Promise<void> {
       }
     }
 
-    await store.output.processLine({ value: line.value, style }, animate);
+    if (line.value)
+      await store.output.processLine({ value: line.value, style }, animate);
   }
 }
 
@@ -59,17 +69,22 @@ function system(sysCommand: string, args: string[]): string[] {
     case "font":
       return store.style.set(args.join(" "));
     case "cd":
-      store.path.cd(args.join(" "));
-      return [];
+      return store.path.cd(args.join(" "));
     case "help":
       return store.commands.helpLines;
+    case "home":
+      return [renderHome()];
+    case "projects":
+      return [renderProjects()];
+    case "project":
+      return args.length ? [renderProject(args.join(" "))] : [renderProjects()];
+    case "about":
+      return [renderAbout()];
+    case "contact":
+      return [renderContact()];
+    case "ls":
+      return [renderDirectory(store.path.value)];
     default:
       return [];
   }
-}
-
-function parseArgs(commandArgs: string): string[] {
-  return [...commandArgs.matchAll(/["']([^"']*)["']| ?([^"' ]+) ?/g)]
-    .map(m => m[1] || m[2])
-    .filter(c => !!c);
 }

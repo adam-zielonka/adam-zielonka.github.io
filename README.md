@@ -1,51 +1,69 @@
 # adam-zielonka.github.io
 
-Interactive terminal-style portfolio website published at [adam-zielonka.github.io](https://adam-zielonka.github.io/).
+Adam Zielonka's interactive portfolio, published at [adam-zielonka.github.io](https://adam-zielonka.github.io/).
 
-![Current terminal-style portfolio UI](./img/2024-06-02.png)
+A terminal-inspired interface with selected projects, project descriptions, a browsable catalog and clickable commands. Built with TypeScript, native DOM APIs and SCSS. Project descriptions and links also work without JavaScript.
 
-## How to use
+![Portfolio with selected projects and interactive terminal](img/2026-10-26.png)
 
-1. Open [adam-zielonka.github.io](https://adam-zielonka.github.io/).
-2. Wait for the startup scripts to finish.
-3. Type a command.
-4. Press Enter.
-5. Enjoy!
+## Explore
+
+Click a project or navigation shortcut, or enter a command:
+
+| Command | Result |
+| --- | --- |
+| `whoami` / `home` | Selected projects |
+| `projects` | Full project catalog |
+| `project server-status` | Project description, demo and source |
+| `about` | About the author and the portfolio |
+| `contact` | GitHub profile and project repositories |
+| `ls` | Current directory contents |
+| `cd projects` | Open the project directory |
+| `cd server-status` | Open a project directory from `~/projects` |
+| `pwd` | Current path |
+| `help` | All available commands |
+| `clear` | Clear output |
+
+Use Enter to execute, ↑/↓ for history, and Tab to complete a command or project name. Shift+Tab leaves the input; Tab also leaves it when the prompt is empty. Ctrl+C interrupts a running command without interfering with copying selected text.
+
+Animation preferences can be changed in the terminal toolbar. Reduced-motion preferences are respected by default, and an ongoing animation can be skipped.
+
+Project links use fragments such as [`/#project/server-status`](https://adam-zielonka.github.io/#project/server-status), so direct links and browser Back/Forward work on GitHub Pages.
 
 ## Development
 
-Install dependencies and run the local development environment:
+See [DEVELOPMENT.md](DEVELOPMENT.md) for runtime requirements.
 
-1. `pnpm install`
-2. `pnpm dev`
-3. `pnpm build`
-4. `pnpm test`
-5. `pnpm lint`
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
+pnpm test
+pnpm lint
+pnpm fmt:check
+pnpm build
+pnpm preview
+```
 
-## Command files
+## Content and commands
 
-Commands are stored as Markdown files in [src/commands](./src/commands/) with YAML front matter.
+[src/data/projects.ts](src/data/projects.ts) is the shared project catalog for the interactive interface and the static HTML fallback. Set `featured: true` on the three projects displayed on the home screen. Longer project descriptions use the optional `idea` and `decisions` fields.
 
-### Front matter
+Commands are Markdown files in [src/commands](src/commands/) with YAML front matter:
 
-- `command` – command name
-- `alias` – optional list of aliases
-- `help` – description shown by the `help` command
+- `command` — command name
+- `alias` — optional aliases
+- `help` — description shown by `help`
 
-### Body
+The body is rendered line by line. Regular Markdown links stay clickable. Special action links control the terminal:
 
-The Markdown body is rendered line by line. Regular links remain clickable, while special action links control terminal behavior:
+- `sleep:` pauses before the next line, for example `[](sleep:500)`
+- `system:` runs built-in actions such as `clear`, `shutdown`, `help`, `font`, `cd`, `ls`, `home`, `projects`, `project`, `about` and `contact`
+- `const:` inserts escaped runtime text: `command`, `args` or `pwd`
+- `ui:` supports `animate` and `hide`
+- `css:` applies styles, for example `[#6CA391](css:color)`
 
-- `sleep:` pauses before rendering the next line, for example `[](sleep:500)`
-- `system:` triggers built-in actions such as `clear`, `shutdown`, `freeze`, `help`, `font`, or `cd`
-- `const:` injects runtime values such as `command`, `args`, and `pwd`
-- `ui:` controls rendering with `animate` or `hide`
-- `css:` applies inline styles with CSS properties such as `color`, `font-weight`, `font-size`, or `margin-top`
+Author-written Markdown may contain HTML. User-entered values are treated as text, including when inserted into command output.
 
 ## License
 
-MIT
-
-## Development
-
-See [DEVELOPMENT.md](DEVELOPMENT.md) for the current runtime, builds and checks.
+Code: MIT. The bundled Manrope font uses the [SIL Open Font License](public/fonts/OFL-Manrope.txt) and is served locally.

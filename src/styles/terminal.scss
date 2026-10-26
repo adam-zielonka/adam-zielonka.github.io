@@ -1,11 +1,445 @@
-div.Terminal {
-  float: left;
-
-  ul {
-    list-style: none;
-  }
+.TerminalWindow {
+  border: 1px solid #354130;
+  background: var(--terminal);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 18px 70px #0003;
+}
+.TerminalBar {
+  min-height: 49px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-inline: 23px;
+  border-bottom: 1px solid var(--border);
+  background: #1a211a;
+  font: 11px var(--mono);
+}
+.WindowDots {
+  display: flex;
+  gap: 6px;
+}
+.WindowDots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #65765e;
+}
+.WindowDots i:first-child {
+  background: #b58c73;
+}
+.WindowDots i:nth-child(2) {
+  background: #b8ac73;
+}
+.WindowDots i:nth-child(3) {
+  background: #8aaa74;
+}
+.TerminalTitle {
+  color: #b7c3b0;
+}
+.TerminalTitle span {
+  color: var(--faint);
+  margin-left: 10px;
+}
+.TerminalControls {
+  margin-left: auto;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.TerminalControls button {
+  padding: 8px 0;
+  background: transparent;
+  font: 10px var(--mono);
+  color: var(--muted);
+}
+.TerminalControls button:hover {
+  color: var(--accent);
+}
+.QuickCommands {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 26px;
+  border-bottom: 1px solid var(--border);
+  font: 11px var(--mono);
+}
+.QuickCommands > span {
+  color: var(--faint);
+  margin-right: 8px;
+}
+.QuickCommands a,
+.QuickCommands button {
+  padding: 5px 9px;
+  border: 1px solid #303a2b;
+  border-radius: 4px;
+  background: #1b231a;
+  color: #b8c8ae;
+}
+.QuickCommands a:hover,
+.QuickCommands button:hover {
+  background: #273421;
+  color: var(--accent);
+  border-color: #526344;
+}
+.QuickCommands button {
+  margin-left: auto;
+}
+.QuickCommands button span {
+  color: var(--faint);
+  padding-left: 6px;
+}
+.Terminal {
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.TerminalOutput {
+  position: relative;
+  max-height: 600px;
+  min-height: 300px;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #405239 transparent;
+  padding: 24px 28px 26px;
+}
+.TerminalOutput > ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.TerminalOutput:focus-visible {
+  outline-offset: -5px;
+}
+.TerminalHints {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 26px;
+  border-top: 1px solid var(--border);
+  color: var(--faint);
+  font: 9px/1.5 var(--mono);
+}
+kbd {
+  font: inherit;
+  color: var(--muted);
+}
+.LocalSession {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.LocalSession i {
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+.OutputHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+.OutputHeading h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font: 500 16px/1.5 var(--sans);
+}
+.Count {
+  color: var(--faint);
+  font: 10px var(--mono);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 6px;
+}
+.OutputNote {
+  color: var(--faint);
+  font: 10px/1.7 var(--mono);
+}
+.OutputIntro {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.ProjectRow {
+  display: grid;
+  grid-template-columns: 29px 1fr 35px;
+  align-items: center;
+  gap: 14px;
+  padding-block: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.ProjectNumber {
+  align-self: start;
+  padding-top: 3px;
+  font-size: 10px;
+  color: var(--faint);
+}
+.ProjectCategory {
+  display: block;
+  color: var(--muted);
+  font: 9px/1.5 var(--mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.ProjectInfo h3 {
+  margin: 3px 0 5px;
+  font: 500 18px/1.4 var(--sans);
+}
+.ProjectInfo h3 a span {
+  color: var(--faint);
+  font-size: 13px;
+  margin-left: 3px;
+}
+.ProjectInfo h3 a:hover span {
+  color: var(--accent);
+}
+.ProjectInfo p {
+  color: var(--muted);
+  margin: 0 0 7px;
+  font: 12px/1.6 var(--sans);
+}
+.ProjectStack {
+  color: #8ca57a;
+  font: 9px/1.7 var(--mono);
+}
+.ProjectOpen {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-content: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font: 15px var(--sans);
+  color: var(--muted);
+}
+.ProjectOpen:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--page);
+}
+.OutputActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 19px;
+}
+.CommandLink,
+.DirectoryLink {
+  display: inline-block;
+  padding: 3px 0;
+  background: transparent;
+  font: 11px/1.8 var(--mono);
+  color: var(--accent);
+  text-align: left;
+}
+.CommandLink:hover,
+.DirectoryLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.OutputActions > :nth-child(n + 2) {
+  color: var(--muted);
+}
+.ProjectList--compact .ProjectRow {
+  padding-block: 16px;
+}
+.ProjectList--compact .ProjectInfo h3 {
+  font-size: 16px;
+}
+.ProjectDetail,
+.TextOutput {
+  max-width: 740px;
+  padding-bottom: 10px;
+  font: 14px/1.85 var(--sans);
+}
+.ProjectDetail h2,
+.TextOutput h2 {
+  margin: 6px 0 12px;
+  font: 500 29px/1.25 var(--sans);
+  letter-spacing: -0.7px;
+}
+.ProjectDetail h3,
+.TextOutput h3 {
+  margin: 28px 0 7px;
+  font: 500 14px/1.5 var(--sans);
+}
+.ProjectDetail p,
+.TextOutput p {
+  color: var(--muted);
+  margin-top: 0;
+}
+.ProjectDetail .DetailSummary {
+  color: var(--text);
+  font-size: 15px;
+}
+.DetailBreadcrumb {
+  margin-bottom: 26px;
+  font: 11px/1.6 var(--mono);
+  color: var(--faint);
+  overflow-wrap: anywhere;
+}
+.DetailBreadcrumb .CommandLink {
+  color: var(--muted);
+}
+.DetailLinks {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-block: 27px 18px;
+  font: 11px/1.8 var(--mono);
+}
+.DetailLinks > a {
+  color: var(--accent);
+  padding: 8px 0;
+}
+.DetailLinks > a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.DetailLinks .PrimaryLink {
+  padding: 10px 15px;
+  color: var(--page);
+  background: var(--accent);
+  border-radius: 5px;
+}
+.DirectoryList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+.HelpList > div {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 16px;
+  align-items: baseline;
+  padding-block: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.HelpList > div > span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.HelpList small {
+  color: var(--faint);
+}
+.Error {
+  color: #f0a890;
+}
+.FallbackContent {
+  padding: 26px;
+}
+.FallbackContent > section {
+  margin-bottom: 24px;
+}
+.FallbackContent noscript .ProjectRow a {
+  pointer-events: auto;
 }
 
-ul {
-  list-style: none;
+@media (max-width: 600px) {
+  .TerminalBar {
+    padding-inline: 14px;
+    gap: 12px;
+    min-height: 46px;
+  }
+  .TerminalTitle {
+    font-size: 9px;
+  }
+  .TerminalTitle span {
+    display: none;
+  }
+  .WindowDots {
+    gap: 4px;
+  }
+  .WindowDots i {
+    width: 6px;
+    height: 6px;
+  }
+  .TerminalControls {
+    gap: 10px;
+  }
+  .TerminalControls button {
+    font-size: 9px;
+  }
+  .TerminalControls [data-skip-animation] {
+    font-size: 0;
+  }
+  .TerminalControls [data-skip-animation]::after {
+    content: "Pomiń";
+    font-size: 9px;
+  }
+  .QuickCommands {
+    padding: 11px 14px;
+    gap: 6px;
+    font-size: 10px;
+  }
+  .QuickCommands > span {
+    display: none;
+  }
+  .QuickCommands a,
+  .QuickCommands button {
+    padding: 7px;
+  }
+  .QuickCommands button span {
+    display: none;
+  }
+  .TerminalOutput {
+    padding: 20px 16px 22px;
+    max-height: 530px;
+  }
+  .OutputHeading h2 {
+    font-size: 14px;
+  }
+  .OutputHeading .OutputNote {
+    display: none;
+  }
+  .ProjectRow {
+    grid-template-columns: 21px 1fr 28px;
+    gap: 8px;
+    padding-block: 18px;
+  }
+  .ProjectInfo h3 {
+    font-size: 17px;
+  }
+  .ProjectInfo p {
+    font-size: 12px;
+  }
+  .ProjectOpen {
+    width: 28px;
+    height: 28px;
+  }
+  .ProjectStack {
+    font-size: 9px;
+  }
+  .TerminalHints {
+    padding: 11px 16px;
+    font-size: 8px;
+  }
+  .HintDesktop {
+    display: none;
+  }
+  .ProjectDetail h2,
+  .TextOutput h2 {
+    font-size: 25px;
+  }
+  .ProjectDetail,
+  .TextOutput {
+    font-size: 13px;
+  }
+  .HelpList > div {
+    grid-template-columns: 83px 1fr;
+    gap: 8px;
+  }
+  .HelpList > div > span {
+    font-size: 10px;
+  }
 }

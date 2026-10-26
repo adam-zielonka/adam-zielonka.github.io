@@ -1,22 +1,9 @@
-span.Caret {
-  color: #111;
-  animation: blink 0.5s linear infinite;
-
-  @keyframes blink {
-    0% {
-      color: #aaa;
-    }
-
-    50% {
-      color: #aaa;
-    }
-
-    50.01% {
-      color: #111;
-    }
-
-    100% {
-      color: #111;
-    }
+.Caret {
+  color: var(--accent);
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
 }
