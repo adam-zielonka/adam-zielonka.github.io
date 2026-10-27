@@ -59,7 +59,7 @@ export const projects: Project[] = [
     stack: ["React", "TypeScript", "SVG"],
     source: `${github}/soma`,
     demo: `${pages}/soma/`,
-    idea: "A Polish-language educational app for exploring the bodily side of emotions. Choose from twelve emotions, explore six body regions and compare two maps alongside examples of sensations.",
+    idea: "An educational app in Polish and English for exploring the bodily side of emotions. Choose from twelve emotions, explore six body regions and compare two maps alongside examples of sensations.",
     decisions:
       "React and original SVG body maps provide an interactive view with text equivalents, keyboard controls and shareable links. The maps are qualitative interpretations of self-report research, with sources and limitations explained in the app. Personal sensations are not collected or stored.",
   },
@@ -231,7 +231,7 @@ export const projects: Project[] = [
     demo: `${pages}/tetris/`,
     idea: "Originally created in June 2015 for a university course in computer graphics and visualization, this Tetris implementation now also runs in the browser. Arrange falling blocks and clear completed rows.",
     decisions:
-      "Written in C++ with OpenGL and GLUT, the game is compiled to WebAssembly with Emscripten for the browser. It includes menu, settings, help and results screens, with keyboard controls on desktop and on-screen controls on phones. High scores are saved locally in the browser.",
+      "Written in C++ with OpenGL and GLUT, the game is compiled to WebAssembly with Emscripten for the browser. It includes menu, settings, help and results screens, with keyboard controls on desktop and on-screen controls on phones. High scores are saved locally in the browser. The web version supports Polish and English, with automatic language selection and a saved manual choice.",
   },
   {
     id: "statki",
@@ -243,7 +243,7 @@ export const projects: Project[] = [
     stack: ["JavaScript"],
     source: `${github}/statki`,
     demo: `${pages}/statki/`,
-    idea: "A browser version of Battleship: find the opposing fleet on a coordinate grid before the computer sinks yours.",
+    idea: "A browser version of Battleship with Polish and English interfaces: find the opposing fleet on a coordinate grid before the computer sinks yours.",
     decisions:
       "The board and turn logic live separately from the interface. The computer starts with random shots, then explores neighboring cells after a hit and follows the ship's direction once more of it is revealed. Hits keep the turn going; a miss passes it to the opponent.",
   },
@@ -257,7 +257,7 @@ export const projects: Project[] = [
     stack: ["Svelte", "TypeScript", "Game AI"],
     source: `${github}/pan`,
     demo: `${pages}/pan/`,
-    idea: "Bring the Polish card game Pan to a shared virtual table for two to four players. Play against computer opponents or watch them compete, with a responsive interface and a history of moves. Players try to empty their hands; the last player holding cards loses.",
+    idea: "Bring the Polish card game Pan to a shared virtual table for two to four players. Play against computer opponents or watch them compete, with a responsive interface in Polish and English and a history of moves. Players try to empty their hands; the last player holding cards loses.",
     decisions:
       "Opponents range from random and greedy strategies to tactical evaluation, flat Monte Carlo simulation, MCTS with UCT and MaxN search. Monte Carlo bots sample unknown hands; the experimental MaxN opponent deliberately sees every hand. Simulations run separately from the live game with bounded search, and repeated-state memory helps some bots reduce loops. These are experiments with different decision strategies, with no verified ranking of playing strength.",
   },
@@ -271,7 +271,7 @@ export const projects: Project[] = [
     stack: ["React", "TypeScript", "Game AI"],
     source: `${github}/chinczyk`,
     demo: `${pages}/chinczyk/`,
-    idea: "A browser version of Chińczyk, also known as Ludo, for two to four players sharing one screen. Choose people or computer opponents for each color, race your pieces home or watch an all-bot match.",
+    idea: "A browser version of Chińczyk, also known as Ludo, for two to four players sharing one screen. Choose people or computer opponents for each color, race your pieces home or watch an all-bot match. The interface supports Polish and English.",
     decisions:
       "The interface highlights legal moves after each die roll and lets you pause play or adjust the opponents' speed. Bots use different strategies: releasing pieces, racing one pawn, avoiding danger, seeking captures or exploring possible continuations. On phones, the die and controls stay at the bottom of the screen for easy access.",
   },
