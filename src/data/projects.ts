@@ -211,12 +211,13 @@ export const projects: Project[] = [
     art: projectArt["tetris"],
     name: "Tetris",
     category: "Game",
-    summary: "A take on the classic falling-block puzzle.",
-    stack: ["C++", "OpenGL", "GLUT"],
+    summary: "A C++ falling-block puzzle, now playable in the browser.",
+    stack: ["C++", "OpenGL", "GLUT", "WebAssembly"],
     source: `${github}/tetris`,
-    idea: "A desktop Tetris implementation created in June 2015 for a university course in computer graphics and visualization. Arrange falling blocks and clear completed rows.",
+    demo: `${pages}/tetris/`,
+    idea: "Originally created in June 2015 for a university course in computer graphics and visualization, this Tetris implementation now also runs in the browser. Arrange falling blocks and clear completed rows.",
     decisions:
-      "Written in C++ with OpenGL and GLUT, the project brings together game logic, rendering and keyboard interaction. It includes menu, settings, help and results screens alongside the game board.",
+      "Written in C++ with OpenGL and GLUT, the game is compiled to WebAssembly with Emscripten for the browser. It includes menu, settings, help and results screens, with keyboard controls on desktop and on-screen controls on phones. High scores are saved locally in the browser.",
   },
   {
     id: "statki",
