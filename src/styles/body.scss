@@ -99,104 +99,7 @@ a:hover {
 .SiteShell {
   width: min(1120px, calc(100% - 96px));
   margin-inline: auto;
-}
-.SiteHeader {
-  display: flex;
-  align-items: center;
-  gap: 38px;
-  padding-block: 29px;
-  border-bottom: 1px solid var(--border);
-}
-.Brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font: 600 14px var(--mono);
-  letter-spacing: -0.5px;
-}
-.BrandMark {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  grid-auto-flow: column;
-  place-content: center;
-  border: 1px solid #48583f;
-  border-radius: 7px;
-  color: var(--accent);
-  font-size: 20px;
-}
-.BrandMark span {
-  color: var(--muted);
-}
-.BrandSuffix {
-  color: var(--faint);
-}
-.SiteNav {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  margin-left: auto;
-  font-size: 13px;
-  color: var(--muted);
-}
-.SiteNav a {
-  padding-block: 10px;
-}
-.SiteNav [aria-current] {
-  color: var(--accent);
-}
-.HeaderGithub {
-  border-left: 1px solid var(--border);
-  padding-left: 32px;
-  font-size: 13px;
-}
-.HeaderGithub span {
-  margin-left: 10px;
-  color: var(--accent);
-}
-.Hero {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 40px;
-  padding-block: 62px 46px;
-}
-.Eyebrow {
-  margin: 0 0 21px;
-  color: var(--muted);
-  font: 10px/1.5 var(--mono);
-  letter-spacing: 2px;
-}
-.Eyebrow span {
-  color: var(--accent);
-  margin-right: 9px;
-}
-h1 {
-  margin: 0;
-  font-weight: 500;
-  font-size: clamp(38px, 5.1vw, 65px);
-  letter-spacing: -3px;
-  line-height: 1.12;
-}
-h1 span {
-  color: var(--accent);
-}
-.HeroAside {
-  max-width: 292px;
-  padding-bottom: 3px;
-  font-size: 14px;
-  line-height: 1.85;
-}
-.HeroAside p {
-  color: var(--muted);
-  margin: 0 0 19px;
-}
-.HeroAside a {
-  font-size: 12px;
-}
-.HeroAside a span {
-  color: var(--accent);
-  margin-left: 8px;
+  padding-top: 48px;
 }
 .UnderTerminal {
   display: flex;
@@ -256,81 +159,11 @@ h1 span {
   .SiteShell {
     width: calc(100% - 48px);
   }
-  .Hero {
-    gap: 26px;
-    padding-top: 42px;
-  }
-  h1 {
-    font-size: 45px;
-    letter-spacing: -2px;
-  }
-  .HeroAside {
-    max-width: 230px;
-    font-size: 12px;
-  }
-  .SiteNav {
-    gap: 20px;
-  }
-  .SiteHeader {
-    gap: 24px;
-  }
-  .HeaderGithub {
-    padding-left: 22px;
-  }
 }
 @media (max-width: 600px) {
   .SiteShell {
     width: calc(100% - 32px);
-  }
-  .SiteHeader {
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding-block: 18px 12px;
-    gap: 14px;
-  }
-  .Brand {
-    font-size: 12px;
-    gap: 9px;
-  }
-  .BrandMark {
-    width: 30px;
-    height: 30px;
-  }
-  .HeaderGithub {
-    margin-left: auto;
-    padding-left: 0;
-    border: 0;
-    font-size: 12px;
-  }
-  .SiteNav {
-    width: 100%;
-    order: 3;
-    margin: 0;
-    gap: 28px;
-  }
-  .SiteNav a {
-    padding: 6px 0;
-  }
-  .Hero {
-    display: block;
-    padding-block: 34px 30px;
-  }
-  .Eyebrow {
-    font-size: 9px;
-    letter-spacing: 1px;
-    margin-bottom: 16px;
-  }
-  h1 {
-    font-size: clamp(31px, 8.5vw, 48px);
-    letter-spacing: -1.6px;
-  }
-  .HeroAside {
-    max-width: 100%;
-    margin-top: 22px;
-    font-size: 13px;
-  }
-  .HeroAside p {
-    margin-bottom: 13px;
+    padding-top: 20px;
   }
   .UnderTerminal {
     font-size: 9px;

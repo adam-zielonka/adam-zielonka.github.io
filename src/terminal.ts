@@ -82,7 +82,7 @@ export class Terminal {
   setRoute(hash?: string) {
     if (!hash) return;
     for (const link of document.querySelectorAll<HTMLAnchorElement>(
-      ".SiteNav a",
+      ".QuickCommands a",
     )) {
       const active =
         link.hash === hash ||

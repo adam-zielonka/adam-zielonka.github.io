@@ -25,7 +25,7 @@ const enter = async (text: string) => {
 
 beforeAll(async () => {
   document.body.innerHTML =
-    '<button data-toggle-motion></button><button data-skip-animation hidden></button><nav class="SiteNav"><a href="#about" data-command="about">About</a></nav><div id="root"></div><p id="command-status"></p>';
+    '<button data-toggle-motion></button><button data-skip-animation hidden></button><nav class="QuickCommands"><a href="#about" data-command="about">About</a></nav><div id="root"></div><p id="command-status"></p>';
   localStorage.setItem("portfolio-animations", "false");
   await import("../main");
   store = window.store;
@@ -56,7 +56,7 @@ describe("interactive terminal", () => {
   });
 
   test("does not intercept Tab or Enter on a navigation link", () => {
-    const link = document.querySelector<HTMLAnchorElement>(".SiteNav a")!;
+    const link = document.querySelector<HTMLAnchorElement>(".QuickCommands a")!;
     link.focus();
     for (const key of ["Tab", "Enter"]) {
       const event = new KeyboardEvent("keydown", {
@@ -113,13 +113,13 @@ describe("interactive terminal", () => {
   });
 
   test("clicking a navigation shortcut opens its content", async () => {
-    document.querySelector<HTMLAnchorElement>(".SiteNav a")!.click();
+    document.querySelector<HTMLAnchorElement>(".QuickCommands a")!.click();
     await vi.waitFor(() => expect(store.system.state).toBe(""));
     expect(output().querySelector("h2")?.textContent).toContain(
       "I like understanding",
     );
     expect(
-      document.querySelector(".SiteNav a")?.getAttribute("aria-current"),
+      document.querySelector(".QuickCommands a")?.getAttribute("aria-current"),
     ).toBe("page");
   });
 

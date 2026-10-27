@@ -21,7 +21,7 @@ function renderArt(project: Project, size: "thumbnail" | "detail"): string {
 }
 
 export function renderHome(): string {
-  return `<section class="HomeOutput"><div class="OutputHeading"><h2>Selected projects<span class="Count">03</span></h2><span class="OutputNote">from idea to browser</span></div><div class="ProjectList">${projects
+  return `<section class="HomeOutput"><header class="HomeIntro"><p class="ProjectCategory">Personal projects &amp; experiments</p><h1>Curiosity,<br /><span>written in code.</span></h1><p>Hi, I'm Adam.<br />I build web apps, tools and games. I like finding out what’s possible.</p></header><div class="OutputHeading"><h2>Selected projects<span class="Count">03</span></h2><span class="OutputNote">from idea to browser</span></div><div class="ProjectList">${projects
     .filter(project => project.featured)
     .map(projectRow)
     .join(
