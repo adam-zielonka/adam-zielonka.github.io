@@ -85,6 +85,30 @@ O O O . .  -->  . O O . .
       /        \   //
                    \/`,
   },
+  "dos-pascal-docker": {
+    description:
+      "Pascal source compiled inside Docker and DOSBox into an executable that runs in a browser",
+    drawing: String.raw`       [ .PAS ]
+           |
+ .----------------------.
+ |  Docker + DOSBox     |
+ |    Turbo Pascal      |
+ '----------------------'
+           |
+   .EXE -> [ browser ]`,
+  },
+  "analytic-hierarchy-process": {
+    description:
+      "A decision split into weighted criteria that produce a ranking of alternatives",
+    drawing: String.raw`       [ DECISION ]
+          /   \
+    [cost]   [quality]
+       \       /
+        [ AHP ]
+           |
+     1. A  [|||||||]
+     2. B  [||||   ]`,
+  },
   tiles: {
     description:
       "Four dashboard tiles for planning, transfers, picking and posting",

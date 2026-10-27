@@ -67,6 +67,13 @@ pnpm preview
 
 [src/data/projects.ts](src/data/projects.ts) is the shared project catalog for the interactive interface and the static HTML fallback. Set `featured: true` on the three projects displayed on the home screen. Longer project descriptions use the optional `idea` and `decisions` fields.
 
+The catalog contains 18 projects, including DOS Pascal Docker and the Analytic
+Hierarchy Process desktop app. Each entry includes its purpose, implementation
+and technology stack. Use the optional `releases` field for projects with
+published downloads; `releases/latest` keeps the link pointed at the latest
+stable GitHub release. Release links appear in project details, virtual README
+files and the static HTML fallback.
+
 Each project has an original ASCII illustration in
 [src/data/project-art.ts](src/data/project-art.ts). The same drawing appears as a
 thumbnail in project lists and at a larger size in project details, including

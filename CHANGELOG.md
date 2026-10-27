@@ -86,3 +86,9 @@ Every project now has an ASCII illustration based on its purpose. Project lists
 show compact drawings, while project details and README views show a larger
 version. The drawings include accessible descriptions and remain available
 without JavaScript.
+
+The catalog now includes DOS Pascal Docker and the Analytic Hierarchy Process
+desktop app, with their own ASCII illustrations. Every project has a fuller
+English description and technology stack, including Pan's search strategies and
+Chińczyk's opponents and mobile controls. Projects with published releases link
+to their latest download page in both interactive and static views.
