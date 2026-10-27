@@ -100,6 +100,7 @@ a:hover {
   width: min(1120px, calc(100% - 96px));
   margin-inline: auto;
   padding-top: 48px;
+  padding-bottom: 32px;
 }
 .UnderTerminal {
   display: flex;
@@ -113,24 +114,6 @@ a:hover {
 .SmallPrompt {
   color: var(--accent);
   font-size: 13px;
-}
-.SiteFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  margin-top: 48px;
-  padding-block: 24px;
-  border-top: 1px solid var(--border);
-  color: var(--faint);
-  font: 10px/1.6 var(--mono);
-}
-.SiteFooter > span > span {
-  margin-inline: 9px;
-}
-.SiteFooter a span {
-  color: var(--muted);
-  margin-left: 5px;
 }
 .VisuallyHidden {
   position: absolute;
@@ -169,12 +152,6 @@ a:hover {
     font-size: 9px;
     gap: 7px;
     justify-content: flex-start;
-  }
-  .SiteFooter {
-    margin-top: 32px;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
