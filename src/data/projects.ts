@@ -50,6 +50,20 @@ export const projects: Project[] = [
       "Questions and progress stay in local browser storage. PWA support lets you install the app on your phone. React handles the interface, while MobX manages the learning state.",
   },
   {
+    id: "soma",
+    art: projectArt["soma"],
+    name: "Soma",
+    category: "App",
+    summary:
+      "An interactive atlas exploring how emotions can feel in the body.",
+    stack: ["React", "TypeScript", "SVG"],
+    source: `${github}/soma`,
+    demo: `${pages}/soma/`,
+    idea: "A Polish-language educational app for exploring the bodily side of emotions. Choose from twelve emotions, explore six body regions and compare two maps alongside examples of sensations.",
+    decisions:
+      "React and original SVG body maps provide an interactive view with text equivalents, keyboard controls and shareable links. The maps are qualitative interpretations of self-report research, with sources and limitations explained in the app. Personal sensations are not collected or stored.",
+  },
+  {
     id: "game-of-life",
     art: projectArt["game-of-life"],
     name: "Game of Life",

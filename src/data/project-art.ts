@@ -28,6 +28,18 @@ export const projectArt = {
  |  progress [|||||..]  |
  '----------------------'`,
   },
+  soma: {
+    description:
+      "A body silhouette with marked regions beside a list of emotions",
+    drawing: String.raw` .----------------------.
+ |   SOMA / BODY MAP    |
+ |                      |
+ |     O     [joy]      |
+ |   /[+]\   [anger]    |
+ |     |     [sadness]  |
+ |    / \    [compare]  |
+ '----------------------'`,
+  },
   "game-of-life": {
     description:
       "A Game of Life glider evolving from one generation to the next",
