@@ -102,19 +102,6 @@ a:hover {
   padding-top: 48px;
   padding-bottom: 32px;
 }
-.UnderTerminal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 11px;
-  color: var(--faint);
-  font: 11px/1.6 var(--mono);
-  margin: 18px 0 0;
-}
-.SmallPrompt {
-  color: var(--accent);
-  font-size: 13px;
-}
 .VisuallyHidden {
   position: absolute;
   width: 1px;
@@ -147,11 +134,6 @@ a:hover {
   .SiteShell {
     width: calc(100% - 32px);
     padding-top: 20px;
-  }
-  .UnderTerminal {
-    font-size: 9px;
-    gap: 7px;
-    justify-content: flex-start;
   }
 }
 @media (prefers-reduced-motion: reduce) {

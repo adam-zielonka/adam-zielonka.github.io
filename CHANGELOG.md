@@ -92,3 +92,12 @@ desktop app, with their own ASCII illustrations. Every project has a fuller
 English description and technology stack, including Pan's search strategies and
 Chińczyk's opponents and mobile controls. Projects with published releases link
 to their latest download page in both interactive and static views.
+
+### 27 October 2026 - The terminal comes first
+
+The page now opens directly with the terminal. The introduction and “Curiosity,
+written in code.” headline appear at the start of `whoami`, before the selected
+projects. The duplicate top navigation, site footer and text below the terminal
+have been removed; the `try` shortcuts provide the main navigation.
+
+![Introduction and selected projects inside the terminal](./img/2026-10-27.png)
