@@ -106,6 +106,7 @@ a:hover {
   position: absolute;
   width: 1px;
   height: 1px;
+  margin: 0;
   padding: 0;
   overflow: hidden;
   clip-path: inset(50%);
@@ -133,7 +134,14 @@ a:hover {
 @media (max-width: 600px) {
   .SiteShell {
     width: calc(100% - 32px);
-    padding-top: 20px;
+  }
+}
+@media (max-width: 600px), (max-height: 600px) {
+  .SiteShell {
+    --shell-top: max(12px, env(safe-area-inset-top));
+    --shell-bottom: max(12px, env(safe-area-inset-bottom));
+    padding-top: var(--shell-top);
+    padding-bottom: var(--shell-bottom);
   }
 }
 @media (prefers-reduced-motion: reduce) {

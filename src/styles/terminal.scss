@@ -402,6 +402,39 @@ kbd {
   pointer-events: auto;
 }
 
+@media (max-width: 600px), (max-height: 600px) {
+  .TerminalWindow {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--shell-top) - var(--shell-bottom));
+    // Keep the command prompt above mobile browser controls, even when expanded.
+    height: calc(100svh - var(--shell-top) - var(--shell-bottom));
+  }
+  .TerminalBar,
+  .QuickCommands,
+  .InputHost,
+  .TerminalHints {
+    flex-shrink: 0;
+  }
+  .Terminal,
+  #fallback {
+    flex: 1;
+    min-height: 0;
+  }
+  .Terminal {
+    display: flex;
+    flex-direction: column;
+  }
+  .TerminalOutput {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+  }
+  #fallback {
+    overflow: auto;
+  }
+}
+
 @media (max-width: 600px) {
   .TerminalBar {
     padding-inline: 14px;
@@ -451,7 +484,6 @@ kbd {
   }
   .TerminalOutput {
     padding: 20px 16px 22px;
-    max-height: 530px;
   }
   .OutputHeading h2 {
     font-size: 14px;
