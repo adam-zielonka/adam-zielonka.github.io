@@ -49,6 +49,13 @@ needed to be powered off manually. Use Restart terminal or Escape to reload.
 
 Project links use fragments such as [`/#project/server-status`](https://adam-zielonka.github.io/#project/server-status), so direct links and browser Back/Forward work on GitHub Pages.
 
+On desktop windows at least 1280 px wide and 700 px tall, the terminal grows to
+1600 px wide and fits the viewport height, with scrollable output and the prompt
+always available. From 1440 px, the home introduction sits beside the three
+selected projects. Longer descriptions keep their readable column width; phones
+and short windows retain their compact layout. The same home layout is available
+without JavaScript.
+
 ## Development
 
 See [DEVELOPMENT.md](DEVELOPMENT.md) for runtime requirements.

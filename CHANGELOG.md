@@ -101,3 +101,13 @@ projects. The duplicate top navigation, site footer and text below the terminal
 have been removed; the `try` shortcuts provide the main navigation.
 
 ![Introduction and selected projects inside the terminal](./img/2026-10-27.png)
+
+### 31 October 2026 - More room on desktop
+
+Large desktop windows now use a fluid terminal frame up to 1600 px wide, with
+output filling the available viewport height and scrolling inside the terminal.
+The command shortcuts, input and bottom hints stay available. From 1440 px, the
+existing home introduction sits beside the selected projects, so all three are
+visible immediately on a large screen. Long descriptions retain their readable
+width. The layout also applies to the static fallback, while phones and short
+windows keep their previous layout.

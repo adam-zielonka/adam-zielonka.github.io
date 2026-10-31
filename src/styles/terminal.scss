@@ -402,12 +402,14 @@ kbd {
   pointer-events: auto;
 }
 
-@media (max-width: 600px), (max-height: 600px) {
+@media (max-width: 600px),
+  (max-height: 600px),
+  (min-width: 1280px) and (min-height: 700px) {
   .TerminalWindow {
     display: flex;
     flex-direction: column;
     height: calc(100vh - var(--shell-top) - var(--shell-bottom));
-    // Keep the command prompt above mobile browser controls, even when expanded.
+    // Keep the command prompt inside the visible viewport, including mobile controls.
     height: calc(100svh - var(--shell-top) - var(--shell-bottom));
   }
   .TerminalBar,
@@ -432,6 +434,27 @@ kbd {
   }
   #fallback {
     overflow: auto;
+  }
+}
+
+@media (min-width: 1440px) and (min-height: 700px) {
+  .HomeOutput {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    column-gap: 48px;
+    align-content: start;
+  }
+  .HomeOutput > .HomeIntro {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    align-self: start;
+    margin-bottom: 0;
+  }
+  .HomeOutput > .OutputHeading,
+  .HomeOutput > .ProjectList,
+  .HomeOutput > .OutputActions {
+    grid-column: 2;
+    min-width: 0;
   }
 }
 
