@@ -16,7 +16,7 @@
   border-radius: 4px;
   background: var(--surface);
   color: var(--muted);
-  font: 11px/1.5 var(--mono);
+  font: 11px/1.5 var(--terminal-font, var(--mono));
   overflow-wrap: anywhere;
 }
 .Completion button.active,

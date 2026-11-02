@@ -1,5 +1,5 @@
 .LinePrefix {
-  font-family: var(--mono);
+  font-family: var(--terminal-font, var(--mono));
   margin-right: 6px;
 }
 .LinePrefix .path {

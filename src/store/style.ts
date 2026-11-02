@@ -8,7 +8,7 @@ export class Style {
     }
 
     window.terminal.font(
-      `${font ? font + ", " : ""}"Courier New", Courier, monospace`,
+      font ? `${font}, "Courier New", Courier, monospace` : "",
     );
     return [];
   }

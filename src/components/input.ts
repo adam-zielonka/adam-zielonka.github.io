@@ -47,6 +47,7 @@ export function Input() {
     }
     void system.addCommand(input.value, {
       focus: document.activeElement === input,
+      animateCommand: false,
     });
   });
 

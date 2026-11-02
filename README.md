@@ -38,12 +38,26 @@ Every project directory has its own `README.md`. `cat` accepts relative paths,
 
 Animation preferences can be changed in the terminal toolbar. Reduced-motion preferences are respected by default, and an ongoing animation can be skipped.
 
+Commands started by a click or a shared link are typed into the terminal before
+their results appear. Manually entered commands are printed immediately.
+Results appear progressively as complete paragraphs, directory entries and
+project cards, keeping links and ASCII illustrations intact. Skip reveals the
+rest immediately; Ctrl+C stops the command and restores the prompt.
+
+The old `ls` Easter egg now appears when `cd` points to a missing directory:
+“There is nothing. Only warm, primordial blackness.” The directory stays unchanged.
+Other classic extras remain: `ping` / `pong`, `neo YourName`, `cls`, `description`
+and the hidden `panic` command (reload to recover from its simulated kernel panic).
+`font` changes the terminal text, prompt and completion font; using it without an
+argument restores the default. Project typography and ASCII art keep their fonts.
+
 `neo` and `matrix` take over the browser viewport without clearing the portfolio
 behind them. Escape, Ctrl+C or the back button in the scene returns to the
 terminal; the animated sequence also returns automatically when it finishes.
 With animations disabled, all messages remain visible until dismissed.
 
-`exit` and `shutdown` display the orange “It's now safe to turn off your computer”
+`exit` and `shutdown` show “Wait ...” in the terminal for a second, then display
+the orange “It's now safe to turn off your computer”
 message on black, a nod to the Windows 95 shutdown screen for computers that
 needed to be powered off manually. Use Restart terminal or Escape to reload.
 
@@ -72,7 +86,21 @@ pnpm preview
 
 ## Content and commands
 
-[src/data/projects.ts](src/data/projects.ts) is the shared project catalog for the interactive interface and the static HTML fallback. Set `featured: true` on the three projects displayed on the home screen. Longer project descriptions use the optional `idea` and `decisions` fields.
+[src/projects/](src/projects/) is the single source of project content for the
+interactive interface, virtual project `README.md` files and static HTML fallback.
+Each project has one `<id>.md` file with YAML front matter: `id` (matching the
+filename), `name`, `category`, `summary`, `stack`, `source` and a unique positive
+`order` controlling catalog order. Optional fields are `demo`, `releases` and
+`featured`; set `featured: true` on the three projects displayed on the home screen.
+
+Write the description as Markdown below the front matter, using `### The idea`
+and `### How it works` headings. Paragraphs, lists, links and emphasis are rendered
+as normal Markdown, independently of the line-by-line terminal command format.
+The shared parser validates metadata, attaches the existing ASCII art by project
+ID and renders the body with `marked`. Vite supplies the same source files to the
+browser that Node reads for the fallback; editing, adding or deleting a project
+Markdown file reloads the development page. No generated content files or extra
+build commands are needed.
 
 The catalog contains 19 projects, including Soma, DOS Pascal Docker and the
 Analytic Hierarchy Process desktop app. Each entry includes its purpose, implementation

@@ -32,7 +32,15 @@ export async function process(commandArgs: string): Promise<void> {
         case "system":
           if (!store.system.isProcessing) return;
           for (const systemLine of system(action.key, args)) {
-            await store.output.processLine({ value: systemLine, style });
+            const output =
+              typeof systemLine === "string"
+                ? { value: systemLine }
+                : systemLine;
+            await store.output.processLine(
+              { value: output.value, style },
+              "animate" in output && output.animate,
+            );
+            if ("pause" in output) await store.system.wait(output.pause);
           }
           continue;
         case "ui":
@@ -56,7 +64,9 @@ function css(key: string, value: string): Partial<CSSStyleDeclaration> {
   return { [newKey]: value };
 }
 
-function system(sysCommand: string, args: string[]): string[] {
+type SystemOutput = string | { value: string; animate: boolean; pause: number };
+
+function system(sysCommand: string, args: string[]): SystemOutput[] {
   switch (sysCommand) {
     case "clear":
       store.output.clear();
@@ -72,8 +82,20 @@ function system(sysCommand: string, args: string[]): string[] {
       return [];
     case "font":
       return store.style.set(args.join(" "));
-    case "cd":
-      return store.path.cd(args.join(" "));
+    case "cd": {
+      const result = store.path.cd(args.join(" "));
+      return result.length
+        ? [
+            ...result,
+            { value: "There is nothing.", animate: true, pause: 500 },
+            {
+              value: "Only warm, primordial blackness.",
+              animate: true,
+              pause: 500,
+            },
+          ]
+        : result;
+    }
     case "help":
       return store.commands.helpLines;
     case "home":

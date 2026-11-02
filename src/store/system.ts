@@ -45,6 +45,9 @@ export class System {
   get shouldAnimate() {
     return this.animations && !this.skipped;
   }
+  get isAnimationSkipped() {
+    return this.skipped;
+  }
 
   private updateMotion() {
     document.documentElement.dataset.animations = String(this.animations);
@@ -106,7 +109,12 @@ export class System {
 
   async addCommand(
     command: string,
-    options: { focus?: boolean; startup?: boolean; route?: boolean } = {},
+    options: {
+      focus?: boolean;
+      startup?: boolean;
+      route?: boolean;
+      animateCommand?: boolean;
+    } = {},
   ) {
     if (!this.isInputAllowed || !command.trim()) return;
     this.focusAfterCommand = options.focus ?? false;
@@ -124,7 +132,10 @@ export class System {
     }
     window.terminal.setRoute(hash);
     try {
-      await store.output.processCommandLine(command, options.startup);
+      await store.output.processCommandLine(
+        command,
+        options.animateCommand ?? true,
+      );
       if (this.isProcessing) await process(command);
       // Reduced motion shows every message at once, until the visitor dismisses it.
       if (this.isProcessing && window.terminal.isStaticMatrix) {

@@ -143,6 +143,52 @@ describe("interactive terminal", () => {
     expect(store.path.value).toBe("~/projects/server-status");
     expect(output().querySelector("svg")).toBeNull();
     expect(output().textContent).toContain("no such directory");
+    expect(output().textContent).toContain("There is nothing.");
+    expect(output().textContent).toContain("Only warm, primordial blackness.");
+  });
+
+  test("the missing-directory Easter egg types both phrases and can be skipped", async () => {
+    vi.useFakeTimers();
+    store.system.animations = true;
+    const task = store.system.addCommand("cd void", { animateCommand: false });
+    await vi.advanceTimersByTimeAsync(180);
+    expect(output().lastElementChild?.lastElementChild?.textContent).toBe("T");
+    expect(store.path.value).toBe("~");
+    await vi.advanceTimersByTimeAsync(1600);
+    expect(output().textContent).toContain("There is nothing.");
+    expect(output().textContent).not.toContain("Only warm");
+    store.system.skipAnimation();
+    await task;
+    expect(output().textContent).toContain("Only warm, primordial blackness.");
+    expect(store.system.isInputAllowed).toBe(true);
+  });
+
+  test("keeps the hidden ping/pong exchange and classic aliases", async () => {
+    await store.system.addCommand("ping");
+    expect(output().lastElementChild?.lastElementChild?.textContent).toBe(
+      "pong",
+    );
+    await store.system.addCommand("pong");
+    expect(output().lastElementChild?.lastElementChild?.textContent).toBe(
+      "ping",
+    );
+    expect(store.commands.getLines("neo")).toEqual(
+      store.commands.getLines("matrix"),
+    );
+    expect(store.commands.getLines("cls")).toEqual(
+      store.commands.getLines("clear"),
+    );
+    expect(
+      store.commands
+        .getLines("panic")
+        .some(line => line.value.includes("Kernel panic")),
+    ).toBe(true);
+    await store.system.addCommand("description");
+    expect(output().querySelector("h2")?.textContent).toContain(
+      "I like understanding",
+    );
+    await store.system.addCommand("cls");
+    expect(output().textContent).toBe("");
   });
 
   test("reads several quoted, absolute and home-relative files in order", async () => {
@@ -313,6 +359,75 @@ describe("interactive terminal", () => {
     expect(input().value).toBe("copy this text");
   });
 
+  test("types clicked commands and reveals complete project rows progressively", async () => {
+    vi.useFakeTimers();
+    store.system.animations = true;
+    // Happy DOM emits hashchange for pushState; browsers do not.
+    // Keep the animation clock independent of that emulated navigation.
+    const task = store.system.addCommand("projects", { route: false });
+    await vi.advanceTimersByTimeAsync(50);
+    expect(output().querySelector(".CommandLine")?.textContent).toMatch(/p_$/);
+    expect(store.system.isProcessing).toBe(true);
+    expect(output().querySelector(".ProjectRow")).toBeNull();
+    await vi.advanceTimersByTimeAsync(350);
+    const rows = [...output().querySelectorAll<HTMLElement>(".ProjectRow")];
+    expect(rows.length).toBeGreaterThan(3);
+    expect(rows.every(row => row.hidden)).toBe(true);
+    await vi.advanceTimersByTimeAsync(240);
+    expect(rows[0].hidden).toBe(false);
+    expect(rows[1].hidden).toBe(true);
+    expect(rows[0].querySelector("a")?.dataset.command).toBe(
+      "project server-status",
+    );
+    store.system.skipAnimation();
+    await task;
+    expect(rows.every(row => !row.hidden)).toBe(true);
+    expect(store.system.isInputAllowed).toBe(true);
+  });
+
+  test("prints typed commands immediately but animates their results", async () => {
+    vi.useFakeTimers();
+    store.system.animations = true;
+    input().value = "ls";
+    input().form!.dispatchEvent(
+      new Event("submit", { bubbles: true, cancelable: true }),
+    );
+    await vi.advanceTimersByTimeAsync(0);
+    expect(output().querySelector(".CommandLine")?.textContent).toMatch(/ls$/);
+    const entries = [
+      ...output().querySelectorAll<HTMLElement>(".DirectoryLink"),
+    ];
+    expect(entries.every(entry => entry.hidden)).toBe(true);
+    await vi.advanceTimersByTimeAsync(80);
+    expect(entries[0].hidden).toBe(false);
+    expect(entries[1].hidden).toBe(true);
+    await vi.runAllTimersAsync();
+    expect(entries.every(entry => !entry.hidden)).toBe(true);
+    expect(store.system.isInputAllowed).toBe(true);
+  });
+
+  test("interrupting result output removes unrevealed links and restores input", async () => {
+    vi.useFakeTimers();
+    store.system.animations = true;
+    const task = store.system.addCommand("projects", {
+      animateCommand: false,
+      focus: true,
+      route: false,
+    });
+    await vi.advanceTimersByTimeAsync(240);
+    expect(output().querySelectorAll(".ProjectRow:not([hidden])")).toHaveLength(
+      1,
+    );
+    await store.system.break();
+    await task;
+    expect(output().querySelectorAll(".ProjectRow")).toHaveLength(1);
+    expect(output().querySelector("[hidden]")).toBeNull();
+    expect(document.activeElement).toBe(input());
+    store.system.animations = false;
+    await store.system.addCommand("ping");
+    expect(output().textContent).toContain("pong");
+  });
+
   test("cancels a running animation immediately and restores the input", async () => {
     vi.useFakeTimers();
     store.system.animations = true;
@@ -377,7 +492,16 @@ describe("interactive terminal", () => {
     await store.system.addCommand("about", { route: false });
     vi.useFakeTimers();
     store.system.animations = true;
-    const task = store.system.addCommand("neo");
+    const task = store.system.addCommand("neo", { animateCommand: false });
+    await vi.advanceTimersByTimeAsync(500);
+    const matrix = document.querySelector(".MatrixOutput")!;
+    expect(matrix.textContent).toBe("");
+    await vi.advanceTimersByTimeAsync(100);
+    expect(matrix.textContent).toBe("W");
+    await vi.advanceTimersByTimeAsync(99);
+    expect(matrix.textContent).toBe("W");
+    await vi.advanceTimersByTimeAsync(1);
+    expect(matrix.textContent).toBe("Wa");
     await vi.runAllTimersAsync();
     await task;
     expect(document.querySelector("dialog")).toBeNull();
@@ -407,7 +531,17 @@ describe("interactive terminal", () => {
 
   test("exit shows the persistent Windows shutdown message on a separate screen", async () => {
     await store.system.addCommand("whoami", { route: false });
-    await store.system.addCommand("exit");
+    vi.useFakeTimers();
+    store.system.animations = true;
+    const task = store.system.addCommand("exit", { animateCommand: false });
+    await vi.advanceTimersByTimeAsync(130);
+    expect(output().textContent).toContain("Wait ...");
+    expect(document.querySelector("dialog")).toBeNull();
+    await vi.advanceTimersByTimeAsync(999);
+    expect(document.querySelector("dialog")).toBeNull();
+    expect(store.system.isProcessing).toBe(true);
+    await vi.advanceTimersByTimeAsync(1);
+    await task;
     const dialog = document.querySelector<HTMLDialogElement>(
       "dialog.Experience--shutdown",
     )!;

@@ -1,11 +1,12 @@
 import { CommandLine, OutputLine, TextLine } from "../types/line";
 import { store } from "./store";
 import { resolveConstants } from "../utils/constants";
+import { outputSteps } from "../utils/output-steps";
 
 export class Output {
   context = { command: "", args: [] as string[], pwd: "/root" };
   push(...lines: OutputLine[]) {
-    window.terminal.push(...lines);
+    return window.terminal.push(...lines);
   }
 
   clear(): void {
@@ -26,14 +27,16 @@ export class Output {
     };
 
     if (!animate || !store.system.shouldAnimate || value.includes("<")) {
-      this.push(textLine);
+      const [element] = this.push(textLine);
+      if (element && store.system.shouldAnimate && !window.terminal.isMatrix)
+        await this.reveal(element);
       return;
     }
 
     textLine.value = "";
     this.push(textLine);
     for (const letter of value) {
-      await store.system.wait(35);
+      await store.system.wait(100);
       if (!store.system.isProcessing) return;
       if (!store.system.shouldAnimate) {
         textLine.value = value;
@@ -42,6 +45,26 @@ export class Output {
       }
       textLine.value += letter;
       this.updateLast(textLine);
+    }
+  }
+
+  private async reveal(element: HTMLElement) {
+    const steps = outputSteps(element);
+    for (const step of steps) step.hidden = true;
+    try {
+      for (const step of steps) {
+        await store.system.wait(80);
+        if (!store.system.isProcessing) return;
+        step.hidden = false;
+      }
+    } finally {
+      // Interrupted commands leave only the output already printed.
+      for (const step of steps) {
+        if (step.hidden) {
+          if (store.system.isProcessing) step.hidden = false;
+          else step.remove();
+        }
+      }
     }
   }
 
@@ -63,7 +86,7 @@ export class Output {
     commandLine.blink = true;
     this.push(commandLine);
     for (const letter of command) {
-      await store.system.wait(25);
+      await store.system.wait(50);
       if (!store.system.isProcessing) break;
       if (!store.system.shouldAnimate) {
         commandLine.value = command;

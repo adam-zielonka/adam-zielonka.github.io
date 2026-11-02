@@ -19,6 +19,10 @@ export class Terminal {
     return this.experienceKind === "matrix" && this.staticMatrix;
   }
 
+  get isMatrix() {
+    return this.experienceKind === "matrix";
+  }
+
   private get activeLines() {
     return this.experience?.lines ?? this.lines;
   }
@@ -37,6 +41,7 @@ export class Terminal {
   }
 
   push(...lines: OutputLine[]) {
+    const elements: HTMLElement[] = [];
     for (const line of lines) {
       if (
         this.experienceKind === "matrix" &&
@@ -46,8 +51,13 @@ export class Terminal {
         continue;
       const element = Line({ line });
       this.activeLines.append(element);
-      if (isCommandLine(line)) this.lastCommand = element;
+      elements.push(element);
+      if (isCommandLine(line)) {
+        this.lastCommand = element;
+        this.output.scrollTop = element.offsetTop - 24;
+      }
     }
+    return elements;
   }
 
   clear() {
@@ -102,7 +112,8 @@ export class Terminal {
   }
 
   enterMatrix() {
-    this.staticMatrix = !window.store.system.shouldAnimate;
+    const system = window.store.system;
+    this.staticMatrix = !system.shouldAnimate && !system.isAnimationSkipped;
     this.openExperience("matrix");
   }
 
@@ -134,7 +145,13 @@ export class Terminal {
     document.body.classList.remove("has-experience");
   }
   font(font: string) {
-    this.root.style.fontFamily = font;
+    if (font) {
+      this.root.style.fontFamily = font;
+      this.root.style.setProperty("--terminal-font", font);
+    } else {
+      this.root.style.removeProperty("font-family");
+      this.root.style.removeProperty("--terminal-font");
+    }
   }
   resetInput() {
     this.input?.reset();

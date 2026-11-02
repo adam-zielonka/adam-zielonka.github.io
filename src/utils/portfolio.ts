@@ -20,24 +20,27 @@ function renderArt(project: Project, size: "thumbnail" | "detail"): string {
   return `<figure class="ProjectArt ProjectArt--${size}" role="img" aria-label="${escape(project.art.description)}"><pre aria-hidden="true">${escape(project.art.drawing)}</pre></figure>`;
 }
 
-export function renderHome(): string {
-  return `<section class="HomeOutput"><header class="HomeIntro"><p class="ProjectCategory">Personal projects &amp; experiments</p><h1>Curiosity,<br /><span>written in code.</span></h1><p>Hi, I'm Adam.<br />I build web apps, tools and games. I like finding out what’s possible.</p></header><div class="OutputHeading"><h2>Selected projects<span class="Count">03</span></h2><span class="OutputNote">from idea to browser</span></div><div class="ProjectList">${projects
-    .filter(project => project.featured)
+export function renderHome(catalog: Project[] = projects): string {
+  const featured = catalog.filter(project => project.featured);
+  return `<section class="HomeOutput"><header class="HomeIntro"><p class="ProjectCategory">Personal projects &amp; experiments</p><h1>Curiosity,<br /><span>written in code.</span></h1><p>Hi, I'm Adam.<br />I build web apps, tools and games. I like finding out what’s possible.</p></header><div class="OutputHeading"><h2>Selected projects<span class="Count">${String(featured.length).padStart(2, "0")}</span></h2><span class="OutputNote">from idea to browser</span></div><div class="ProjectList">${featured
     .map(projectRow)
     .join(
       "",
     )}</div><div class="OutputActions">${commandLink("projects", "All projects →")}${commandLink("help", "What can this terminal do?")}</div></section>`;
 }
 
-export function renderProjects(): string {
-  return `<section><div class="OutputHeading"><h2>Project catalog<span class="Count">${projects.length}</span></h2></div><p class="OutputIntro">Tools, apps, games and experiments. Choose a project or type <code>project server-status</code>.</p><div class="ProjectList ProjectList--compact">${projects.map(projectRow).join("")}</div></section>`;
+export function renderProjects(catalog: Project[] = projects): string {
+  return `<section><div class="OutputHeading"><h2>Project catalog<span class="Count">${catalog.length}</span></h2></div><p class="OutputIntro">Tools, apps, games and experiments. Choose a project or type <code>project server-status</code>.</p><div class="ProjectList ProjectList--compact">${catalog.map(projectRow).join("")}</div></section>`;
 }
 
-export function renderProject(id: string): string {
-  const project = findProject(id);
+export function renderProject(
+  id: string,
+  catalog: Project[] = projects,
+): string {
+  const project = catalog.find(project => project.id === id);
   if (!project)
     return `<p class="Error">Project “${escape(id)}” not found.</p><p>${commandLink("projects", "Browse projects →")}</p>`;
-  return `<article class="ProjectDetail"><div class="DetailBreadcrumb">${commandLink("projects", "projects")}<span aria-hidden="true"> / </span><span>${escape(project.id)}</span></div><div class="DetailHero"><div><span class="ProjectCategory">${escape(project.category)}</span><h2>${escape(project.name)}</h2><p class="DetailSummary">${escape(project.summary)}</p><p class="ProjectStack">${project.stack.map(escape).join(" / ")}</p></div>${renderArt(project, "detail")}</div>${project.idea ? `<h3>The idea</h3><p>${escape(project.idea)}</p>` : ""}${project.decisions ? `<h3>How it works</h3><p>${escape(project.decisions)}</p>` : ""}<div class="DetailLinks">${project.demo ? `<a class="PrimaryLink" href="${project.demo}" target="_blank" rel="noopener noreferrer">${project.category === "Game" ? "Play" : "Try the demo"} <span aria-hidden="true">↗</span></a>` : ""}${project.releases ? `<a class="${project.demo ? "" : "PrimaryLink"}" href="${project.releases}" target="_blank" rel="noopener noreferrer">Download / Releases <span aria-hidden="true">↗</span></a>` : ""}<a href="${project.source}" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">↗</span></a><a href="#project/${project.id}" data-copy-link="${project.id}">Copy link <span aria-hidden="true">⤴</span></a></div>${project.id === "game-of-life" ? '<p class="OutputNote">The simulation contains moving, changing patterns.</p>' : ""}</article>`;
+  return `<article class="ProjectDetail"><div class="DetailBreadcrumb">${commandLink("projects", "projects")}<span aria-hidden="true"> / </span><span>${escape(project.id)}</span></div><div class="DetailHero"><div><span class="ProjectCategory">${escape(project.category)}</span><h2>${escape(project.name)}</h2><p class="DetailSummary">${escape(project.summary)}</p><p class="ProjectStack">${project.stack.map(escape).join(" / ")}</p></div>${renderArt(project, "detail")}</div>${project.html}<div class="DetailLinks">${project.demo ? `<a class="PrimaryLink" href="${escape(project.demo)}" target="_blank" rel="noopener noreferrer">${project.category === "Game" ? "Play" : "Try the demo"} <span aria-hidden="true">↗</span></a>` : ""}${project.releases ? `<a class="${project.demo ? "" : "PrimaryLink"}" href="${escape(project.releases)}" target="_blank" rel="noopener noreferrer">Download / Releases <span aria-hidden="true">↗</span></a>` : ""}<a href="${escape(project.source)}" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">↗</span></a><a href="#project/${project.id}" data-copy-link="${project.id}">Copy link <span aria-hidden="true">⤴</span></a></div>${project.id === "game-of-life" ? '<p class="OutputNote">The simulation contains moving, changing patterns.</p>' : ""}</article>`;
 }
 
 export function renderAbout(): string {

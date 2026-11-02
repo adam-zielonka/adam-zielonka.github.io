@@ -1,10 +1,11 @@
 import { defineConfig } from "vitest/config";
 import { markdownProcessor } from "./src/plugins/markdown-processor.ts";
+import { projectContent } from "./src/plugins/project-content.ts";
 import { noScript } from "./src/plugins/no-script.ts";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [noScript, markdownProcessor],
+  plugins: [projectContent(), noScript, markdownProcessor],
   base: "./",
   test: {
     environment: "happy-dom",

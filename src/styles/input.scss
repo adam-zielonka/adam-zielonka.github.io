@@ -37,7 +37,7 @@
   background: transparent;
   color: var(--text);
   caret-color: var(--accent);
-  font: 13px/1.5 var(--mono);
+  font: 13px/1.5 var(--terminal-font, var(--mono));
   border-radius: 0;
 }
 .InputRow input::placeholder {
