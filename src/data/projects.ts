@@ -120,13 +120,14 @@ export const projects: Project[] = [
     art: projectArt["paintaz"],
     name: "paintAZ",
     category: "App",
-    summary: "A desktop drawing app for Linux, Windows and macOS.",
-    stack: ["C++", "Qt"],
+    summary: "A cross-platform drawing app, now also available in the browser.",
+    stack: ["C++", "Qt", "WebAssembly"],
     source: `${github}/paintaz`,
+    demo: `${pages}/paintaz/`,
     releases: `${github}/paintaz/releases/latest`,
     idea: "A drawing application created to explore cross-platform desktop programming: a canvas, drawing tools and color controls built with C++ and Qt.",
     decisions:
-      "Qt provides the interface and drawing APIs. The app saves drawings as images, and its release workflow packages the same code for Linux, Windows and macOS with the required Qt libraries included.",
+      "Qt provides the interface and drawing APIs, with desktop packages for Linux, Windows and macOS. The same drawing code runs in the browser through WebAssembly, importing PNG, JPEG and BMP images and downloading drawings as PNG. Browser drawings stay in memory, so download them before reloading. The web version keeps the desktop Qt interface and requires WebAssembly and WebGL.",
   },
   {
     id: "dos-pascal-docker",
@@ -238,14 +239,13 @@ export const projects: Project[] = [
     art: projectArt["statki"],
     name: "Ships",
     category: "Game",
-    summary:
-      "Browser Battleship against a computer that follows up on its hits.",
-    stack: ["JavaScript"],
+    summary: "Browser Battleship with four computer opponents to choose from.",
+    stack: ["JavaScript", "Game AI"],
     source: `${github}/statki`,
     demo: `${pages}/statki/`,
     idea: "A browser version of Battleship with Polish and English interfaces: find the opposing fleet on a coordinate grid before the computer sinks yours.",
     decisions:
-      "The board and turn logic live separately from the interface. The computer starts with random shots, then explores neighboring cells after a hit and follows the ship's direction once more of it is revealed. Hits keep the turn going; a miss passes it to the opponent.",
+      "Four opponents use random shots, targeted follow-up, checkerboard search or counts of legal ship placements. Each uses only previous shot results and the sizes of remaining ships. Hits keep the turn going; a miss passes it to the opponent. Pause, rematches, shot history and accuracy summaries help follow the game, and the board supports keyboard controls.",
   },
   {
     id: "pan",
