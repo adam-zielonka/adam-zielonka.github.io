@@ -29,12 +29,7 @@ export function Experience(kind: ExperienceKind, onDismiss: () => void) {
     title.id = "experience-title";
     title.className = "VisuallyHidden";
     title.textContent = "The Matrix";
-    const close = document.createElement("button");
-    close.type = "button";
-    close.className = "ExperienceClose";
-    close.textContent = "Back to portfolio · Esc";
-    close.addEventListener("click", onDismiss);
-    dialog.append(title, lines, close);
+    dialog.append(title, lines);
   }
   return { dialog, lines };
 }

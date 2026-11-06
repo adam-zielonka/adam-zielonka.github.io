@@ -100,7 +100,7 @@
   list-style: none;
 }
 .TerminalOutput:focus-visible {
-  outline-offset: -5px;
+  outline: none;
 }
 .TerminalHints {
   display: flex;

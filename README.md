@@ -60,8 +60,8 @@ argument restores the default. Project typography and ASCII art keep their fonts
 
 `neo` and `matrix` fill the CRT screen while its case and glass effects remain
 visible, without clearing the portfolio behind them. The covered terminal controls
-are inactive until the scene closes. Escape, Ctrl+C or the back button in the
-scene returns to the terminal; the animated sequence also returns automatically
+are inactive until the scene closes. Escape or Ctrl+C returns to the terminal;
+the animated sequence also returns automatically
 when it finishes.
 With animations disabled, all messages remain visible until dismissed.
 

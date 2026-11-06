@@ -560,9 +560,8 @@ describe("interactive terminal", () => {
         bubbles: true,
         cancelable: true,
       });
-      dialog
-        .querySelector<HTMLButtonElement>(".ExperienceClose")!
-        .dispatchEvent(escape);
+      expect(dialog.querySelector("button")).toBeNull();
+      dialog.dispatchEvent(escape);
       await task;
       expect(escape.defaultPrevented).toBe(true);
       expect(document.querySelector("dialog")).toBeNull();
@@ -612,7 +611,10 @@ describe("interactive terminal", () => {
     expect(dialog.querySelectorAll(".Line")).toHaveLength(4);
     expect(dialog.textContent).toContain("Wake up, <b>Trinity</b>...");
     expect(dialog.querySelector("b")).toBeNull();
-    dialog.querySelector<HTMLButtonElement>(".ExperienceClose")!.click();
+    expect(dialog.querySelector("button")).toBeNull();
+    dialog.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    );
     await task;
     expect(document.querySelector("dialog")).toBeNull();
     expect(store.system.isInputAllowed).toBe(true);

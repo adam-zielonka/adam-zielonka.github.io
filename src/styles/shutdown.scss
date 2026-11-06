@@ -33,21 +33,6 @@
 .MatrixOutput .Line + .Line {
   margin-top: 16px;
 }
-.ExperienceClose {
-  position: absolute;
-  padding: 12px;
-  background: transparent;
-  border-radius: 0;
-  font: 11px/1.5 var(--mono);
-  color: #83a596;
-}
-.ExperienceClose {
-  top: 14px;
-  right: 16px;
-}
-.ExperienceClose:hover {
-  color: #b9e7d2;
-}
 .Shutdown {
   min-height: 100%;
   display: grid;
