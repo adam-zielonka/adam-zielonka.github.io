@@ -1,6 +1,7 @@
 import {
   beforeAll,
   beforeEach,
+  afterAll,
   afterEach,
   describe,
   expect,
@@ -40,13 +41,86 @@ beforeEach(() => {
   window.terminal.hideInput();
   window.terminal.showInput();
 });
+afterAll(() => document.body.replaceChildren());
 afterEach(async () => {
   if (store.system.isProcessing) await store.system.break();
   vi.useRealTimers();
   await vi.waitFor(() => expect(store.system.state).not.toBe("interrupted"));
+  vi.restoreAllMocks();
 });
 
 describe("interactive terminal", () => {
+  test("follows appended and typed output and stays at the end after completion", async () => {
+    const height = vi
+      .spyOn(output(), "scrollHeight", "get")
+      .mockReturnValue(900);
+    window.terminal.push({ value: "first", style: {} });
+    expect(output().scrollTop).toBe(900);
+    height.mockReturnValue(1200);
+    window.terminal.updateLast({ value: "more text", style: {} });
+    expect(output().scrollTop).toBe(1200);
+    output().scrollTop = 0;
+    await store.system.addCommand("ping", { animateCommand: false });
+    expect(output().scrollTop).toBe(1200);
+  });
+
+  test("follows every newly revealed project row", async () => {
+    vi.useFakeTimers();
+    store.system.animations = true;
+    vi.spyOn(output(), "scrollHeight", "get").mockImplementation(
+      () =>
+        300 +
+        output().querySelectorAll(".ProjectRow:not([hidden])").length * 100,
+    );
+    const task = store.system.addCommand("projects", {
+      route: false,
+      animateCommand: false,
+    });
+    await vi.advanceTimersByTimeAsync(240);
+    expect(output().scrollTop).toBe(400);
+    await vi.advanceTimersByTimeAsync(80);
+    expect(output().scrollTop).toBe(500);
+    store.system.skipAnimation();
+    await task;
+    expect(output().scrollTop).toBe(output().scrollHeight);
+  });
+
+  test("follows Matrix text inside the CRT without scrolling its background", async () => {
+    vi.useFakeTimers();
+    store.system.animations = true;
+    const task = store.system.addCommand("neo", { animateCommand: false });
+    await vi.advanceTimersByTimeAsync(500);
+    const dialog = document.querySelector<HTMLDialogElement>(".Experience")!;
+    vi.spyOn(dialog, "scrollHeight", "get").mockReturnValue(750);
+    output().scrollTop = 123;
+    await vi.advanceTimersByTimeAsync(100);
+    expect(dialog.scrollTop).toBe(750);
+    expect(output().scrollTop).toBe(123);
+    await store.system.break();
+    await task;
+  });
+
+  test("interrupted home output stays partial when the viewport is remeasured", async () => {
+    vi.useFakeTimers();
+    store.system.animations = true;
+    const task = store.system.addCommand("whoami", {
+      route: false,
+      animateCommand: false,
+    });
+    // Three intro blocks, heading, then the first project.
+    await vi.advanceTimersByTimeAsync(400);
+    expect(output().querySelectorAll(".ProjectRow:not([hidden])")).toHaveLength(
+      1,
+    );
+    await store.system.break();
+    await task;
+    window.terminal.showInput();
+    expect(output().querySelectorAll(".ProjectRow")).toHaveLength(1);
+    expect(output().querySelector(".HomeOutput .Count")?.textContent).toBe(
+      "01",
+    );
+  });
+
   test("executes a typed command and renders HTML-like input as text", async () => {
     const text = '<img src=x onerror="alert(1)"> & $&';
     await enter(`echo '${text}'`);
@@ -463,6 +537,7 @@ describe("interactive terminal", () => {
     "%s fills the CRT screen and Escape restores the terminal controls",
     async command => {
       await store.system.addCommand("whoami", { route: false });
+      const homeRows = output().querySelectorAll(".ProjectRow").length;
       vi.useFakeTimers();
       store.system.animations = true;
       input().focus();
@@ -479,7 +554,7 @@ describe("interactive terminal", () => {
       expect(document.querySelector<HTMLElement>(".QuickCommands")!.inert).toBe(
         true,
       );
-      expect(output().querySelectorAll(".ProjectRow")).toHaveLength(3);
+      expect(output().querySelectorAll(".ProjectRow")).toHaveLength(homeRows);
       const escape = new KeyboardEvent("keydown", {
         key: "Escape",
         bubbles: true,
@@ -495,7 +570,7 @@ describe("interactive terminal", () => {
       expect(document.querySelector<HTMLElement>(".QuickCommands")!.inert).toBe(
         false,
       );
-      expect(output().querySelectorAll(".ProjectRow")).toHaveLength(3);
+      expect(output().querySelectorAll(".ProjectRow")).toHaveLength(homeRows);
       expect(document.activeElement).toBe(input());
     },
   );
@@ -545,6 +620,7 @@ describe("interactive terminal", () => {
 
   test("exit shows the persistent Windows shutdown message inside the CRT", async () => {
     await store.system.addCommand("whoami", { route: false });
+    const homeRows = output().querySelectorAll(".ProjectRow").length;
     vi.useFakeTimers();
     store.system.animations = true;
     const task = store.system.addCommand("exit", { animateCommand: false });
@@ -569,7 +645,7 @@ describe("interactive terminal", () => {
     expect(dialog.querySelector(".ExperienceRestart")?.textContent).toBe(
       "Restart terminal",
     );
-    expect(output().querySelectorAll(".ProjectRow")).toHaveLength(3);
+    expect(output().querySelectorAll(".ProjectRow")).toHaveLength(homeRows);
     expect(store.system.shutdown).toBe(true);
     expect(document.activeElement).toBe(dialog);
     expect(store.commands.getLines("shutdown")).toEqual(

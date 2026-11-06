@@ -1,18 +1,19 @@
 .TerminalBar {
-  min-height: 49px;
+  min-height: 40px;
   display: flex;
   align-items: center;
   gap: 20px;
   padding-inline: 23px;
-  border-bottom: 1px solid var(--border);
-  background: #99ed9910;
-  font: 11px var(--mono);
+  background: var(--accent);
+  color: var(--terminal);
+  font: 12px var(--mono);
+  text-shadow: none;
 }
 .TerminalTitle {
-  color: var(--accent);
+  color: inherit;
 }
 .TerminalTitle span {
-  color: var(--faint);
+  color: inherit;
   margin-left: 10px;
 }
 .TerminalControls {
@@ -24,11 +25,15 @@
 .TerminalControls button {
   padding: 8px 0;
   background: transparent;
-  font: 10px var(--mono);
-  color: var(--muted);
+  font: inherit;
+  color: inherit;
 }
 .TerminalControls button:hover {
-  color: var(--accent);
+  text-decoration: underline;
+}
+.TerminalBar :focus-visible {
+  outline-color: var(--terminal);
+  outline-offset: 2px;
 }
 .QuickCommands {
   display: flex;
@@ -36,8 +41,8 @@
   align-items: center;
   gap: 8px;
   padding: 13px 26px;
-  border-bottom: 1px solid var(--border);
-  font: 11px var(--mono);
+  border-bottom: 1px dashed var(--border);
+  font: 13px var(--mono);
 }
 .QuickCommands > span {
   color: var(--faint);
@@ -45,29 +50,39 @@
 }
 .QuickCommands a,
 .QuickCommands button {
-  padding: 5px 9px;
-  border: 1px solid #303a2b;
-  border-radius: 4px;
-  background: #1b231a;
-  color: #b8c8ae;
+  padding: 6px 3px;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+}
+.QuickCommands a::before,
+.QuickCommands button::before,
+.Count::before,
+.DetailLinks > a::before {
+  content: "[";
+}
+.QuickCommands a::after,
+.QuickCommands button::after,
+.Count::after,
+.DetailLinks > a::after {
+  content: "]";
 }
 .QuickCommands a:hover,
 .QuickCommands button:hover,
 .QuickCommands a[aria-current] {
-  background: #273421;
-  color: var(--accent);
-  border-color: #526344;
+  background: var(--accent);
+  color: var(--terminal);
+  text-shadow: none;
 }
 .QuickCommands button {
   margin-left: auto;
 }
 .QuickCommands button span {
-  color: var(--faint);
-  padding-left: 6px;
+  display: none;
 }
 .Terminal {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 14px;
 }
 .TerminalOutput {
   position: relative;
@@ -93,9 +108,9 @@
   align-items: center;
   gap: 12px;
   padding: 12px 26px;
-  border-top: 1px solid var(--border);
+  border-top: 1px dashed var(--border);
   color: var(--faint);
-  font: 9px/1.5 var(--mono);
+  font: 11px/1.5 var(--mono);
 }
 kbd {
   font: inherit;
@@ -111,22 +126,23 @@ kbd {
   width: 5px;
   height: 5px;
   background: var(--accent);
-  border-radius: 50%;
+  border-radius: 0;
 }
 .HomeIntro {
   max-width: 640px;
-  margin-bottom: 28px;
-  font-family: var(--sans);
+  margin-bottom: 24px;
+  font-family: var(--mono);
 }
 .HomeIntro .ProjectCategory {
-  margin: 0 0 12px;
+  margin: 0 0 8px;
 }
 .HomeIntro h1 {
-  margin: 0 0 16px;
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 500;
-  letter-spacing: -1.3px;
-  line-height: 1.15;
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.5;
+  text-transform: uppercase;
 }
 .HomeIntro h1 span {
   color: var(--accent);
@@ -134,56 +150,59 @@ kbd {
 .HomeIntro > p:last-child {
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
-  line-height: 1.85;
+  font-size: 14px;
+  line-height: 1.6;
 }
 .OutputHeading {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 10px;
+  margin-bottom: 0;
+  padding-block: 8px;
+  border-block: 1px dashed var(--border);
 }
 .OutputHeading h2 {
   display: flex;
   align-items: center;
   gap: 10px;
   margin: 0;
-  font: 500 16px/1.5 var(--sans);
+  font: 700 14px/1.5 var(--mono);
+  text-transform: uppercase;
 }
 .Count {
   color: var(--faint);
-  font: 10px var(--mono);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 3px 6px;
+  font: 12px var(--mono);
 }
 .OutputNote {
   color: var(--faint);
-  font: 10px/1.7 var(--mono);
+  font: 12px/1.6 var(--mono);
 }
 .OutputIntro {
   color: var(--muted);
-  font-size: 12px;
-  line-height: 1.8;
+  font-size: 14px;
+  line-height: 1.6;
 }
 .ProjectRow {
   display: grid;
-  grid-template-columns: 24px 148px minmax(0, 1fr) 35px;
+  grid-template-columns: 24px 148px minmax(0, 1fr) 42px;
   align-items: center;
   gap: 14px;
-  padding-block: 20px;
-  border-bottom: 1px solid var(--border);
+  padding-block: 16px;
+  border-bottom: 1px dashed var(--border);
 }
 .ProjectNumber {
   align-self: start;
   padding-top: 3px;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--faint);
 }
 .ProjectArt {
   margin: 0;
-  color: #9bb98a;
+  color: var(--muted);
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
 }
 .ProjectArt pre {
   margin: 0;
@@ -198,7 +217,7 @@ kbd {
   overflow-wrap: normal;
 }
 .ProjectArt--thumbnail pre {
-  font-size: 9px;
+  font-size: 10px;
 }
 .ProjectArt--detail pre {
   font-size: 14px;
@@ -216,13 +235,14 @@ kbd {
 .ProjectCategory {
   display: block;
   color: var(--muted);
-  font: 9px/1.5 var(--mono);
-  letter-spacing: 1px;
+  font: 11px/1.5 var(--mono);
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 .ProjectInfo h3 {
   margin: 3px 0 5px;
-  font: 500 18px/1.4 var(--sans);
+  font: 700 14px/1.5 var(--mono);
+  text-transform: uppercase;
 }
 .ProjectInfo h3 a span {
   color: var(--faint);
@@ -235,26 +255,24 @@ kbd {
 .ProjectInfo p {
   color: var(--muted);
   margin: 0 0 7px;
-  font: 12px/1.6 var(--sans);
+  font: 13px/1.6 var(--mono);
 }
 .ProjectStack {
-  color: #8ca57a;
-  font: 9px/1.7 var(--mono);
+  color: var(--faint);
+  font: 11px/1.6 var(--mono);
 }
 .ProjectOpen {
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  min-height: 36px;
   display: grid;
   place-content: center;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  font: 15px var(--sans);
+  font: 14px var(--mono);
   color: var(--muted);
 }
 .ProjectOpen:hover {
   background: var(--accent);
-  border-color: var(--accent);
   color: var(--page);
+  text-shadow: none;
 }
 .OutputActions {
   display: flex;
@@ -268,7 +286,7 @@ kbd {
   display: inline-block;
   padding: 3px 0;
   background: transparent;
-  font: 11px/1.8 var(--mono);
+  font: 13px/1.6 var(--mono);
   color: var(--accent);
   text-align: left;
 }
@@ -284,24 +302,25 @@ kbd {
   padding-block: 16px;
 }
 .ProjectList--compact .ProjectInfo h3 {
-  font-size: 16px;
+  font-size: 14px;
 }
 .ProjectDetail,
 .TextOutput {
   max-width: 740px;
   padding-bottom: 10px;
-  font: 14px/1.85 var(--sans);
+  font: 14px/1.6 var(--mono);
 }
 .ProjectDetail h2,
 .TextOutput h2 {
   margin: 6px 0 12px;
-  font: 500 29px/1.25 var(--sans);
-  letter-spacing: -0.7px;
+  font: 700 18px/1.5 var(--mono);
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 .ProjectDetail h3,
 .TextOutput h3 {
   margin: 28px 0 7px;
-  font: 500 14px/1.5 var(--sans);
+  font: 700 14px/1.5 var(--mono);
 }
 .ProjectDetail p,
 .TextOutput p {
@@ -310,7 +329,7 @@ kbd {
 }
 .ProjectDetail .DetailSummary {
   color: var(--text);
-  font-size: 15px;
+  font-size: 14px;
 }
 .DetailBreadcrumb {
   margin-bottom: 26px;
@@ -327,7 +346,7 @@ kbd {
   flex-wrap: wrap;
   gap: 18px;
   margin-block: 27px 18px;
-  font: 11px/1.8 var(--mono);
+  font: 13px/1.6 var(--mono);
 }
 .DetailLinks > a {
   color: var(--accent);
@@ -338,10 +357,10 @@ kbd {
   text-underline-offset: 4px;
 }
 .DetailLinks .PrimaryLink {
-  padding: 10px 15px;
-  color: var(--page);
-  background: var(--accent);
-  border-radius: 5px;
+  padding: 8px 0;
+  color: var(--accent);
+  background: transparent;
+  font-weight: 700;
 }
 .DirectoryList {
   display: flex;
@@ -354,7 +373,7 @@ kbd {
   gap: 16px;
   align-items: baseline;
   padding-block: 8px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px dashed var(--border);
 }
 .HelpList > div > span {
   font-size: 11px;
@@ -413,27 +432,6 @@ kbd {
   }
 }
 
-@media (min-width: 1440px) and (min-height: 700px) {
-  .HomeOutput {
-    display: grid;
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-    column-gap: 48px;
-    align-content: start;
-  }
-  .HomeOutput > .HomeIntro {
-    grid-column: 1;
-    grid-row: 1 / span 3;
-    align-self: start;
-    margin-bottom: 0;
-  }
-  .HomeOutput > .OutputHeading,
-  .HomeOutput > .ProjectList,
-  .HomeOutput > .OutputActions {
-    grid-column: 2;
-    min-width: 0;
-  }
-}
-
 @media (max-width: 600px) {
   .TerminalBar {
     padding-inline: 14px;
@@ -462,14 +460,14 @@ kbd {
   .QuickCommands {
     padding: 11px 14px;
     gap: 6px;
-    font-size: 10px;
+    font-size: 11px;
   }
   .QuickCommands > span {
     display: none;
   }
   .QuickCommands a,
   .QuickCommands button {
-    padding: 7px;
+    padding: 9px 2px;
   }
   .QuickCommands button span {
     display: none;
@@ -484,7 +482,7 @@ kbd {
     display: none;
   }
   .ProjectRow {
-    grid-template-columns: 21px minmax(0, 1fr) 28px;
+    grid-template-columns: 21px minmax(0, 1fr) 32px;
     gap: 8px;
     padding-block: 18px;
   }
@@ -513,17 +511,16 @@ kbd {
     justify-self: start;
   }
   .ProjectInfo h3 {
-    font-size: 17px;
+    font-size: 14px;
   }
   .ProjectInfo p {
     font-size: 12px;
   }
   .ProjectOpen {
-    width: 28px;
-    height: 28px;
+    width: 32px;
   }
   .ProjectStack {
-    font-size: 9px;
+    font-size: 10px;
   }
   .TerminalHints {
     padding: 11px 16px;
@@ -534,7 +531,7 @@ kbd {
   }
   .ProjectDetail h2,
   .TextOutput h2 {
-    font-size: 25px;
+    font-size: 16px;
   }
   .ProjectDetail,
   .TextOutput {

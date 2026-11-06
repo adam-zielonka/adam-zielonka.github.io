@@ -1,5 +1,5 @@
 .InputHost {
-  border-top: 1px solid var(--border);
+  border-top: 1px dashed var(--border);
   min-height: 65px;
   display: grid;
   align-items: center;
@@ -47,20 +47,21 @@
 }
 .InputRow:focus-within {
   box-shadow: inset 3px 0 var(--accent);
-  background: #192117;
+  background: transparent;
 }
 .SubmitCommand {
-  width: 35px;
-  height: 32px;
+  min-width: 42px;
+  min-height: 36px;
   flex-shrink: 0;
-  border: 1px solid #3d4d34;
-  border-radius: 5px;
-  background: #25321e;
+  border-radius: 0;
+  background: transparent;
   color: var(--accent);
-  font-size: 18px;
+  font: 14px var(--mono);
 }
 .SubmitCommand:hover {
-  background: #344a27;
+  background: var(--accent);
+  color: var(--terminal);
+  text-shadow: none;
 }
 @media (max-width: 600px) {
   .InputRow {

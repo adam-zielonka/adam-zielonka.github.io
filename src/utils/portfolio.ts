@@ -13,16 +13,25 @@ export function commandLink(
 }
 
 function projectRow(project: Project, index: number): string {
-  return `<article class="ProjectRow"><span class="ProjectNumber" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>${renderArt(project, "thumbnail")}<div class="ProjectInfo"><span class="ProjectCategory">${escape(project.category)}</span><h3><a href="#project/${project.id}" data-command="project ${project.id}">${escape(project.name)}<span aria-hidden="true"> ↗</span></a></h3><p>${escape(project.summary)}</p><span class="ProjectStack">${project.stack.map(escape).join(" / ")}</span></div><a class="ProjectOpen" href="#project/${project.id}" data-command="project ${project.id}" aria-label="Explore project ${escape(project.name)}"><span aria-hidden="true">↗</span></a></article>`;
+  return `<article class="ProjectRow"><span class="ProjectNumber" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>${renderArt(project, "thumbnail")}<div class="ProjectInfo"><span class="ProjectCategory">${escape(project.category)}</span><h3><a href="#project/${project.id}" data-command="project ${project.id}">${escape(project.name)}</a></h3><p>${escape(project.summary)}</p><span class="ProjectStack">${project.stack.map(escape).join(" / ")}</span></div><a class="ProjectOpen" href="#project/${project.id}" data-command="project ${project.id}" aria-label="Explore project ${escape(project.name)}"><span aria-hidden="true">[&gt;]</span></a></article>`;
 }
 
 function renderArt(project: Project, size: "thumbnail" | "detail"): string {
   return `<figure class="ProjectArt ProjectArt--${size}" role="img" aria-label="${escape(project.art.description)}"><pre aria-hidden="true">${escape(project.art.drawing)}</pre></figure>`;
 }
 
-export function renderHome(catalog: Project[] = projects): string {
-  const featured = catalog.filter(project => project.featured);
-  return `<section class="HomeOutput"><header class="HomeIntro"><p class="ProjectCategory">Personal projects &amp; experiments</p><h1>Curiosity,<br /><span>written in code.</span></h1><p>Hi, I'm Adam.<br />I build web apps, tools and games. I like finding out what’s possible.</p></header><div class="OutputHeading"><h2>Selected projects<span class="Count">${String(featured.length).padStart(2, "0")}</span></h2><span class="OutputNote">from idea to browser</span></div><div class="ProjectList">${featured
+export function renderHome(
+  catalog: Project[] = projects,
+  { randomize = true }: { randomize?: boolean } = {},
+): string {
+  const selected = [...catalog];
+  if (randomize) {
+    for (let index = selected.length - 1; index > 0; index--) {
+      const swap = Math.floor(Math.random() * (index + 1));
+      [selected[index], selected[swap]] = [selected[swap], selected[index]];
+    }
+  }
+  return `<section class="HomeOutput"><header class="HomeIntro"><p class="ProjectCategory">Personal projects &amp; experiments</p><h1>Adam Zielonka</h1><p>Hi, I'm Adam.<br />I build web apps, tools and games. I like finding out what’s possible.</p></header><div class="OutputHeading"><h2>Selected projects<span class="Count">${String(selected.length).padStart(2, "0")}</span></h2><span class="OutputNote">~/projects</span></div><div class="ProjectList">${selected
     .map(projectRow)
     .join(
       "",

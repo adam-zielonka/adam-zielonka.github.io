@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { projects, findProject } from "../data/projects.ts";
 import { parseProjectCatalog } from "../loaders/project-catalog.ts";
 import { renderFallback } from "../plugins/no-script.ts";
@@ -45,11 +45,40 @@ describe("Markdown project migration", () => {
       projects.filter(project => project.featured).map(project => project.id),
     ).toEqual(["server-status", "questions", "game-of-life"]);
     expect(element(renderHome()).querySelectorAll(".ProjectRow")).toHaveLength(
-      3,
+      projects.length,
     );
     expect(
       element(renderProjects()).querySelectorAll(".ProjectRow"),
     ).toHaveLength(projects.length);
+  });
+
+  test("shuffles the whole home catalog without duplicates or modifying its order", () => {
+    const original = projects.map(project => project.id);
+    const random = vi.spyOn(Math, "random").mockReturnValue(0);
+    try {
+      const home = element(renderHome());
+      const commands = [
+        ...home.querySelectorAll<HTMLElement>(".ProjectOpen"),
+      ].map(link => link.dataset.command);
+      expect(commands).toEqual(
+        [...original.slice(1), original[0]].map(id => `project ${id}`),
+      );
+      expect(new Set(commands).size).toBe(projects.length);
+      expect(projects.map(project => project.id)).toEqual(original);
+      expect(home.querySelector(".Count")?.textContent).toBe(
+        String(projects.length),
+      );
+    } finally {
+      random.mockRestore();
+    }
+  });
+
+  test("keeps the no-JavaScript home deterministic and the complete catalog accessible", () => {
+    const first = renderFallback("<portfolio-fallback />");
+    expect(renderFallback("<portfolio-fallback />")).toBe(first);
+    expect(element(first).querySelectorAll("#home .ProjectRow")).toHaveLength(
+      projects.filter(project => project.featured).length,
+    );
   });
 
   test("shares project descriptions, links and ASCII art with cat and the static fallback", () => {

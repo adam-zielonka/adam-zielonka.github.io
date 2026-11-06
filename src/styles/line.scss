@@ -4,7 +4,7 @@ li.Line {
 li.Line + li.CommandLine {
   margin-top: 26px;
   padding-top: 24px;
-  border-top: 1px solid var(--border);
+  border-top: 1px dashed var(--border);
 }
 li.CommandLine {
   color: var(--muted);

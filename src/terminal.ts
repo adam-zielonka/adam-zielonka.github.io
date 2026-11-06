@@ -4,12 +4,12 @@ import { Experience, ExperienceKind } from "./components/experience";
 import { useBreakDetection } from "./hooks/use-break-detection";
 import { OutputLine } from "./types/line";
 import { isCommandLine } from "./utils/line";
+import { fitHomeProjects } from "./utils/home-layout";
 
 export class Terminal {
   private lines = document.createElement("ul");
   private output = document.createElement("div");
   private inputHost = document.createElement("div");
-  private lastCommand?: HTMLElement;
   private input?: ReturnType<typeof Input>;
   private experience?: ReturnType<typeof Experience>;
   private experienceKind?: ExperienceKind;
@@ -39,6 +39,27 @@ export class Terminal {
     this.inputHost.className = "InputHost";
     this.root.append(this.output, this.inputHost);
     useBreakDetection(this.root, () => void window.store.system.break());
+    new ResizeObserver(() => {
+      if (this.root.getAttribute("aria-busy") === "true") {
+        this.scrollToEnd();
+        return;
+      }
+      const atEnd =
+        this.output.scrollTop + this.output.clientHeight >=
+        this.output.scrollHeight - 2;
+      this.fitHomeOutputs();
+      if (atEnd) this.scrollToEnd();
+    }).observe(this.output);
+  }
+
+  scrollToEnd() {
+    const viewport = this.experience?.dialog ?? this.output;
+    viewport.scrollTop = viewport.scrollHeight;
+  }
+
+  private fitHomeOutputs() {
+    for (const home of this.lines.querySelectorAll<HTMLElement>(".HomeOutput"))
+      fitHomeProjects(home, this.output);
   }
 
   push(...lines: OutputLine[]) {
@@ -53,11 +74,10 @@ export class Terminal {
       const element = Line({ line });
       this.activeLines.append(element);
       elements.push(element);
-      if (isCommandLine(line)) {
-        this.lastCommand = element;
-        this.output.scrollTop = element.offsetTop - 24;
-      }
+      for (const home of element.querySelectorAll<HTMLElement>(".HomeOutput"))
+        fitHomeProjects(home, this.output);
     }
+    this.scrollToEnd();
     return elements;
   }
 
@@ -69,14 +89,12 @@ export class Terminal {
     if (this.output.contains(document.activeElement))
       this.output.focus({ preventScroll: true });
     this.lines.replaceChildren();
-    this.lastCommand = undefined;
     this.output.scrollTop = 0;
   }
 
   updateLast(line: OutputLine) {
     this.activeLines.lastElementChild?.replaceWith(Line({ line }));
-    if (isCommandLine(line))
-      this.lastCommand = this.activeLines.lastElementChild as HTMLElement;
+    this.scrollToEnd();
   }
 
   setBusy(busy: boolean) {
@@ -86,8 +104,7 @@ export class Terminal {
     );
     if (skip) skip.hidden = !busy;
     this.inputHost.dataset.busy = String(busy);
-    if (!busy && this.lastCommand)
-      this.output.scrollTop = this.lastCommand.offsetTop - 24;
+    this.scrollToEnd();
   }
 
   setRoute(hash?: string) {
@@ -181,6 +198,8 @@ export class Terminal {
       this.input = Input();
       this.inputHost.replaceChildren(this.input.element);
     }
+    this.fitHomeOutputs();
+    this.scrollToEnd();
     if (focus) this.input.focus();
   }
 }

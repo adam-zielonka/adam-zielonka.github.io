@@ -2,6 +2,7 @@ import { CommandLine, OutputLine, TextLine } from "../types/line";
 import { store } from "./store";
 import { resolveConstants } from "../utils/constants";
 import { outputSteps } from "../utils/output-steps";
+import { updateHomeCount } from "../utils/home-layout";
 
 export class Output {
   context = { command: "", args: [] as string[], pwd: "/root" };
@@ -51,11 +52,13 @@ export class Output {
   private async reveal(element: HTMLElement) {
     const steps = outputSteps(element);
     for (const step of steps) step.hidden = true;
+    window.terminal.scrollToEnd();
     try {
       for (const step of steps) {
         await store.system.wait(80);
         if (!store.system.isProcessing) return;
         step.hidden = false;
+        window.terminal.scrollToEnd();
       }
     } finally {
       // Interrupted commands leave only the output already printed.
@@ -65,6 +68,18 @@ export class Output {
           else step.remove();
         }
       }
+      if (!store.system.isProcessing) {
+        for (const home of element.querySelectorAll<HTMLElement>(
+          ".HomeOutput",
+        )) {
+          // Resizing must not bring back output interrupted with Ctrl+C.
+          home.setAttribute("data-interrupted", "");
+          for (const row of home.querySelectorAll(".ProjectRow[hidden]"))
+            row.remove();
+          updateHomeCount(home);
+        }
+      }
+      window.terminal.scrollToEnd();
     }
   }
 

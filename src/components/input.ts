@@ -24,7 +24,7 @@ export function Input() {
   submit.type = "submit";
   submit.className = "SubmitCommand";
   submit.setAttribute("aria-label", "Run command");
-  submit.innerHTML = '<span aria-hidden="true">↵</span>';
+  submit.innerHTML = '<span aria-hidden="true">[↵]</span>';
   const completionList = document.createElement("div");
   completionList.className = "CompletionHost";
   const updateCompletion = () => completionList.replaceChildren(Completion());
@@ -89,6 +89,7 @@ export function Input() {
   input.addEventListener("blur", () => {
     // Keep choices clickable until the click event has reached the document.
     setTimeout(() => {
+      if (!form.isConnected) return;
       completion.reset();
       updateCompletion();
     }, 150);

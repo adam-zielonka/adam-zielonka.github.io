@@ -24,11 +24,12 @@ body {
 
 .CRTScreen {
   --terminal: #0b160f;
-  --text: #c3e8bb;
+  --text: #b2df96;
   --accent: #b9f69b;
-  --muted: #a3bda0;
-  --faint: #8b9f87;
-  --border: #91b08330;
+  --muted: #9fc38a;
+  --faint: #86a676;
+  --border: #91b08366;
+  --mono: "Courier New", Courier, "Liberation Mono", monospace;
   --sans: var(--mono);
   position: relative;
   container-type: inline-size;
@@ -48,6 +49,10 @@ body {
     0 2px 1px 2px #e4ddc799,
     inset 0 0 24px #000;
   text-shadow: 0 0 5px #9eea7b25;
+}
+
+.CRTScreen :focus-visible {
+  border-radius: 0;
 }
 
 // Fixed to the glass rather than the scrolling output; never intercept input.

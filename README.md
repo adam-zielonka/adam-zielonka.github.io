@@ -30,6 +30,13 @@ Click a project or navigation shortcut, or enter a command:
 
 Use Enter to execute, ↑/↓ for history, and Tab to complete commands, project names and paths. Directory suggestions for `cd` end with `/`, so you can keep typing a nested path without an extra space. Shift+Tab leaves the input; Tab also leaves it when the prompt is empty. Ctrl+C interrupts a running command without interfering with copying selected text.
 
+Output scrolls to the latest text as a command runs, including Matrix inside the
+CRT. Each `whoami` / `home` draws a new random selection from the entire project
+catalog. The number of complete entries fits the available terminal height,
+reserving room for the introduction and actions. Very short screens keep at least
+one entry. Resizing adjusts the count without reshuffling; `projects` always
+shows the complete catalog.
+
 The home directory contains `README.md`, `about.md`, `contact.md` and `projects/`.
 Every project directory has its own `README.md`. `cat` accepts relative paths,
 `~/` and `/root/` paths, and several files at once, such as
@@ -68,10 +75,10 @@ Project links use fragments such as [`/#project/server-status`](https://adam-zie
 
 On desktop windows at least 1280 px wide and 700 px tall, the terminal grows to
 1600 px wide and fits the viewport height, with scrollable output and the prompt
-always available. From 1440 px, the home introduction sits beside the three
-selected projects. Longer descriptions keep their readable column width; phones
-and short windows retain their compact layout. The same home layout is available
-without JavaScript.
+always available. Inside the CRT, a single-column text layout, bracketed commands
+and monochrome typography echo a classic terminal. Longer descriptions keep their
+readable column width; phones and short windows retain their compact layout.
+The same home layout is available without JavaScript.
 
 ## Development
 
@@ -94,7 +101,8 @@ interactive interface, virtual project `README.md` files and static HTML fallbac
 Each project has one `<id>.md` file with YAML front matter: `id` (matching the
 filename), `name`, `category`, `summary`, `stack`, `source` and a unique positive
 `order` controlling catalog order. Optional fields are `demo`, `releases` and
-`featured`; set `featured: true` on the three projects displayed on the home screen.
+`featured`; set `featured: true` for entries in the deterministic no-JavaScript
+home fallback. The interactive home samples from all projects.
 
 Write the description as Markdown below the front matter, using `### The idea`
 and `### How it works` headings. Paragraphs, lists, links and emphasis are rendered

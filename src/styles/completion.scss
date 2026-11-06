@@ -3,7 +3,7 @@
   flex-wrap: wrap;
   gap: 8px;
   padding: 12px 28px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px dashed var(--border);
   max-height: 165px;
   overflow-y: auto;
 }
@@ -11,18 +11,24 @@
   display: none;
 }
 .Completion button {
-  padding: 6px 9px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--surface);
+  padding: 8px 3px;
+  border-radius: 0;
+  background: transparent;
   color: var(--muted);
-  font: 11px/1.5 var(--terminal-font, var(--mono));
+  font: 13px/1.5 var(--terminal-font, var(--mono));
   overflow-wrap: anywhere;
+}
+.Completion button::before {
+  content: "[";
+}
+.Completion button::after {
+  content: "]";
 }
 .Completion button.active,
 .Completion button:hover {
   background: var(--accent);
   color: var(--page);
+  text-shadow: none;
 }
 @media (max-width: 600px) {
   .Completion {

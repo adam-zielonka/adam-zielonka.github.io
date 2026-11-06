@@ -33,7 +33,13 @@ export function renderFallback(html: string): string {
         `<section id="project/${project.id}">${renderProject(project.id, projects)}</section>`,
     )
     .join("");
-  const content = `<div class="FallbackContent"><section id="home">${renderHome(projects)}</section><p class="OutputIntro">The terminal needs JavaScript. You can still browse every project and find contact links below.</p><section id="projects">${renderProjects(projects)}</section><section id="about">${renderAbout()}</section><section id="contact">${renderContact()}</section>${details}</div>`;
+  const home = renderHome(
+    projects.filter(project => project.featured),
+    {
+      randomize: false,
+    },
+  );
+  const content = `<div class="FallbackContent"><section id="home">${home}</section><p class="OutputIntro">The terminal needs JavaScript. You can still browse every project and find contact links below.</p><section id="projects">${renderProjects(projects)}</section><section id="about">${renderAbout()}</section><section id="contact">${renderContact()}</section>${details}</div>`;
   return html.replace("<portfolio-fallback />", staticContent(content));
 }
 
