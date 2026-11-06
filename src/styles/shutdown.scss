@@ -1,9 +1,7 @@
-body.has-experience {
-  overflow: hidden;
-}
 .Experience {
-  position: fixed;
+  position: absolute;
   inset: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   max-width: none;
@@ -17,18 +15,15 @@ body.has-experience {
   overflow: auto;
   overscroll-behavior: contain;
 }
-.Experience::backdrop {
-  background: #000;
-}
 .Experience:focus {
   outline: none;
 }
 .MatrixOutput {
   margin: 0;
-  padding: clamp(70px, 12vh, 130px) clamp(24px, 6vw, 90px) 90px;
+  padding: clamp(60px, 8cqi, 100px) clamp(20px, 6cqi, 90px) 90px;
   list-style: none;
   font:
-    700 clamp(18px, 3vw, 30px)/1.65 "Courier New",
+    700 clamp(18px, 3cqi, 30px)/1.65 "Courier New",
     Courier,
     monospace;
 }
@@ -65,7 +60,7 @@ body.has-experience {
   margin: 0;
   color: #ff8d22;
   font:
-    700 clamp(24px, 4.8vw, 68px)/1.2 "MS Sans Serif",
+    700 clamp(24px, 4.8cqi, 68px)/1.2 "MS Sans Serif",
     Tahoma,
     var(--sans);
   letter-spacing: 0;

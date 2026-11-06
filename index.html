@@ -43,41 +43,45 @@
           aria-label="Interactive portfolio"
           tabindex="-1"
         >
-          <header class="TerminalBar">
-            <div class="WindowDots" aria-hidden="true">
-              <i></i><i></i><i></i>
-            </div>
-            <span class="TerminalTitle">adam@portfolio <span>~</span></span>
-            <div class="TerminalControls">
-              <button type="button" data-skip-animation hidden>
-                Skip animation</button
-              ><button type="button" data-toggle-motion aria-pressed="true">
-                Animations: on
+          <div class="CRTScreen">
+            <header class="TerminalBar">
+              <span class="TerminalTitle">adam@portfolio <span>~/</span></span>
+              <div class="TerminalControls">
+                <button type="button" data-skip-animation hidden>
+                  Skip animation</button
+                ><button type="button" data-toggle-motion aria-pressed="true">
+                  Animations: on
+                </button>
+              </div>
+            </header>
+            <nav class="QuickCommands" aria-label="Command shortcuts">
+              <span>try</span><a href="#home" data-command="whoami">whoami</a
+              ><a href="#projects" data-command="projects">projects</a
+              ><a href="#about" data-command="about">about</a
+              ><a href="#contact" data-command="contact">contact</a
+              ><button type="button" data-command="help">
+                help <span aria-hidden="true">?</span>
               </button>
-            </div>
-          </header>
-          <nav class="QuickCommands" aria-label="Command shortcuts">
-            <span>try</span><a href="#home" data-command="whoami">whoami</a
-            ><a href="#projects" data-command="projects">projects</a
-            ><a href="#about" data-command="about">about</a
-            ><a href="#contact" data-command="contact">contact</a
-            ><button type="button" data-command="help">
-              help <span aria-hidden="true">?</span>
-            </button>
-          </nav>
-          <div id="fallback"><portfolio-fallback /></div>
-          <div id="root"></div>
-          <footer class="TerminalHints" id="terminal-hint">
-            <span
-              ><kbd>Enter</kbd> run
-              <span class="HintDesktop"
-                >· <kbd>↑</kbd> <kbd>↓</kbd> history ·
-                <kbd>Tab</kbd> complete</span
-              ></span
-            ><span class="LocalSession"
-              ><i aria-hidden="true"></i> local session</span
-            >
-          </footer>
+            </nav>
+            <div id="fallback"><portfolio-fallback /></div>
+            <div id="root"></div>
+            <footer class="TerminalHints" id="terminal-hint">
+              <span
+                ><kbd>Enter</kbd> run
+                <span class="HintDesktop"
+                  >· <kbd>↑</kbd> <kbd>↓</kbd> history ·
+                  <kbd>Tab</kbd> complete</span
+                ></span
+              ><span class="LocalSession"
+                ><i aria-hidden="true"></i> local session</span
+              >
+            </footer>
+          </div>
+          <div class="CRTChin" aria-hidden="true">
+            <div class="CRTBadge">AZ<span>PERSONAL COMPUTER</span></div>
+            <div class="CRTVents"></div>
+            <div class="CRTPower"><i></i><span>POWER</span></div>
+          </div>
         </section>
         <p
           id="command-status"

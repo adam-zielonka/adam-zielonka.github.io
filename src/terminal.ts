@@ -13,6 +13,7 @@ export class Terminal {
   private input?: ReturnType<typeof Input>;
   private experience?: ReturnType<typeof Experience>;
   private experienceKind?: ExperienceKind;
+  private experienceBackground: { element: HTMLElement; inert: boolean }[] = [];
   private staticMatrix = false;
 
   get isStaticMatrix() {
@@ -127,9 +128,16 @@ export class Terminal {
     useBreakDetection(this.experience.dialog, () => {
       if (kind === "matrix") void window.store.system.break();
     });
-    document.body.append(this.experience.dialog);
-    document.body.classList.add("has-experience");
-    this.experience.dialog.showModal();
+    const screen = this.root.closest<HTMLElement>(".CRTScreen")!;
+    this.experienceBackground = Array.from(screen.children)
+      .filter(
+        (element): element is HTMLElement => element instanceof HTMLElement,
+      )
+      .map(element => ({ element, inert: element.inert }));
+    for (const { element } of this.experienceBackground) element.inert = true;
+    screen.append(this.experience.dialog);
+    // Non-modal dialogs stay inside the CRT instead of entering the top layer.
+    this.experience.dialog.show();
     this.experience.dialog.focus({ preventScroll: true });
   }
 
@@ -138,11 +146,17 @@ export class Terminal {
   }
 
   private closeExperience() {
+    const restoreFocus = this.experience?.dialog.contains(
+      document.activeElement,
+    );
     this.experience?.dialog.close();
     this.experience?.dialog.remove();
+    for (const { element, inert } of this.experienceBackground)
+      element.inert = inert;
+    this.experienceBackground = [];
     this.experience = undefined;
     this.experienceKind = undefined;
-    document.body.classList.remove("has-experience");
+    if (restoreFocus) this.output.focus({ preventScroll: true });
   }
   font(font: string) {
     if (font) {

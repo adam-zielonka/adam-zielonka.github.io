@@ -25,7 +25,7 @@ Click a project or navigation shortcut, or enter a command:
 | `pwd` | Current path |
 | `help` | All available commands |
 | `clear` | Clear output |
-| `neo` / `matrix` | Full-screen Matrix sequence |
+| `neo` / `matrix` | Matrix sequence filling the CRT screen |
 | `exit` / `shutdown` | Classic Windows 95 shutdown screen |
 
 Use Enter to execute, ↑/↓ for history, and Tab to complete commands, project names and paths. Directory suggestions for `cd` end with `/`, so you can keep typing a nested path without an extra space. Shift+Tab leaves the input; Tab also leaves it when the prompt is empty. Ctrl+C interrupts a running command without interfering with copying selected text.
@@ -51,15 +51,18 @@ and the hidden `panic` command (reload to recover from its simulated kernel pani
 `font` changes the terminal text, prompt and completion font; using it without an
 argument restores the default. Project typography and ASCII art keep their fonts.
 
-`neo` and `matrix` take over the browser viewport without clearing the portfolio
-behind them. Escape, Ctrl+C or the back button in the scene returns to the
-terminal; the animated sequence also returns automatically when it finishes.
+`neo` and `matrix` fill the CRT screen while its case and glass effects remain
+visible, without clearing the portfolio behind them. The covered terminal controls
+are inactive until the scene closes. Escape, Ctrl+C or the back button in the
+scene returns to the terminal; the animated sequence also returns automatically
+when it finishes.
 With animations disabled, all messages remain visible until dismissed.
 
 `exit` and `shutdown` show “Wait ...” in the terminal for a second, then display
 the orange “It's now safe to turn off your computer”
-message on black, a nod to the Windows 95 shutdown screen for computers that
-needed to be powered off manually. Use Restart terminal or Escape to reload.
+message on black inside the same CRT screen, a nod to the Windows 95 shutdown
+screen for computers that needed to be powered off manually. Use Restart
+terminal or Escape to reload.
 
 Project links use fragments such as [`/#project/server-status`](https://adam-zielonka.github.io/#project/server-status), so direct links and browser Back/Forward work on GitHub Pages.
 

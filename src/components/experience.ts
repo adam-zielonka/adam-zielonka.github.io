@@ -11,6 +11,14 @@ export function Experience(kind: ExperienceKind, onDismiss: () => void) {
     event.preventDefault();
     onDismiss();
   });
+  dialog.addEventListener("keydown", event => {
+    // show() does not provide the modal dialog's native Escape dismissal.
+    if (event.key === "Escape" && !event.isComposing) {
+      event.preventDefault();
+      event.stopPropagation();
+      onDismiss();
+    }
+  });
 
   const lines = document.createElement("ul");
   lines.className = "MatrixOutput";

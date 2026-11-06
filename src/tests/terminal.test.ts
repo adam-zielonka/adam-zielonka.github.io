@@ -25,7 +25,7 @@ const enter = async (text: string) => {
 
 beforeAll(async () => {
   document.body.innerHTML =
-    '<button data-toggle-motion></button><button data-skip-animation hidden></button><nav class="QuickCommands"><a href="#about" data-command="about">About</a></nav><div id="root"></div><p id="command-status"></p>';
+    '<div class="CRTScreen"><button data-toggle-motion></button><button data-skip-animation hidden></button><nav class="QuickCommands"><a href="#about" data-command="about">About</a></nav><div id="root"></div></div><p id="command-status"></p>';
   localStorage.setItem("portfolio-animations", "false");
   await import("../main");
   store = window.store;
@@ -460,7 +460,7 @@ describe("interactive terminal", () => {
   });
 
   test.each(["neo", "matrix"])(
-    "%s opens a modal above the portfolio and Escape restores it",
+    "%s fills the CRT screen and Escape restores the terminal controls",
     async command => {
       await store.system.addCommand("whoami", { route: false });
       vi.useFakeTimers();
@@ -473,16 +473,28 @@ describe("interactive terminal", () => {
         "dialog.Experience--matrix",
       )!;
       expect(dialog.open).toBe(true);
-      expect(dialog.parentElement).toBe(document.body);
+      expect(dialog.parentElement).toBe(document.querySelector(".CRTScreen"));
       expect(document.activeElement).toBe(dialog);
-      expect(document.body.classList.contains("has-experience")).toBe(true);
+      expect(document.getElementById("root")!.inert).toBe(true);
+      expect(document.querySelector<HTMLElement>(".QuickCommands")!.inert).toBe(
+        true,
+      );
       expect(output().querySelectorAll(".ProjectRow")).toHaveLength(3);
-      const cancel = new Event("cancel", { cancelable: true });
-      dialog.dispatchEvent(cancel);
+      const escape = new KeyboardEvent("keydown", {
+        key: "Escape",
+        bubbles: true,
+        cancelable: true,
+      });
+      dialog
+        .querySelector<HTMLButtonElement>(".ExperienceClose")!
+        .dispatchEvent(escape);
       await task;
-      expect(cancel.defaultPrevented).toBe(true);
+      expect(escape.defaultPrevented).toBe(true);
       expect(document.querySelector("dialog")).toBeNull();
-      expect(document.body.classList.contains("has-experience")).toBe(false);
+      expect(document.getElementById("root")!.inert).toBe(false);
+      expect(document.querySelector<HTMLElement>(".QuickCommands")!.inert).toBe(
+        false,
+      );
       expect(output().querySelectorAll(".ProjectRow")).toHaveLength(3);
       expect(document.activeElement).toBe(input());
     },
@@ -506,6 +518,8 @@ describe("interactive terminal", () => {
     await task;
     expect(document.querySelector("dialog")).toBeNull();
     expect(store.system.isInputAllowed).toBe(true);
+    expect(document.getElementById("root")!.inert).toBe(false);
+    expect(document.activeElement).toBe(output());
     expect(output().querySelector("h2")?.textContent).toContain(
       "I like understanding",
     );
@@ -529,7 +543,7 @@ describe("interactive terminal", () => {
     expect(store.system.isInputAllowed).toBe(true);
   });
 
-  test("exit shows the persistent Windows shutdown message on a separate screen", async () => {
+  test("exit shows the persistent Windows shutdown message inside the CRT", async () => {
     await store.system.addCommand("whoami", { route: false });
     vi.useFakeTimers();
     store.system.animations = true;
@@ -546,6 +560,8 @@ describe("interactive terminal", () => {
       "dialog.Experience--shutdown",
     )!;
     expect(dialog.open).toBe(true);
+    expect(dialog.parentElement).toBe(document.querySelector(".CRTScreen"));
+    expect(document.getElementById("root")!.inert).toBe(true);
     expect(dialog.querySelector("h2")?.textContent).toBe(
       "It's now safe to turn offyour computer.",
     );
