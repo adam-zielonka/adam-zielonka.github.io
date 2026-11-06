@@ -9,14 +9,14 @@ export function Experience(kind: ExperienceKind, onDismiss: () => void) {
   dialog.tabIndex = -1;
   dialog.addEventListener("cancel", event => {
     event.preventDefault();
-    onDismiss();
+    if (kind === "matrix") onDismiss();
   });
   dialog.addEventListener("keydown", event => {
     // show() does not provide the modal dialog's native Escape dismissal.
     if (event.key === "Escape" && !event.isComposing) {
       event.preventDefault();
       event.stopPropagation();
-      onDismiss();
+      if (kind === "matrix") onDismiss();
     }
   });
 

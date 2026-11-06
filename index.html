@@ -77,10 +77,66 @@
               >
             </footer>
           </div>
-          <div class="CRTChin" aria-hidden="true">
-            <div class="CRTBadge">AZ<span>PERSONAL COMPUTER</span></div>
-            <div class="CRTVents"></div>
-            <div class="CRTPower"><i></i><span>POWER</span></div>
+          <div class="CRTChin">
+            <div class="CRTBadge" aria-hidden="true">
+              AZ<span>PERSONAL COMPUTER</span>
+            </div>
+            <div class="CRTVents" aria-hidden="true"></div>
+            <div class="CRTHardware" hidden>
+              <div class="CRTIndicators" data-disk="idle" aria-hidden="true">
+                <div class="CRTIndicator">
+                  <i class="CRTLED CRTLED--power"></i><span>PWR</span>
+                </div>
+                <div class="CRTIndicator">
+                  <i class="CRTLED CRTLED--disk"></i><span>HDD</span>
+                </div>
+              </div>
+              <button
+                class="CRTPower"
+                type="button"
+                data-toggle-power
+                aria-label="Computer power"
+                aria-pressed="true"
+                title="Turn off computer"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <mask
+                      id="power-symbol-wear"
+                      maskUnits="userSpaceOnUse"
+                      x="0"
+                      y="0"
+                      width="24"
+                      height="24"
+                    >
+                      <rect width="24" height="24" fill="white" stroke="none" />
+                      <path
+                        d="M2 8l18-3M4 15l16-2M9 20l9-3"
+                        stroke="black"
+                        stroke-width="0.8"
+                        opacity="0.7"
+                      />
+                      <path
+                        d="M11 3h3M3 12l4-1"
+                        stroke="black"
+                        stroke-width="1"
+                      />
+                    </mask>
+                  </defs>
+                  <path
+                    d="M7 5a8 8 0 1 0 10 0M12 2v10"
+                    mask="url(#power-symbol-wear)"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </section>
         <p

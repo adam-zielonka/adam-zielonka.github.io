@@ -54,7 +54,7 @@ rest immediately; Ctrl+C stops the command and restores the prompt.
 The old `ls` Easter egg now appears when `cd` points to a missing directory:
 “There is nothing. Only warm, primordial blackness.” The directory stays unchanged.
 Other classic extras remain: `ping` / `pong`, `neo YourName`, `cls`, `description`
-and the hidden `panic` command (reload to recover from its simulated kernel panic).
+and the hidden `panic` command (power-cycle the monitor to recover from its simulated kernel panic).
 `font` changes the terminal text, prompt and completion font; using it without an
 argument restores the default. Project typography and ASCII art keep their fonts.
 
@@ -68,8 +68,14 @@ With animations disabled, all messages remain visible until dismissed.
 `exit` and `shutdown` show “Wait ...” in the terminal for a second, then display
 the orange “It's now safe to turn off your computer”
 message on black inside the same CRT screen, a nod to the Windows 95 shutdown
-screen for computers that needed to be powered off manually. Use Restart
-terminal or Escape to reload.
+screen for computers that needed to be powered off manually. Use the physical
+power button on the CRT case to turn the screen off, then press it again to
+start a fresh terminal session. The same button can stop a running command or
+Matrix. The power LED goes dark when off; Escape does not restart shutdown.
+The round, worn power button has separate green power and amber disk LEDs.
+The decorative disk indicator flickers more often during commands and occasionally
+while idle, and stops at shutdown or power-off. With animations disabled or reduced
+motion enabled, it stays steady during commands and dark while idle.
 
 Project links use fragments such as [`/#project/server-status`](https://adam-zielonka.github.io/#project/server-status), so direct links and browser Back/Forward work on GitHub Pages.
 

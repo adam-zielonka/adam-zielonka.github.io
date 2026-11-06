@@ -107,6 +107,11 @@ export class Terminal {
     this.scrollToEnd();
   }
 
+  setDiskActivity(activity: "busy" | "idle" | "off") {
+    const indicators = document.querySelector<HTMLElement>(".CRTIndicators");
+    if (indicators) indicators.dataset.disk = activity;
+  }
+
   setRoute(hash?: string) {
     if (!hash) return;
     for (const link of document.querySelectorAll<HTMLAnchorElement>(
@@ -129,6 +134,23 @@ export class Terminal {
     this.openExperience("shutdown");
   }
 
+  powerOff() {
+    this.closeExperience();
+    this.setDiskActivity("off");
+    const button = document.querySelector<HTMLButtonElement>(
+      "[data-toggle-power]",
+    );
+    if (button) {
+      button.setAttribute("aria-pressed", "false");
+      button.title = "Turn on computer";
+      button.focus({ preventScroll: true });
+    }
+    const screen = this.root.closest<HTMLElement>(".CRTScreen")!;
+    screen.dataset.power = "off";
+    screen.inert = true;
+    screen.setAttribute("aria-hidden", "true");
+  }
+
   enterMatrix() {
     const system = window.store.system;
     this.staticMatrix = !system.shouldAnimate && !system.isAnimationSkipped;
@@ -139,8 +161,7 @@ export class Terminal {
     this.closeExperience();
     this.experienceKind = kind;
     this.experience = Experience(kind, () => {
-      if (kind === "shutdown") window.location.reload();
-      else void window.store.system.break();
+      if (kind === "matrix") void window.store.system.break();
     });
     useBreakDetection(this.experience.dialog, () => {
       if (kind === "matrix") void window.store.system.break();

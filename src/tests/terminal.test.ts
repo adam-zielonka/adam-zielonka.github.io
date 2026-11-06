@@ -642,9 +642,7 @@ describe("interactive terminal", () => {
       "It's now safe to turn offyour computer.",
     );
     expect(dialog.querySelector("h2 br")).not.toBeNull();
-    expect(dialog.querySelector(".ExperienceRestart")?.textContent).toBe(
-      "Restart terminal",
-    );
+    expect(dialog.querySelector("button")).toBeNull();
     expect(output().querySelectorAll(".ProjectRow")).toHaveLength(homeRows);
     expect(store.system.shutdown).toBe(true);
     expect(document.activeElement).toBe(dialog);

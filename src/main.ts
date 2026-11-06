@@ -18,8 +18,14 @@ async function runRoute() {
 }
 
 window.addEventListener("hashchange", () => void runRoute());
+const hardware = document.querySelector<HTMLElement>(".CRTHardware");
+if (hardware) hardware.hidden = false;
 document.addEventListener("click", event => {
   if (!(event.target instanceof Element)) return;
+  if (event.target.closest("[data-toggle-power]")) {
+    store.system.togglePower();
+    return;
+  }
   const motion = event.target.closest("[data-toggle-motion]");
   if (motion) {
     store.system.toggleAnimations();

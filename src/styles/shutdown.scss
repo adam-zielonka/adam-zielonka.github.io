@@ -33,8 +33,7 @@
 .MatrixOutput .Line + .Line {
   margin-top: 16px;
 }
-.ExperienceClose,
-.ExperienceRestart {
+.ExperienceClose {
   position: absolute;
   padding: 12px;
   background: transparent;
@@ -53,7 +52,7 @@
   min-height: 100%;
   display: grid;
   place-items: center;
-  padding: 60px 24px 100px;
+  padding: 48px 24px;
   text-align: center;
 }
 .Shutdown h2 {
@@ -64,17 +63,4 @@
     Tahoma,
     var(--sans);
   letter-spacing: 0;
-}
-.ExperienceRestart {
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #888;
-  white-space: nowrap;
-}
-.ExperienceRestart:hover {
-  color: #ff8d22;
-}
-.Experience--shutdown :focus-visible {
-  outline-color: #ff8d22;
 }

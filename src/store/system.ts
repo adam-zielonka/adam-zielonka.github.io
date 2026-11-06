@@ -3,7 +3,13 @@ import { process } from "../utils/process";
 import { sleep } from "../utils/sleep";
 import { hashFromCommand } from "../utils/routes";
 
-type SystemState = "processing" | "shutdown" | "freeze" | "interrupted" | "";
+type SystemState =
+  | "processing"
+  | "shutdown"
+  | "off"
+  | "freeze"
+  | "interrupted"
+  | "";
 
 export class System {
   private _state: SystemState = "";
@@ -26,6 +32,9 @@ export class System {
   set state(newState: SystemState) {
     this._state = newState;
     window.terminal.setBusy(this.isProcessing);
+    window.terminal.setDiskActivity(
+      this.isProcessing ? "busy" : this.isInputAllowed ? "idle" : "off",
+    );
     if (this.isInputAllowed) window.terminal.showInput(this.focusAfterCommand);
     else window.terminal.hideInput();
   }
@@ -35,6 +44,9 @@ export class System {
   }
   get shutdown() {
     return this.state === "shutdown";
+  }
+  get isPoweredOff() {
+    return this.state === "off";
   }
   get isInputAllowed() {
     return this.state === "";
@@ -103,6 +115,21 @@ export class System {
     window.terminal.shutdown();
   }
 
+  togglePower() {
+    if (this.isPoweredOff) {
+      window.location.reload();
+      return;
+    }
+    // Mark the session off before aborting, so pending commands cannot revive it.
+    this.state = "off";
+    this.controller.abort();
+    this.animationController.abort();
+    window.terminal.powerOff();
+    window.terminal.announce(
+      "Computer powered off. Use the power button to turn it on.",
+    );
+  }
+
   setFreeze() {
     this.state = "freeze";
   }
@@ -157,9 +184,12 @@ export class System {
     } finally {
       window.terminal.finishExperience();
       if (["processing", "interrupted"].includes(this.state)) this.state = "";
-      window.terminal.announce(
-        this.state === "" ? `Finished: ${command}` : "Terminal session ended.",
-      );
+      if (!this.isPoweredOff)
+        window.terminal.announce(
+          this.state === ""
+            ? `Finished: ${command}`
+            : "Terminal session ended.",
+        );
     }
   }
 

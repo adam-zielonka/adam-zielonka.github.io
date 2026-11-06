@@ -55,6 +55,17 @@ body {
   border-radius: 0;
 }
 
+.CRTScreen[data-power="off"] {
+  background: #080b09;
+  text-shadow: none;
+}
+.CRTScreen[data-power="off"] > * {
+  visibility: hidden;
+}
+.CRTScreen[data-power="off"]::after {
+  background: linear-gradient(125deg, #d8ffd305, transparent 38%);
+}
+
 // Fixed to the glass rather than the scrolling output; never intercept input.
 .CRTScreen::after {
   content: "";
@@ -110,23 +121,149 @@ body {
   );
 }
 
-.CRTPower {
+.CRTHardware {
   display: flex;
   align-items: center;
-  gap: 9px;
-  font: 8px var(--mono);
-  letter-spacing: 1px;
+  gap: 16px;
+  flex-shrink: 0;
 }
 
-.CRTPower i {
-  width: 7px;
-  height: 7px;
-  border: 1px solid #638949;
+.CRTPower {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 2px solid #7e7969;
+  border-top-color: #aaa38c;
   border-radius: 50%;
-  background: #c0f786;
+  color: #5a5547;
+  background:
+    radial-gradient(ellipse at 30% 20%, #fff8df66, transparent 60%),
+    repeating-linear-gradient(23deg, #4039220a 0 1px, transparent 1px 4px),
+    radial-gradient(ellipse at 75% 80%, #6e64443d, transparent 60%),
+    linear-gradient(135deg, #c9c1a6, #aaa086);
   box-shadow:
-    0 0 5px #9cf377,
-    0 0 12px #9cf37788;
+    0 0 0 2px #ddd6bd66,
+    0 2px 3px #49433388,
+    inset 2px 2px 3px #f4e9c699,
+    inset -2px -3px 4px #746a4a88;
+}
+
+.CRTPower::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.35;
+  background:
+    radial-gradient(circle, #554c3477 0 0.5px, transparent 0.9px) 0 0 / 3px 4px,
+    radial-gradient(circle, #f7eccd88 0 0.5px, transparent 0.9px) 1px 2px / 5px
+      3px;
+}
+
+.CRTPower svg {
+  width: 23px;
+  height: 23px;
+  opacity: 0.72;
+  transform: rotate(-6deg);
+  filter: drop-shadow(0 1px 0 #e5d9b877);
+}
+.CRTPower:hover {
+  border-color: #6f6957;
+}
+.CRTPower:active {
+  box-shadow:
+    0 0 0 2px #ddd6bd66,
+    inset 2px 3px 5px #5a513c99;
+  transform: translateY(1px);
+}
+.CRTPower:focus-visible {
+  outline: 2px solid #303d28;
+  outline-offset: 3px;
+}
+
+.CRTIndicators {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.CRTIndicator {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  font: 7px/1 var(--mono);
+  letter-spacing: 1px;
+  color: #575545;
+}
+.CRTLED {
+  display: block;
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border: 1px solid #625c45;
+  border-radius: 50%;
+  background: #495039;
+  box-shadow:
+    inset 0 1px 2px #0009,
+    0 1px 0 #eee4c888;
+}
+.CRTLED::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(circle at 35% 30%, #e6ffc1, #93cd58);
+  box-shadow: 0 0 6px 1px #a4f17499;
+}
+.CRTHardware:has(.CRTPower[aria-pressed="true"]) .CRTLED--power::after {
+  opacity: 1;
+}
+.CRTLED--disk {
+  background: #574126;
+}
+.CRTLED--disk::after {
+  background: radial-gradient(circle at 35% 30%, #ffedb0, #e3a244);
+  box-shadow: 0 0 6px 1px #f1b45299;
+}
+.CRTIndicators[data-disk="busy"] .CRTLED--disk::after {
+  opacity: 0.8;
+  animation: disk-busy 1.7s steps(1, end) infinite;
+}
+.CRTIndicators[data-disk="idle"] .CRTLED--disk::after {
+  animation: disk-idle 13.7s steps(1, end) infinite;
+}
+
+// Brief, uneven bursts during commands; only occasional activity while idle.
+@keyframes disk-busy {
+  0%,
+  24%,
+  58%,
+  100% {
+    opacity: 1;
+  }
+  12%,
+  42%,
+  76% {
+    opacity: 0.1;
+  }
+}
+@keyframes disk-idle {
+  0%,
+  49%,
+  52%,
+  83%,
+  86%,
+  100% {
+    opacity: 0;
+  }
+  50%,
+  84% {
+    opacity: 0.65;
+  }
 }
 
 @media (max-width: 600px), (max-height: 600px) {
@@ -142,9 +279,9 @@ body {
     box-shadow: inset 0 0 10px 2px #0006;
   }
   .CRTChin {
-    min-height: 42px;
-    padding: 10px 4px;
-    gap: 14px;
+    min-height: 56px;
+    padding: 6px 4px;
+    gap: 10px;
   }
   .CRTBadge {
     font-size: 16px;
@@ -159,8 +296,12 @@ body {
   .CRTVents {
     height: 14px;
   }
-  .CRTPower span {
-    display: none;
+  .CRTHardware {
+    gap: 10px;
+  }
+  .CRTPower {
+    width: 44px;
+    height: 44px;
   }
 }
 
