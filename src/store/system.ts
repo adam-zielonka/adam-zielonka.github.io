@@ -2,6 +2,7 @@ import { store } from "./store";
 import { process } from "../utils/process";
 import { sleep } from "../utils/sleep";
 import { hashFromCommand } from "../utils/routes";
+import { requestPowerOnBoot } from "../utils/boot";
 
 type SystemState =
   | "processing"
@@ -117,6 +118,7 @@ export class System {
 
   togglePower() {
     if (this.isPoweredOff) {
+      requestPowerOnBoot();
       window.location.reload();
       return;
     }
@@ -143,13 +145,16 @@ export class System {
       animateCommand?: boolean;
     } = {},
   ) {
-    if (!this.isInputAllowed || !command.trim()) return;
+    if (!this.isInputAllowed || !command.trim()) return false;
     this.focusAfterCommand = options.focus ?? false;
     this.controller = new AbortController();
     this.animationController = new AbortController();
     this.skipped = false;
-    store.history.set(command);
-    store.history.add();
+    const automaticBoot = options.startup === true && command === "boot";
+    if (!automaticBoot) {
+      store.history.set(command);
+      store.history.add();
+    }
     store.completion.reset();
     this.state = "processing";
     const hash = hashFromCommand(command);
@@ -158,11 +163,14 @@ export class System {
       else window.history.pushState(null, "", hash);
     }
     window.terminal.setRoute(hash);
+    let completed = false;
     try {
-      await store.output.processCommandLine(
-        command,
-        options.animateCommand ?? true,
-      );
+      // A power-on starts the boot screen immediately, without a shell prompt.
+      if (!automaticBoot)
+        await store.output.processCommandLine(
+          command,
+          options.animateCommand ?? true,
+        );
       if (this.isProcessing) await process(command);
       // Reduced motion shows every message at once, until the visitor dismisses it.
       if (this.isProcessing && window.terminal.isStaticMatrix) {
@@ -174,6 +182,7 @@ export class System {
             });
         });
       }
+      completed = this.isProcessing;
     } catch (error) {
       console.error("Command failed", error);
       store.output.push({
@@ -191,10 +200,16 @@ export class System {
             : "Terminal session ended.",
         );
     }
+    return completed;
   }
 
   async start(commands: string[]) {
-    for (const command of commands)
-      await this.addCommand(command, { startup: true, route: false });
+    for (const command of commands) {
+      const completed = await this.addCommand(command, {
+        startup: true,
+        route: false,
+      });
+      if (!completed) break;
+    }
   }
 }

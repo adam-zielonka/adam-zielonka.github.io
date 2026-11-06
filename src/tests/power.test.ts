@@ -9,6 +9,7 @@ import {
   vi,
 } from "vitest";
 import type { Store } from "../store/store";
+import { startupCommands } from "../utils/boot";
 
 let store: Store;
 const screen = () => document.querySelector<HTMLElement>(".CRTScreen")!;
@@ -32,6 +33,7 @@ beforeAll(async () => {
 });
 
 beforeEach(() => {
+  window.history.replaceState(null, "");
   window.terminal.powerOff();
   screen().inert = false;
   screen().removeAttribute("aria-hidden");
@@ -87,6 +89,11 @@ test("the case button powers off, blocks commands and powers on with a fresh pag
   );
   button().click();
   expect(reload).toHaveBeenCalledTimes(1);
+  expect(startupCommands("#project/tetris")).toEqual([
+    "boot",
+    "project tetris",
+  ]);
+  expect(startupCommands("#project/tetris")).toEqual(["project tetris"]);
 });
 
 test.each([
@@ -188,4 +195,151 @@ test("interrupting a command restores idle disk activity", async () => {
   await store.system.break();
   await task;
   expect(indicators().dataset.disk).toBe("idle");
+});
+
+test("reduced-motion power-on prints the boot log and then opens the portfolio", async () => {
+  const enterBoot = vi.spyOn(window.terminal, "enterBoot");
+  vi.spyOn(window.location, "reload").mockImplementation(() => {});
+  button().click();
+  button().click();
+  const commands = startupCommands("");
+  // Simulate the new page after the requested reload, keeping real startup code.
+  screen().inert = false;
+  screen().removeAttribute("aria-hidden");
+  delete screen().dataset.power;
+  button().setAttribute("aria-pressed", "true");
+  store.system.state = "";
+  await store.system.start(commands);
+  expect(enterBoot).toHaveBeenCalledTimes(1);
+  expect(document.querySelector(".Experience--boot")).toBeNull();
+  expect(document.querySelector(".TerminalOutput .BootBanner")).toBeNull();
+  expect(document.querySelector(".HomeOutput")).not.toBeNull();
+  expect(store.history.lastCommand).toBe("whoami");
+  expect(indicators().dataset.disk).toBe("idle");
+});
+
+test("boot fills only the CRT, scrolls its own log and Escape skips every remaining entry", async () => {
+  expect(store.commands.getLines("boot")[0].value).toContain("BootBanner");
+  vi.useFakeTimers();
+  store.system.animations = true;
+  const previousCommand = store.history.lastCommand;
+  const startup = store.system.start(["boot", "whoami"]);
+  expect(
+    document.querySelector<HTMLDialogElement>(".Experience--boot")?.open,
+  ).toBe(true);
+  expect(document.querySelector(".CommandLine")).toBeNull();
+  expect(store.history.lastCommand).toBe(previousCommand);
+  await vi.advanceTimersByTimeAsync(350);
+  const dialog =
+    document.querySelector<HTMLDialogElement>(".Experience--boot")!;
+  expect(dialog.open).toBe(true);
+  expect(dialog.parentElement).toBe(screen());
+  expect(dialog.querySelector("button")).toBeNull();
+  expect(document.activeElement).toBe(dialog);
+  expect(document.getElementById("root")!.inert).toBe(true);
+  expect(document.querySelector<HTMLElement>(".QuickCommands")!.inert).toBe(
+    true,
+  );
+  expect(button().closest("[inert]")).toBeNull();
+  expect(document.querySelector(".TerminalOutput .BootBanner")).toBeNull();
+  vi.spyOn(dialog, "scrollHeight", "get").mockReturnValue(950);
+  const background = document.querySelector<HTMLElement>(".TerminalOutput")!;
+  background.scrollTop = 123;
+  expect(document.querySelector<HTMLElement>(".BootBanner")?.hidden).toBe(
+    false,
+  );
+  expect(document.querySelector(".BootLine")).toBeNull();
+  expect(indicators().dataset.disk).toBe("busy");
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(dialog.scrollTop).toBe(950);
+  expect(background.scrollTop).toBe(123);
+  expect(document.querySelector(".BootLine:not([hidden])")).not.toBeNull();
+  expect(document.querySelector(".HomeOutput")).toBeNull();
+  const escape = new KeyboardEvent("keydown", {
+    key: "Escape",
+    bubbles: true,
+    cancelable: true,
+  });
+  dialog.dispatchEvent(escape);
+  expect(escape.defaultPrevented).toBe(true);
+  await vi.runAllTimersAsync();
+  await startup;
+  const services = store.commands
+    .getLines("boot")
+    .filter(line => line.value.includes('class="BootLine"'));
+  expect(dialog.querySelectorAll(".BootLine:not([hidden])")).toHaveLength(
+    services.length,
+  );
+  expect(dialog.isConnected).toBe(false);
+  expect(document.getElementById("root")!.inert).toBe(false);
+  expect(document.querySelector<HTMLElement>(".QuickCommands")!.inert).toBe(
+    false,
+  );
+  expect(document.querySelector(".HomeOutput")).not.toBeNull();
+  expect(store.system.isInputAllowed).toBe(true);
+});
+
+test("manually entering boot still prints the command and records it in history", async () => {
+  vi.useFakeTimers();
+  store.system.animations = true;
+  const task = store.system.addCommand("boot", { animateCommand: false });
+  expect(document.querySelector(".CommandLine")?.textContent).toMatch(/boot$/);
+  expect(store.history.lastCommand).toBe("boot");
+  await vi.advanceTimersByTimeAsync(0);
+  expect(
+    document.querySelector<HTMLDialogElement>(".Experience--boot")?.open,
+  ).toBe(true);
+  await store.system.break();
+  await task;
+});
+
+test("Ctrl+C cancels startup without opening the queued home page", async () => {
+  vi.useFakeTimers();
+  store.system.animations = true;
+  const startup = store.system.start(["boot", "whoami"]);
+  await vi.advanceTimersByTimeAsync(350);
+  const dialog = document.querySelector(".Experience--boot")!;
+  const interrupt = new KeyboardEvent("keydown", {
+    key: "c",
+    ctrlKey: true,
+    bubbles: true,
+    cancelable: true,
+  });
+  dialog.dispatchEvent(interrupt);
+  expect(interrupt.defaultPrevented).toBe(true);
+  await startup;
+  await vi.runAllTimersAsync();
+  expect(document.querySelector(".HomeOutput")).toBeNull();
+  expect(document.querySelector(".Experience--boot")).toBeNull();
+  expect(document.getElementById("root")!.inert).toBe(false);
+  expect(store.system.isInputAllowed).toBe(true);
+  expect(indicators().dataset.disk).toBe("idle");
+});
+
+test("power-off during boot prevents the queued portfolio from reviving the computer", async () => {
+  vi.useFakeTimers();
+  store.system.animations = true;
+  const startup = store.system.start(["boot", "whoami"]);
+  await vi.advanceTimersByTimeAsync(700);
+  button().click();
+  await startup;
+  await vi.runAllTimersAsync();
+  expectPoweredOff();
+  expect(document.querySelector(".HomeOutput")).toBeNull();
+});
+
+test("navigation during boot opens the new route instead of the queued home page", async () => {
+  vi.useFakeTimers();
+  store.system.animations = true;
+  const startup = store.system.start(["boot", "whoami"]);
+  await vi.advanceTimersByTimeAsync(350);
+  window.location.hash = "#contact";
+  await vi.runAllTimersAsync();
+  await startup;
+  expect(document.querySelector(".HomeOutput")).toBeNull();
+  expect(document.querySelector(".TextOutput h2")?.textContent).toBe(
+    "Find me on GitHub.",
+  );
+  expect(store.history.lastCommand).toBe("contact");
+  expect(store.system.isInputAllowed).toBe(true);
 });

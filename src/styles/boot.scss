@@ -1,0 +1,26 @@
+.BootOutput {
+  margin: 0;
+  padding: clamp(24px, 4cqi, 48px);
+  list-style: none;
+}
+
+.BootBanner {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--accent);
+  font: 700 16px/1.6 var(--mono);
+}
+.BootMessage,
+.BootLine {
+  font: 13px/1.8 var(--mono);
+  color: var(--muted);
+}
+.BootLine {
+  display: grid;
+  grid-template-columns: 8ch minmax(0, 1fr);
+  gap: 1ch;
+}
+.BootStatus {
+  color: var(--accent);
+  white-space: pre;
+}

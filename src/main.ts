@@ -1,6 +1,7 @@
 import "./terminal";
 import { store } from "./store/store";
 import { commandFromHash } from "./utils/routes";
+import { startupCommands } from "./utils/boot";
 
 let routeRequest = 0;
 async function runRoute() {
@@ -82,11 +83,9 @@ document.addEventListener("click", event => {
 });
 
 document.getElementById("fallback")?.remove();
-void store.system
-  .start([commandFromHash(location.hash) ?? "whoami"])
-  .then(() => {
-    if (commandFromHash(location.hash))
-      document
-        .getElementById("terminal")
-        ?.scrollIntoView({ block: "start", behavior: "instant" });
-  });
+void store.system.start(startupCommands(location.hash)).then(() => {
+  if (commandFromHash(location.hash))
+    document
+      .getElementById("terminal")
+      ?.scrollIntoView({ block: "start", behavior: "instant" });
+});

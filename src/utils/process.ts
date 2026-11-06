@@ -77,6 +77,9 @@ function system(sysCommand: string, args: string[]): SystemOutput[] {
     case "matrix":
       window.terminal.enterMatrix();
       return [];
+    case "boot":
+      window.terminal.enterBoot();
+      return [];
     case "freeze":
       store.system.setFreeze();
       return [];

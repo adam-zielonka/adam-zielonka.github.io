@@ -27,6 +27,7 @@ Click a project or navigation shortcut, or enter a command:
 | `clear` | Clear output |
 | `neo` / `matrix` | Matrix sequence filling the CRT screen |
 | `exit` / `shutdown` | Classic Windows 95 shutdown screen |
+| `boot` | Linux-style startup with fictional portfolio services |
 
 Use Enter to execute, ↑/↓ for history, and Tab to complete commands, project names and paths. Directory suggestions for `cd` end with `/`, so you can keep typing a nested path without an extra space. Shift+Tab leaves the input; Tab also leaves it when the prompt is empty. Ctrl+C interrupts a running command without interfering with copying selected text.
 
@@ -76,6 +77,17 @@ The round, worn power button has separate green power and amber disk LEDs.
 The decorative disk indicator flickers more often during commands and occasionally
 while idle, and stops at shutdown or power-off. With animations disabled or reduced
 motion enabled, it stays steady during commands and dark while idle.
+
+Turning the computer back on with the case button runs `boot` before opening
+the portfolio (or the linked page). Power-on opens the boot screen immediately,
+without typing `boot` at a shell prompt. The boot log fills the CRT screen, covering
+the terminal controls until startup finishes. It starts fictional services for the project
+catalog, ASCII art, paintAZ, Tetris, Game of Life and more, with paced `[ OK ]`
+messages and disk activity. Ordinary visits and refreshes skip this sequence;
+the power-on marker is consumed once without changing the URL. You can also type
+`boot` to replay it. Escape skips the remaining animation, and reduced motion
+prints the log without delays; Ctrl+C
+stops startup, and the power button can switch off during it.
 
 Project links use fragments such as [`/#project/server-status`](https://adam-zielonka.github.io/#project/server-status), so direct links and browser Back/Forward work on GitHub Pages.
 

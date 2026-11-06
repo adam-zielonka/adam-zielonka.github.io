@@ -157,14 +157,19 @@ export class Terminal {
     this.openExperience("matrix");
   }
 
+  enterBoot() {
+    this.openExperience("boot");
+  }
+
   private openExperience(kind: ExperienceKind) {
     this.closeExperience();
     this.experienceKind = kind;
     this.experience = Experience(kind, () => {
       if (kind === "matrix") void window.store.system.break();
+      if (kind === "boot") window.store.system.skipAnimation();
     });
     useBreakDetection(this.experience.dialog, () => {
-      if (kind === "matrix") void window.store.system.break();
+      if (kind !== "shutdown") void window.store.system.break();
     });
     const screen = this.root.closest<HTMLElement>(".CRTScreen")!;
     this.experienceBackground = Array.from(screen.children)
@@ -180,7 +185,8 @@ export class Terminal {
   }
 
   finishExperience() {
-    if (this.experienceKind === "matrix") this.closeExperience();
+    if (this.experienceKind === "matrix" || this.experienceKind === "boot")
+      this.closeExperience();
   }
 
   private closeExperience() {
