@@ -29,7 +29,8 @@ body {
   --muted: #9fc38a;
   --faint: #86a676;
   --border: #91b08366;
-  --mono: "Courier New", Courier, "Liberation Mono", monospace;
+  --mono:
+    "Courier New", Courier, "Liberation Mono", "DejaVu Sans Mono", monospace;
   --sans: var(--mono);
   position: relative;
   container-type: inline-size;

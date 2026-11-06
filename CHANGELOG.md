@@ -111,3 +111,34 @@ existing home introduction sits beside the selected projects, so all three are
 visible immediately on a large screen. Long descriptions retain their readable
 width. The layout also applies to the static fallback, while phones and short
 windows keep their previous layout.
+
+### 6 November 2026 - A CRT on the desk
+
+The terminal now lives inside a CRT monitor, with textured beige plastic, curved
+glass, scanlines and a green, single-column interior. A worn, round power button
+sits beside separate power and disk LEDs. The disk light flickers during commands
+and occasionally while idle; reduced motion keeps it steady during commands.
+
+![The CRT portfolio on desktop](./img/2026-11-06-crt.png)
+
+Each visit to `whoami` draws a random selection from the complete project catalog.
+The number of projects fits the available screen height and adjusts on resize
+without reshuffling. Small screens keep at least one project, with the rest of its
+content available by scrolling. The `projects` command still shows everything,
+and running commands scroll their output to the latest text.
+
+![The CRT portfolio on a mobile screen](./img/2026-11-06-mobile.png)
+
+Matrix and the Windows 95-style shutdown message now fill the CRT screen while
+its case remains visible. Matrix has no overlay button; Escape or Ctrl+C returns
+to the terminal. The case power button can stop a command, turn the monitor off
+and start a fresh session, replacing the old restart control on the shutdown
+screen.
+
+Powering back on with the case button opens a Linux-style boot sequence immediately,
+without first typing a command into the shell. Fictional portfolio services start
+one by one across the whole CRT screen before the portfolio or a linked page
+appears. Ordinary visits and refreshes skip this automatic sequence; `boot` can
+also replay it from the terminal.
+
+![The CRT boot sequence](./img/2026-11-06-boot.png)

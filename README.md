@@ -4,7 +4,7 @@ Adam Zielonka's interactive portfolio, published at [adam-zielonka.github.io](ht
 
 A terminal-inspired interface with selected projects, project descriptions, a browsable catalog and clickable commands. Built with TypeScript, native DOM APIs and SCSS. Project descriptions and links also work without JavaScript. The public interface and project descriptions are written in English.
 
-![Portfolio introduction and selected projects inside the terminal](img/2026-10-27.png)
+![Portfolio introduction and selected projects inside the CRT monitor](img/2026-11-06-crt.png)
 
 ## Explore
 
