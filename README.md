@@ -91,11 +91,12 @@ stops startup, and the power button can switch off during it.
 
 Project links use fragments such as [`/#project/server-status`](https://adam-zielonka.github.io/#project/server-status), so direct links and browser Back/Forward work on GitHub Pages.
 
-On desktop windows at least 1280 px wide and 700 px tall, the terminal grows to
-1600 px wide and fits the viewport height, with scrollable output and the prompt
-always available. Inside the CRT, a single-column text layout, bracketed commands
-and monochrome typography echo a classic terminal. Longer descriptions keep their
-readable column width; phones and short windows retain their compact layout.
+At every screen size, the monitor fits the viewport height, with scrollable
+output and the prompt always available. On desktop windows at least 1280 px wide
+and 700 px tall, the terminal grows to 1600 px wide. Inside the CRT, a single-column
+text layout, bracketed commands and monochrome typography echo a classic terminal.
+Longer descriptions keep their readable column width; phones and short windows
+retain their compact layout.
 The same home layout is available without JavaScript.
 
 ## Development

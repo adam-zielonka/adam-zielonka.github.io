@@ -1,3 +1,31 @@
+.TerminalWindow {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--shell-top) - var(--shell-bottom));
+  // Keep the command prompt inside the visible viewport, including mobile controls.
+  height: calc(100svh - var(--shell-top) - var(--shell-bottom));
+}
+.TerminalBar,
+.QuickCommands,
+.InputHost,
+.TerminalHints {
+  flex-shrink: 0;
+}
+.CRTScreen,
+.Terminal,
+#fallback {
+  flex: 1;
+  min-height: 0;
+}
+.CRTScreen,
+.Terminal {
+  display: flex;
+  flex-direction: column;
+}
+#fallback {
+  overflow: auto;
+}
+
 .TerminalBar {
   min-height: 40px;
   display: flex;
@@ -86,8 +114,8 @@
 }
 .TerminalOutput {
   position: relative;
-  max-height: 600px;
-  min-height: 300px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior-y: contain;
   scrollbar-width: thin;
@@ -393,43 +421,6 @@ kbd {
 }
 .FallbackContent noscript .ProjectRow a {
   pointer-events: auto;
-}
-
-@media (max-width: 600px),
-  (max-height: 600px),
-  (min-width: 1280px) and (min-height: 700px) {
-  .TerminalWindow {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - var(--shell-top) - var(--shell-bottom));
-    // Keep the command prompt inside the visible viewport, including mobile controls.
-    height: calc(100svh - var(--shell-top) - var(--shell-bottom));
-  }
-  .TerminalBar,
-  .QuickCommands,
-  .InputHost,
-  .TerminalHints {
-    flex-shrink: 0;
-  }
-  .CRTScreen,
-  .Terminal,
-  #fallback {
-    flex: 1;
-    min-height: 0;
-  }
-  .CRTScreen,
-  .Terminal {
-    display: flex;
-    flex-direction: column;
-  }
-  .TerminalOutput {
-    flex: 1;
-    min-height: 0;
-    max-height: none;
-  }
-  #fallback {
-    overflow: auto;
-  }
 }
 
 @media (max-width: 600px) {

@@ -97,10 +97,12 @@ a:hover {
   display: none !important;
 }
 .SiteShell {
+  --shell-top: 48px;
+  --shell-bottom: 32px;
   width: min(1120px, calc(100% - 96px));
   margin-inline: auto;
-  padding-top: 48px;
-  padding-bottom: 32px;
+  padding-top: var(--shell-top);
+  padding-bottom: var(--shell-bottom);
 }
 .VisuallyHidden {
   position: absolute;
@@ -128,8 +130,6 @@ a:hover {
 
 @media (min-width: 1280px) and (min-height: 700px) {
   .SiteShell {
-    --shell-top: 48px;
-    --shell-bottom: 32px;
     width: min(1600px, calc(100% - 96px));
   }
 }
