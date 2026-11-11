@@ -421,7 +421,7 @@ test.each(["typed command", "shortcut", "alias", "direct link"])(
       ".Experience--windows-startup",
     )!;
     expect(splash.open).toBe(true);
-    expect(splash.textContent).toContain("Starting Windows 98");
+    expect(splash.textContent).toContain("Starting Portfolio 98");
     expect(splash.parentElement?.className).toBe("CRTScreen");
     expect(document.querySelector(".Win98")).toBeNull();
     expect(document.getElementById("root")!.inert).toBe(true);

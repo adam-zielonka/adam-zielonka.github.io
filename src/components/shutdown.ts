@@ -15,7 +15,7 @@ export function ShutdownAnimation() {
   div.innerHTML = `
     <section class="ShutdownDesktop">
       <div class="ShutdownPanel">
-        <header>Shut Down Windows</header>
+        <header>Shut Down Portfolio 98</header>
         <div>${windowsIcon("shutdown")}<p>Please wait while your computer<br>shuts down.</p></div>
       </div>
     </section>

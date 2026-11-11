@@ -164,7 +164,7 @@ export class Terminal {
   enterWindowsStartup() {
     if (!window.store.system.shouldAnimate) return;
     this.openExperience("windows-startup");
-    this.announce("Starting Windows 98…");
+    this.announce("Starting Portfolio 98…");
   }
 
   enterWindows() {
@@ -208,7 +208,7 @@ export class Terminal {
   enterShutdownAnimation() {
     if (!window.store.system.shouldAnimate) return;
     this.openExperience("shutdown-animation");
-    this.announce("Windows is shutting down…");
+    this.announce("Portfolio 98 is shutting down…");
   }
 
   showShutdownSplash() {

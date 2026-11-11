@@ -30,11 +30,11 @@ export function Experience(kind: ExperienceKind, onDismiss: () => void) {
   lines.className = kind === "boot" ? "BootOutput" : "MatrixOutput";
   if (kind === "windows-startup") {
     dialog.removeAttribute("aria-labelledby");
-    dialog.setAttribute("aria-label", "Windows 98 startup");
+    dialog.setAttribute("aria-label", "Portfolio 98 startup");
     dialog.innerHTML = `${windowsSplash("startup")}<span class="WindowsSkip">Esc · skip animation</span>`;
   } else if (kind === "shutdown-animation") {
     dialog.removeAttribute("aria-labelledby");
-    dialog.setAttribute("aria-label", "Windows shutdown");
+    dialog.setAttribute("aria-label", "Portfolio 98 shutdown");
     dialog.dataset.phase = "desktop";
     dialog.append(ShutdownAnimation());
   } else if (kind === "shutdown") {
