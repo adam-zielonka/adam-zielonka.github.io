@@ -1,10 +1,11 @@
 ---
 command: shutdown
 alias: [exit]
-help: the classic Windows 95 shutdown screen
+help: shut down with a classic Windows 98 sequence
 ---
 
-[](sleep:50)
-Wait ...
-[](sleep:1000)
+[](system:shutdown-start)
+[](sleep:650)
+[](system:shutdown-splash)
+[](sleep:2300)
 [](system:shutdown)

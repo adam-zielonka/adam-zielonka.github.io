@@ -343,3 +343,188 @@ test("navigation during boot opens the new route instead of the queued home page
   expect(store.history.lastCommand).toBe("contact");
   expect(store.system.isInputAllowed).toBe(true);
 });
+
+test("Windows shutdown dims the actual desktop, shows the splash and ends on the safe screen", async () => {
+  vi.useFakeTimers();
+  await store.system.addCommand("windows", {
+    route: false,
+    animateCommand: false,
+  });
+  const desktop = document.querySelector<HTMLElement>(".Win98")!;
+  const output = document.querySelector(".TerminalOutput")!;
+  const previousOutput = output.innerHTML;
+  store.system.animations = true;
+  const task = store.system.addCommand("shutdown", {
+    route: false,
+    animateCommand: false,
+  });
+  const transition = document.querySelector<HTMLDialogElement>(
+    ".Experience--shutdown-animation",
+  )!;
+  expect(transition.open).toBe(true);
+  expect(transition.dataset.phase).toBe("desktop");
+  expect(desktop.isConnected).toBe(true);
+  expect(desktop.inert).toBe(true);
+  expect(output.innerHTML).toBe(previousOutput);
+  expect(document.activeElement).toBe(transition);
+  expect(indicators().dataset.disk).toBe("busy");
+  await vi.advanceTimersByTimeAsync(650);
+  expect(transition.dataset.phase).toBe("splash");
+  expect(document.querySelector(".Experience--shutdown")).toBeNull();
+  await vi.advanceTimersByTimeAsync(2300);
+  await task;
+  expect(transition.isConnected).toBe(false);
+  expect(desktop.isConnected).toBe(false);
+  expect(store.system.shutdown).toBe(true);
+  expect(document.querySelector(".Shutdown")!.textContent).toContain(
+    "It's now safe",
+  );
+  expect(indicators().dataset.disk).toBe("off");
+});
+
+test.each([200, 1000])(
+  "power-off at %sms during Windows shutdown cannot revive the screen",
+  async elapsed => {
+    vi.useFakeTimers();
+    await store.system.addCommand("windows", {
+      route: false,
+      animateCommand: false,
+    });
+    store.system.animations = true;
+    const task = store.system.addCommand("shutdown", {
+      route: false,
+      animateCommand: false,
+    });
+    await vi.advanceTimersByTimeAsync(elapsed);
+    button().click();
+    await task;
+    await vi.runAllTimersAsync();
+    expectPoweredOff();
+    expect(document.querySelector(".Win98")).toBeNull();
+    // Both overlay snapshots must unwind in reverse order.
+    expect(document.getElementById("root")!.inert).toBe(false);
+  },
+);
+
+test.each(["Escape", "Ctrl+C"])(
+  "%s skips shutdown animation without returning to the desktop",
+  async key => {
+    vi.useFakeTimers();
+    await store.system.addCommand("windows", {
+      route: false,
+      animateCommand: false,
+    });
+    store.system.animations = true;
+    const task = store.system.addCommand("shutdown", {
+      route: false,
+      animateCommand: false,
+    });
+    await vi.advanceTimersByTimeAsync(100);
+    const dialog = document.querySelector(".Experience--shutdown-animation")!;
+    dialog.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: key === "Ctrl+C" ? "c" : key,
+        ctrlKey: key === "Ctrl+C",
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+    await task;
+    expect(store.system.shutdown).toBe(true);
+    expect(document.querySelector(".Win98")).toBeNull();
+    expect(
+      document.querySelector(".Experience--shutdown-animation"),
+    ).toBeNull();
+    expect(document.querySelector(".Shutdown")).not.toBeNull();
+  },
+);
+
+test("disabled animations bypass both shutdown stages and leave no timers", async () => {
+  vi.useFakeTimers();
+  await store.system.addCommand("windows", {
+    route: false,
+    animateCommand: false,
+  });
+  await store.system.addCommand("shutdown", {
+    route: false,
+    animateCommand: false,
+  });
+  expect(store.system.shutdown).toBe(true);
+  expect(document.querySelector(".Experience--shutdown-animation")).toBeNull();
+  expect(document.querySelector(".Win98")).toBeNull();
+  expect(vi.getTimerCount()).toBe(0);
+});
+
+test("navigation during shutdown cancels its remaining stages and restores terminal controls", async () => {
+  vi.useFakeTimers();
+  await store.system.addCommand("windows", {
+    route: false,
+    animateCommand: false,
+  });
+  store.system.animations = true;
+  const task = store.system.addCommand("shutdown", {
+    route: false,
+    animateCommand: false,
+  });
+  await vi.advanceTimersByTimeAsync(800);
+  window.location.hash = "#project/paintaz";
+  // Deliver navigation now: Happy DOM's native hash timer is not advanced
+  // alongside the command's fake timers and otherwise arrives after shutdown.
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+  await vi.runAllTimersAsync();
+  await task;
+  expect(store.system.isInputAllowed).toBe(true);
+  expect(document.querySelector(".Experience")).toBeNull();
+  expect(document.querySelector(".Win98")).toBeNull();
+  expect(document.getElementById("root")!.inert).toBe(false);
+  expect(document.querySelector(".ProjectDetail h2")!.textContent).toBe(
+    "paintAZ",
+  );
+});
+
+test.each([false, true])(
+  "power-on in Windows opens its splash immediately (shutdown first: %s)",
+  async shutdownFirst => {
+    vi.useFakeTimers();
+    const reload = vi
+      .spyOn(window.location, "reload")
+      .mockImplementation(() => {});
+    const linuxBoot = vi.spyOn(window.terminal, "enterBoot");
+    await store.system.addCommand("windows", {
+      route: false,
+      animateCommand: false,
+    });
+    if (shutdownFirst)
+      await store.system.addCommand("shutdown", {
+        route: false,
+        animateCommand: false,
+      });
+    button().click();
+    expectPoweredOff();
+    button().click();
+    expect(reload).toHaveBeenCalledOnce();
+    const commands = startupCommands("#windows");
+    expect(commands).toEqual(["windows"]);
+    // Emulate the reloaded shell while retaining the real startup dispatcher.
+    screen().inert = false;
+    screen().removeAttribute("aria-hidden");
+    delete screen().dataset.power;
+    button().setAttribute("aria-pressed", "true");
+    store.system.state = "";
+    window.terminal.clear();
+    store.system.animations = true;
+    const startup = store.system.start(commands);
+    expect(
+      document.querySelector<HTMLDialogElement>(".Experience--windows-startup")
+        ?.open,
+    ).toBe(true);
+    expect(document.querySelector(".CommandLine")).toBeNull();
+    expect(document.querySelector(".Experience--boot")).toBeNull();
+    await vi.advanceTimersByTimeAsync(2400);
+    await startup;
+    expect(linuxBoot).not.toHaveBeenCalled();
+    expect(document.querySelector(".Win98")).not.toBeNull();
+    expect(document.querySelector(".Experience--windows-startup")).toBeNull();
+    expect(store.system.isInputAllowed).toBe(true);
+  },
+);

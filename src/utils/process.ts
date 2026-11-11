@@ -71,8 +71,20 @@ function system(sysCommand: string, args: string[]): SystemOutput[] {
     case "clear":
       store.output.clear();
       return [];
+    case "shutdown-start":
+      window.terminal.enterShutdownAnimation();
+      return [];
+    case "shutdown-splash":
+      window.terminal.showShutdownSplash();
+      return [];
     case "shutdown":
       store.system.setShutdown();
+      return [];
+    case "windows-startup":
+      window.terminal.enterWindowsStartup();
+      return [];
+    case "windows":
+      window.terminal.enterWindows();
       return [];
     case "matrix":
       window.terminal.enterMatrix();

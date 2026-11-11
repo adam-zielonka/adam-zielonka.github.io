@@ -153,14 +153,17 @@ a:hover {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  // Respect the OS default, but let the visitor explicitly enable animations.
+  // System.animations already gives the saved toolbar choice this precedence.
+  html:not([data-animations="true"]) *,
+  html:not([data-animations="true"]) *::before,
+  html:not([data-animations="true"]) *::after {
     animation: none !important;
     scroll-behavior: auto !important;
   }
 }
 html[data-animations="false"] *,
+html[data-animations="false"] *::before,
 html[data-animations="false"] *::after {
   animation: none !important;
 }

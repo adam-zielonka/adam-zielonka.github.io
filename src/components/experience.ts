@@ -1,6 +1,12 @@
-import { Shutdown } from "./shutdown";
+import { windowsSplash } from "./windows-splash";
+import { Shutdown, ShutdownAnimation } from "./shutdown";
 
-export type ExperienceKind = "matrix" | "shutdown" | "boot";
+export type ExperienceKind =
+  | "matrix"
+  | "shutdown"
+  | "boot"
+  | "shutdown-animation"
+  | "windows-startup";
 
 export function Experience(kind: ExperienceKind, onDismiss: () => void) {
   const dialog = document.createElement("dialog");
@@ -22,7 +28,16 @@ export function Experience(kind: ExperienceKind, onDismiss: () => void) {
 
   const lines = document.createElement("ul");
   lines.className = kind === "boot" ? "BootOutput" : "MatrixOutput";
-  if (kind === "shutdown") {
+  if (kind === "windows-startup") {
+    dialog.removeAttribute("aria-labelledby");
+    dialog.setAttribute("aria-label", "Windows 98 startup");
+    dialog.innerHTML = `${windowsSplash("startup")}<span class="WindowsSkip">Esc · skip animation</span>`;
+  } else if (kind === "shutdown-animation") {
+    dialog.removeAttribute("aria-labelledby");
+    dialog.setAttribute("aria-label", "Windows shutdown");
+    dialog.dataset.phase = "desktop";
+    dialog.append(ShutdownAnimation());
+  } else if (kind === "shutdown") {
     dialog.append(Shutdown());
   } else {
     const title = document.createElement("h2");

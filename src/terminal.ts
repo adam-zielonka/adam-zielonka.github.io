@@ -1,3 +1,4 @@
+import { WindowsDesktop } from "./components/windows-desktop";
 import { Input } from "./components/input";
 import { Line } from "./components/line";
 import { Experience, ExperienceKind } from "./components/experience";
@@ -15,6 +16,12 @@ export class Terminal {
   private experienceKind?: ExperienceKind;
   private experienceBackground: { element: HTMLElement; inert: boolean }[] = [];
   private staticMatrix = false;
+  private desktop?: ReturnType<typeof WindowsDesktop>;
+  private desktopBackground: { element: HTMLElement; inert: boolean }[] = [];
+
+  get isWindows() {
+    return !!this.desktop;
+  }
 
   get isStaticMatrix() {
     return this.experienceKind === "matrix" && this.staticMatrix;
@@ -131,11 +138,14 @@ export class Terminal {
   }
 
   shutdown() {
+    this.closeExperience();
+    this.closeWindows();
     this.openExperience("shutdown");
   }
 
   powerOff() {
     this.closeExperience();
+    this.closeWindows();
     this.setDiskActivity("off");
     const button = document.querySelector<HTMLButtonElement>(
       "[data-toggle-power]",
@@ -151,10 +161,59 @@ export class Terminal {
     screen.setAttribute("aria-hidden", "true");
   }
 
+  enterWindowsStartup() {
+    if (!window.store.system.shouldAnimate) return;
+    this.openExperience("windows-startup");
+    this.announce("Starting Windows 98…");
+  }
+
+  enterWindows() {
+    this.closeExperience();
+    this.closeWindows();
+    const screen = this.root.closest<HTMLElement>(".CRTScreen")!;
+    this.desktopBackground = Array.from(screen.children)
+      .filter(
+        (element): element is HTMLElement => element instanceof HTMLElement,
+      )
+      .map(element => ({ element, inert: element.inert }));
+    for (const { element } of this.desktopBackground) element.inert = true;
+    this.desktop = WindowsDesktop(
+      () => {
+        void window.store.system.addCommand("whoami", { focus: true });
+      },
+      () => {
+        void window.store.system.addCommand("shutdown", {
+          animateCommand: false,
+        });
+      },
+    );
+    screen.append(this.desktop.element);
+    this.desktop.start();
+  }
+
+  closeWindows() {
+    this.desktop?.dispose();
+    this.desktop = undefined;
+    for (const { element, inert } of this.desktopBackground)
+      element.inert = inert;
+    this.desktopBackground = [];
+  }
+
   enterMatrix() {
     const system = window.store.system;
     this.staticMatrix = !system.shouldAnimate && !system.isAnimationSkipped;
     this.openExperience("matrix");
+  }
+
+  enterShutdownAnimation() {
+    if (!window.store.system.shouldAnimate) return;
+    this.openExperience("shutdown-animation");
+    this.announce("Windows is shutting down…");
+  }
+
+  showShutdownSplash() {
+    if (this.experienceKind === "shutdown-animation")
+      this.experience!.dialog.dataset.phase = "splash";
   }
 
   enterBoot() {
@@ -166,10 +225,16 @@ export class Terminal {
     this.experienceKind = kind;
     this.experience = Experience(kind, () => {
       if (kind === "matrix") void window.store.system.break();
-      if (kind === "boot") window.store.system.skipAnimation();
+      if (
+        kind === "boot" ||
+        kind === "shutdown-animation" ||
+        kind === "windows-startup"
+      )
+        window.store.system.skipAnimation();
     });
     useBreakDetection(this.experience.dialog, () => {
-      if (kind !== "shutdown") void window.store.system.break();
+      if (kind === "shutdown-animation") window.store.system.skipAnimation();
+      else if (kind !== "shutdown") void window.store.system.break();
     });
     const screen = this.root.closest<HTMLElement>(".CRTScreen")!;
     this.experienceBackground = Array.from(screen.children)
@@ -185,7 +250,12 @@ export class Terminal {
   }
 
   finishExperience() {
-    if (this.experienceKind === "matrix" || this.experienceKind === "boot")
+    if (
+      this.experienceKind === "matrix" ||
+      this.experienceKind === "boot" ||
+      this.experienceKind === "shutdown-animation" ||
+      this.experienceKind === "windows-startup"
+    )
       this.closeExperience();
   }
 
@@ -227,7 +297,7 @@ export class Terminal {
     }
     this.fitHomeOutputs();
     this.scrollToEnd();
-    if (focus) this.input.focus();
+    if (focus && !this.desktop) this.input.focus();
   }
 }
 

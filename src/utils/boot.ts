@@ -23,5 +23,8 @@ export function startupCommands(hash: string): string[] {
     );
   }
   const destination = commandFromHash(hash) ?? "whoami";
-  return poweredOn ? ["boot", destination] : [destination];
+  // Windows has its own startup screen; do not boot Linux before it.
+  return poweredOn && destination !== "windows"
+    ? ["boot", destination]
+    : [destination];
 }

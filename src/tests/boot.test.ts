@@ -30,3 +30,15 @@ test("each new power cycle requests one new boot", () => {
     expect(startupCommands("")).toEqual(["whoami"]);
   }
 });
+
+test("power-on in Windows starts its own splash without a Linux boot", () => {
+  window.history.replaceState({ scrollPosition: 123 }, "", "#windows");
+  const url = window.location.href;
+  requestPowerOnBoot();
+  expect(startupCommands("#windows")).toEqual(["windows"]);
+  expect(window.history.state).toEqual({ scrollPosition: 123 });
+  expect(window.location.href).toBe(url);
+  expect(startupCommands("#windows")).toEqual(["windows"]);
+  requestPowerOnBoot();
+  expect(startupCommands("#home")).toEqual(["boot", "whoami"]);
+});

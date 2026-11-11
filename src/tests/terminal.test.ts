@@ -626,13 +626,16 @@ describe("interactive terminal", () => {
     vi.useFakeTimers();
     store.system.animations = true;
     const task = store.system.addCommand("exit", { animateCommand: false });
-    await vi.advanceTimersByTimeAsync(130);
-    expect(output().textContent).toContain("Wait ...");
-    expect(document.querySelector("dialog")).toBeNull();
-    await vi.advanceTimersByTimeAsync(999);
-    expect(document.querySelector("dialog")).toBeNull();
+    await vi.advanceTimersByTimeAsync(0);
+    const transition = document.querySelector<HTMLElement>(
+      ".Experience--shutdown-animation",
+    )!;
+    expect(transition.dataset.phase).toBe("desktop");
+    expect(document.querySelector(".Experience--shutdown")).toBeNull();
+    await vi.advanceTimersByTimeAsync(650);
+    expect(transition.dataset.phase).toBe("splash");
     expect(store.system.isProcessing).toBe(true);
-    await vi.advanceTimersByTimeAsync(1);
+    await vi.advanceTimersByTimeAsync(2300);
     await task;
     const dialog = document.querySelector<HTMLDialogElement>(
       "dialog.Experience--shutdown",

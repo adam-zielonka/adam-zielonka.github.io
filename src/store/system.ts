@@ -2,6 +2,7 @@ import { store } from "./store";
 import { process } from "../utils/process";
 import { sleep } from "../utils/sleep";
 import { hashFromCommand } from "../utils/routes";
+import { parseArgs } from "../utils/args";
 import { requestPowerOnBoot } from "../utils/boot";
 
 type SystemState =
@@ -146,11 +147,16 @@ export class System {
     } = {},
   ) {
     if (!this.isInputAllowed || !command.trim()) return false;
+    const desktopShutdown =
+      window.terminal.isWindows &&
+      ["shutdown", "exit"].includes(parseArgs(command)[0]);
+    if (!desktopShutdown) window.terminal.closeWindows();
     this.focusAfterCommand = options.focus ?? false;
     this.controller = new AbortController();
     this.animationController = new AbortController();
     this.skipped = false;
-    const automaticBoot = options.startup === true && command === "boot";
+    const automaticBoot =
+      options.startup === true && ["boot", "windows"].includes(command);
     if (!automaticBoot) {
       store.history.set(command);
       store.history.add();
@@ -166,7 +172,7 @@ export class System {
     let completed = false;
     try {
       // A power-on starts the boot screen immediately, without a shell prompt.
-      if (!automaticBoot)
+      if (!automaticBoot && !desktopShutdown)
         await store.output.processCommandLine(
           command,
           options.animateCommand ?? true,

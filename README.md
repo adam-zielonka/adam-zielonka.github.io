@@ -25,8 +25,9 @@ Click a project or navigation shortcut, or enter a command:
 | `pwd` | Current path |
 | `help` | All available commands |
 | `clear` | Clear output |
+| `windows` / `win` | Interactive Windows 98-style portfolio desktop |
 | `neo` / `matrix` | Matrix sequence filling the CRT screen |
-| `exit` / `shutdown` | Classic Windows 95 shutdown screen |
+| `exit` / `shutdown` | Animated Windows 98-style shutdown |
 | `boot` | Linux-style startup with fictional portfolio services |
 
 Use Enter to execute, ↑/↓ for history, and Tab to complete commands, project names and paths. Directory suggestions for `cd` end with `/`, so you can keep typing a nested path without an extra space. Shift+Tab leaves the input; Tab also leaves it when the prompt is empty. Ctrl+C interrupts a running command without interfering with copying selected text.
@@ -44,7 +45,7 @@ Every project directory has its own `README.md`. `cat` accepts relative paths,
 `cat about.md contact.md`. Tab completes file paths, and clicking a filename in
 `ls` reads it. File contents are displayed using the portfolio's existing layout.
 
-Animation preferences can be changed in the terminal toolbar. Reduced-motion preferences are respected by default, and an ongoing animation can be skipped.
+Animation preferences can be changed in the terminal toolbar. Reduced-motion preferences are respected by default; explicitly choosing “Animations: on” overrides that default for both CSS motion and timed sequences. An ongoing animation can be skipped.
 
 Commands started by a click or a shared link are typed into the terminal before
 their results appear. Manually entered commands are printed immediately.
@@ -59,6 +60,27 @@ and the hidden `panic` command (power-cycle the monitor to recover from its simu
 `font` changes the terminal text, prompt and completion font; using it without an
 argument restores the default. Project typography and ASCII art keep their fonts.
 
+`windows` (alias `win`, or the shareable `#windows` URL) opens a Windows 98-style
+portfolio inside the same CRT. Commands, the navigation shortcut and direct links
+all show a Windows 98-style startup splash before the desktop. Escape skips it;
+Ctrl+C cancels startup. Disabled animations open the desktop immediately.
+Desktop icons fill each column from top to bottom, then continue in the next
+column; they scroll only when the available desktop space is exhausted.
+The desktop includes original pixel SVG icons,
+a Start menu, taskbar with a live clock, and an Explorer containing all projects
+from the existing Markdown catalog. Browse Games, Applications, Tools, or
+Experiments & Learning; switch between icons and a list; open descriptions,
+demos and repositories. External links open in a new tab.
+
+Click, tap, or keyboard-activate an icon to open it. Drag title bars to move
+windows, double-click a title bar to maximize, and use the window buttons or
+taskbar to minimize, restore and close them. On small screens windows fit the
+available display. Start → Restart in MS-DOS mode (or the MS-DOS Prompt desktop
+shortcut) returns to the terminal. Start → Shut Down… runs the same shutdown
+sequence and safe-to-turn-off screen as the terminal command. The physical power
+button also works here.
+This is a portfolio simulation, not an operating system emulator.
+
 `neo` and `matrix` fill the CRT screen while its case and glass effects remain
 visible, without clearing the portfolio behind them. The covered terminal controls
 are inactive until the scene closes. Escape or Ctrl+C returns to the terminal;
@@ -66,10 +88,13 @@ the animated sequence also returns automatically
 when it finishes.
 With animations disabled, all messages remain visible until dismissed.
 
-`exit` and `shutdown` show “Wait ...” in the terminal for a second, then display
-the orange “It's now safe to turn off your computer”
-message on black inside the same CRT screen, a nod to the Windows 95 shutdown
-screen for computers that needed to be powered off manually. Use the physical
+`exit`, `shutdown`, and Start → Shut Down… dim the current screen with a
+classic dither, show a Windows 98-style shutdown splash with a moving progress
+strip, then display the orange “It's now safe to turn off your computer”
+message on black inside the same CRT screen. The desktop stays visible under
+the first stage, without flashing back to the terminal. Escape or Ctrl+C skips
+the animation; disabled animations go straight to the final message.
+Use the physical
 power button on the CRT case to turn the screen off, then press it again to
 start a fresh terminal session. The same button can stop a running command or
 Matrix. The power LED goes dark when off; Escape does not restart shutdown.
@@ -78,8 +103,9 @@ The decorative disk indicator flickers more often during commands and occasional
 while idle, and stops at shutdown or power-off. With animations disabled or reduced
 motion enabled, it stays steady during commands and dark while idle.
 
-Turning the computer back on with the case button runs `boot` before opening
-the portfolio (or the linked page). Power-on opens the boot screen immediately,
+Turning the computer back on with the case button in Windows mode (`#windows`)
+opens the Windows 98 startup screen directly, then restores the desktop. In
+terminal mode it runs `boot` before opening the portfolio (or the linked page). Power-on opens the boot screen immediately,
 without typing `boot` at a shell prompt. The boot log fills the CRT screen, covering
 the terminal controls until startup finishes. It starts fictional services for the project
 catalog, ASCII art, paintAZ, Tetris, Game of Life and more, with paced `[ OK ]`

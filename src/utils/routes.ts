@@ -3,6 +3,7 @@ import { parseArgs } from "./args";
 export function commandFromHash(hash: string): string | undefined {
   const pages: Record<string, string> = {
     "#home": "whoami",
+    "#windows": "windows",
     "#projects": "projects",
     "#about": "about",
     "#contact": "contact",
@@ -18,6 +19,7 @@ export function hashFromCommand(command: string): string | undefined {
     return `#project/${args[0]}`;
   if (args.length) return undefined;
   if (name === "whoami" || name === "home") return "#home";
+  if (name === "windows" || name === "win") return "#windows";
   if (["projects", "about", "contact"].includes(name)) return `#${name}`;
   return undefined;
 }
