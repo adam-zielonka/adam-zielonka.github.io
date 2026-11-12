@@ -96,12 +96,13 @@
   aspect-ratio: 8 / 5;
   container-type: inline-size;
 }
-.WindowsFlag {
+.PortfolioLogo {
   position: absolute;
   top: 9%;
   left: 25%;
   width: 50%;
   height: 60%;
+  object-fit: contain;
 }
 .WindowsBrand {
   position: absolute;

@@ -62,8 +62,8 @@ argument restores the default. Project typography and ASCII art keep their fonts
 
 `windows` (alias `win`, or the shareable `#windows` URL) opens a Windows 98-style
 portfolio inside the same CRT. Commands, the navigation shortcut and direct links
-all show a Windows 98-style startup splash before the desktop: a large waving
-flag above the Portfolio98 wordmark, clouds, and a thin animated strip at the
+all show a Windows 98-style startup splash before the desktop: an original
+terminal-and-project-folders emblem above the Portfolio98 wordmark, clouds, and a thin animated strip at the
 bottom, without extra status text. Escape skips it;
 Ctrl+C cancels startup. Disabled animations open the desktop immediately.
 Desktop icons fill each column from top to bottom, then continue in the next

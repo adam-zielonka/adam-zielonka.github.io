@@ -1,5 +1,6 @@
 import { projects, findProject } from "../data/projects";
 import { windowsIcon } from "../data/windows-icons";
+import logo from "../assets/portfolio98-logo.png";
 import { escape } from "../utils/escape";
 import type { Project } from "../types/project";
 
@@ -73,7 +74,7 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
       </div>
     </nav>
     <footer class="WinTaskbar">
-      <button type="button" class="WinButton WinStart" data-win-action="start" aria-expanded="false" aria-controls="win-start-menu">${windowsIcon("start")}<b>Start</b></button>
+      <button type="button" class="WinButton WinStart" data-win-action="start" aria-expanded="false" aria-controls="win-start-menu"><img class="Win98Icon" src="${logo}" alt="" draggable="false" width="32" height="24"><b>Start</b></button>
       <button type="button" class="WinShowDesktop" data-win-action="desktop" aria-label="Show desktop" title="Show desktop">${windowsIcon("computer")}</button>
       <div class="WinTasks" aria-label="Open windows"></div>
       <div class="WinTray">${windowsIcon("computer")}<time></time></div>
