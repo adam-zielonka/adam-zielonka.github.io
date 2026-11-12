@@ -370,6 +370,12 @@ test("Windows shutdown dims the actual desktop, shows the splash and ends on the
   expect(indicators().dataset.disk).toBe("busy");
   await vi.advanceTimersByTimeAsync(650);
   expect(transition.dataset.phase).toBe("splash");
+  expect(transition.getAttribute("aria-label")).toBe("Portfolio 98 shutdown");
+  expect(transition.querySelector(".WindowsShutdownMessage")?.textContent).toBe(
+    "Portfolio98 is shutting down.",
+  );
+  expect(transition.querySelector(".WindowsProgress")).toBeNull();
+  expect(transition.querySelector(".WindowsSkip")).toBeNull();
   expect(document.querySelector(".Experience--shutdown")).toBeNull();
   await vi.advanceTimersByTimeAsync(2300);
   await task;

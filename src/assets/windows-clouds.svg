@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="clouds" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".009 .017" numOctaves="4" seed="98"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 3 -1.35"/>
+    </filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="7"/></filter>
+    <radialGradient id="sky">
+      <stop stop-color="#d4e4eb"/>
+      <stop offset="1" stop-color="#96bed7"/>
+    </radialGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h640v400H0z"/>
+  <g fill="#fff" opacity=".55" filter="url(#soft)">
+    <path d="M-30 20Q120 65 310 180Q155 110-30 70ZM85-20Q220 55 335 170Q235 105 150-20ZM530-20Q435 85 355 190Q490 75 590-20Z"/>
+    <path d="M670 90Q490 140 350 200Q510 175 670 145ZM670 320Q465 245 350 220Q490 285 670 365ZM-30 335Q150 230 310 210Q140 275-30 385Z"/>
+  </g>
+  <path fill="#fff" opacity=".65" filter="url(#clouds)" d="M0 0h640v400H0z"/>
+</svg>

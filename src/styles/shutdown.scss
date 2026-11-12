@@ -82,106 +82,72 @@
     0 0 / 2px 2px;
   animation: shutdown-dim 650ms steps(5, end) both;
 }
-.ShutdownPanel {
-  width: min(360px, 100%);
-  padding: 3px;
-  background: #c0c0c0;
-  box-shadow:
-    inset -1px -1px #000,
-    inset 1px 1px #fff,
-    inset -2px -2px #808080;
-  header {
-    padding: 3px 6px;
-    background: linear-gradient(90deg, #000080, #1084d0);
-    color: white;
-    font-weight: bold;
-  }
-  > div {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding: 18px;
-  }
-  p {
-    margin: 0;
-  }
-}
 .WindowsSplash {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
+  display: grid;
+  place-items: center;
+  container-type: size;
+  background: #a6c9de url("../assets/windows-clouds.svg") center / cover;
   text-align: center;
-  background:
-    radial-gradient(ellipse at 25% 45%, #fff9, transparent 55%),
-    radial-gradient(ellipse at 90% 85%, #fff8, transparent 50%),
-    linear-gradient(#2c70a9, #91bbd6 62%, #c1d8e4);
-  h2 {
-    font:
-      bold clamp(16px, 3cqi, 25px)/1.4 Tahoma,
-      Arial,
-      sans-serif;
-    margin: 30px 0 0;
-  }
-  p {
-    margin: 8px 0 0;
-  }
+}
+.WindowsSplashArtwork {
+  // Keep the original 640 × 400 composition on portrait and short screens.
+  position: relative;
+  width: min(100cqw, 160cqh);
+  aspect-ratio: 8 / 5;
+  container-type: inline-size;
+}
+.WindowsFlag {
+  position: absolute;
+  top: 9%;
+  left: 25%;
+  width: 50%;
+  height: 60%;
 }
 .WindowsBrand {
-  display: flex;
-  align-items: center;
-  gap: clamp(12px, 3cqi, 32px);
-  text-align: left;
-  > .Win98Icon {
-    width: clamp(64px, 14cqi, 128px);
-    height: auto;
-    transform: rotate(-8deg);
-  }
-  > div > span {
-    display: block;
-    font-size: clamp(11px, 2cqi, 16px);
-    letter-spacing: 2px;
-  }
-  strong {
-    display: block;
-    font:
-      bold clamp(30px, 7cqi, 64px)/1.1 Arial,
-      sans-serif;
-    letter-spacing: -2px;
-  }
-  strong span {
+  position: absolute;
+  top: 70%;
+  left: 0;
+  width: 100%;
+  color: #000;
+  font:
+    900 15cqi/0.9 "Arial Black",
+    Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.7cqi;
+  white-space: nowrap;
+  span {
     font-weight: normal;
   }
+}
+.WindowsShutdownMessage {
+  position: absolute;
+  bottom: 3%;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  padding-inline: 12px;
+  color: #163c85;
+  font:
+    bold clamp(11px, 2.5cqi, 20px)/1.2 Arial,
+    Helvetica,
+    sans-serif;
 }
 .WindowsProgress {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 14px;
-  overflow: hidden;
-  background: #063066;
-  border-top: 1px solid #abd4ed;
-  i {
-    display: block;
-    width: 32%;
-    height: 100%;
-    background: repeating-linear-gradient(
-      90deg,
-      #80c4e9 0 7px,
-      #285b93 7px 9px
-    );
-    animation: windows-progress 1.4s linear infinite;
-  }
-}
-.WindowsSkip {
-  position: absolute;
-  right: 16px;
-  bottom: 24px;
-  color: #fff;
-  font-size: 11px;
-  text-shadow: 1px 1px #000;
+  height: clamp(5px, 1.7cqh, 12px);
+  background: repeating-linear-gradient(
+    90deg,
+    #4163a5 0,
+    #a5c8df 90px,
+    #6b8fbc 160px,
+    #4163a5 320px
+  );
+  background-size: 320px 100%;
+  animation: windows-progress 1.4s linear infinite;
 }
 .ShutdownTransition .WindowsSplash {
   display: none;
@@ -191,7 +157,7 @@
     display: none;
   }
   .WindowsSplash {
-    display: flex;
+    display: grid;
   }
 }
 @keyframes shutdown-dim {
@@ -204,9 +170,9 @@
 }
 @keyframes windows-progress {
   from {
-    transform: translateX(-100%);
+    background-position: 0 0;
   }
   to {
-    transform: translateX(315%);
+    background-position: 320px 0;
   }
 }

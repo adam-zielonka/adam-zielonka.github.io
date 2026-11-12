@@ -62,7 +62,9 @@ argument restores the default. Project typography and ASCII art keep their fonts
 
 `windows` (alias `win`, or the shareable `#windows` URL) opens a Windows 98-style
 portfolio inside the same CRT. Commands, the navigation shortcut and direct links
-all show a Windows 98-style startup splash before the desktop. Escape skips it;
+all show a Windows 98-style startup splash before the desktop: a large waving
+flag above the Portfolio98 wordmark, clouds, and a thin animated strip at the
+bottom, without extra status text. Escape skips it;
 Ctrl+C cancels startup. Disabled animations open the desktop immediately.
 Desktop icons fill each column from top to bottom, then continue in the next
 column; they scroll only when the available desktop space is exhausted.
@@ -76,8 +78,8 @@ Click, tap, or keyboard-activate an icon to open it. Drag title bars to move
 windows, double-click a title bar to maximize, and use the window buttons or
 taskbar to minimize, restore and close them. On small screens windows fit the
 available display. Start → Restart in MS-DOS mode (or the MS-DOS Prompt desktop
-shortcut) returns to the terminal. Start → Shut Down… runs the same shutdown
-sequence and safe-to-turn-off screen as the terminal command. The physical power
+shortcut) returns to the terminal. Start → Shut Down… runs the graphical shutdown
+sequence and ends on the same safe-to-turn-off screen as the terminal command. The physical power
 button also works here.
 This is a portfolio simulation, not an operating system emulator.
 
@@ -92,8 +94,8 @@ With animations disabled, all messages remain visible until dismissed.
 message, without the graphical animation.
 
 Start → Shut Down… on the desktop dims the current screen with a
-classic dither, shows a Windows 98-style shutdown splash with a moving progress
-strip, then displays the orange “It's now safe to turn off your computer”
+classic dither, shows the same artwork with only “Portfolio98 is shutting down.”
+at the bottom (no loading strip), then displays the orange “It's now safe to turn off your computer”
 message on black inside the same CRT screen. The desktop stays visible under
 the first stage, without flashing back to the terminal. Escape or Ctrl+C skips
 the animation; disabled animations go straight to the final message.

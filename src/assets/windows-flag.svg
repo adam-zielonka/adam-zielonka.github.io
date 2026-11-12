@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240">
+  <!-- Original vector artwork: a waving four-pane flag and its pixel trail. -->
+  <defs>
+    <linearGradient id="frame"><stop stop-color="#000"/><stop offset=".5" stop-color="#383838"/><stop offset="1" stop-color="#000"/></linearGradient>
+    <linearGradient id="red"><stop stop-color="#ee6200"/><stop offset=".6" stop-color="#ff8e18"/><stop offset="1" stop-color="#b54300"/></linearGradient>
+    <linearGradient id="green"><stop stop-color="#88b73f"/><stop offset=".5" stop-color="#badb78"/><stop offset="1" stop-color="#5e922c"/></linearGradient>
+    <linearGradient id="blue"><stop stop-color="#2e6db3"/><stop offset=".6" stop-color="#86b5df"/><stop offset="1" stop-color="#487baa"/></linearGradient>
+    <linearGradient id="yellow"><stop stop-color="#eab600"/><stop offset=".5" stop-color="#fff430"/><stop offset="1" stop-color="#dcb000"/></linearGradient>
+  </defs>
+  <g transform="skewX(-18)">
+    <g fill="#111">
+      <path d="M64 17h11v6H64zM87 28h14v8H87zM109 41h17v9h-17zM135 51h21v12h-21zM163 56h25v15h-25z"/>
+      <path d="M62 78h12v7H62zM84 89h16v9H84zM110 101h19v12h-19zM138 107h23v15h-23z"/>
+      <path d="M62 159h12v8H62zM84 171h17v10H84zM111 184h20v12h-20zM141 192h24v15h-24z"/>
+    </g>
+    <g fill="#ef7514">
+      <path d="M62 37h11v6H62zM84 48h14v8H84zM109 62h17v9h-17zM135 73h21v12h-21zM163 79h25v15h-25z"/>
+      <path d="M84 69h14v8H84zM109 82h17v9h-17zM138 94h21v10h-21z"/>
+    </g>
+    <g fill="#548fc1">
+      <path d="M62 100h12v7H62zM84 113h16v9H84zM110 124h19v12h-19zM139 130h23v15h-23z"/>
+      <path d="M62 122h12v7H62zM84 137h16v9H84zM111 149h19v12h-19zM140 155h23v15h-23z"/>
+      <path d="M84 156h16v9H84zM111 168h19v12h-19zM141 178h23v12h-23z"/>
+    </g>
+    <path fill="url(#frame)" d="M192 57C230 43 278 46 322 71L322 222C274 192 232 192 173 208L173 100L192 100Z"/>
+    <path fill="url(#red)" d="M200 75Q224 68 246 72L246 126Q225 122 200 128Z"/>
+    <path fill="url(#green)" d="M259 75Q284 80 306 92L306 145Q282 133 259 129Z"/>
+    <path fill="url(#blue)" d="M188 143Q220 134 246 139L246 185Q217 180 188 189Z"/>
+    <path fill="url(#yellow)" d="M259 142Q284 146 306 159L306 204Q282 191 259 187Z"/>
+    <path fill="none" stroke="#b9b9b9" stroke-width="1.5" opacity=".7" d="M194 59Q230 47 253 52M190 60L178 201M254 56V188"/>
+  </g>
+</svg>

@@ -31,7 +31,7 @@ export function Experience(kind: ExperienceKind, onDismiss: () => void) {
   if (kind === "windows-startup") {
     dialog.removeAttribute("aria-labelledby");
     dialog.setAttribute("aria-label", "Portfolio 98 startup");
-    dialog.innerHTML = `${windowsSplash("startup")}<span class="WindowsSkip">Esc · skip animation</span>`;
+    dialog.innerHTML = windowsSplash("startup");
   } else if (kind === "shutdown-animation") {
     dialog.removeAttribute("aria-labelledby");
     dialog.setAttribute("aria-label", "Portfolio 98 shutdown");
