@@ -1,7 +1,7 @@
 ---
 command: shutdown
 alias: [exit]
-help: shut down with a classic Windows 98 sequence
+help: shut down the current terminal or desktop session
 ---
 
 [](system:shutdown-start)

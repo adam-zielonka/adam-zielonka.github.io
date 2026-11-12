@@ -88,9 +88,12 @@ the animated sequence also returns automatically
 when it finishes.
 With animations disabled, all messages remain visible until dismissed.
 
-`exit`, `shutdown`, and Start → Shut Down… dim the current screen with a
-classic dither, show a Windows 98-style shutdown splash with a moving progress
-strip, then display the orange “It's now safe to turn off your computer”
+`exit` and `shutdown` in the terminal show “Wait ...”, then the orange safe-to-turn-off
+message, without the graphical animation.
+
+Start → Shut Down… on the desktop dims the current screen with a
+classic dither, shows a Windows 98-style shutdown splash with a moving progress
+strip, then displays the orange “It's now safe to turn off your computer”
 message on black inside the same CRT screen. The desktop stays visible under
 the first stage, without flashing back to the terminal. Escape or Ctrl+C skips
 the animation; disabled animations go straight to the final message.

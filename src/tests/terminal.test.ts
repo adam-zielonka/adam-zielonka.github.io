@@ -620,39 +620,46 @@ describe("interactive terminal", () => {
     expect(store.system.isInputAllowed).toBe(true);
   });
 
-  test("exit shows the persistent Windows shutdown message inside the CRT", async () => {
-    await store.system.addCommand("whoami", { route: false });
-    const homeRows = output().querySelectorAll(".ProjectRow").length;
-    vi.useFakeTimers();
-    store.system.animations = true;
-    const task = store.system.addCommand("exit", { animateCommand: false });
-    await vi.advanceTimersByTimeAsync(0);
-    const transition = document.querySelector<HTMLElement>(
-      ".Experience--shutdown-animation",
-    )!;
-    expect(transition.dataset.phase).toBe("desktop");
-    expect(document.querySelector(".Experience--shutdown")).toBeNull();
-    await vi.advanceTimersByTimeAsync(650);
-    expect(transition.dataset.phase).toBe("splash");
-    expect(store.system.isProcessing).toBe(true);
-    await vi.advanceTimersByTimeAsync(2300);
-    await task;
-    const dialog = document.querySelector<HTMLDialogElement>(
-      "dialog.Experience--shutdown",
-    )!;
-    expect(dialog.open).toBe(true);
-    expect(dialog.parentElement).toBe(document.querySelector(".CRTScreen"));
-    expect(document.getElementById("root")!.inert).toBe(true);
-    expect(dialog.querySelector("h2")?.textContent).toBe(
-      "It's now safe to turn offyour computer.",
-    );
-    expect(dialog.querySelector("h2 br")).not.toBeNull();
-    expect(dialog.querySelector("button")).toBeNull();
-    expect(output().querySelectorAll(".ProjectRow")).toHaveLength(homeRows);
-    expect(store.system.shutdown).toBe(true);
-    expect(document.activeElement).toBe(dialog);
-    expect(store.commands.getLines("shutdown")).toEqual(
-      store.commands.getLines("exit"),
-    );
-  });
+  test.each(["exit", "shutdown"])(
+    "%s shuts down the terminal without the desktop animation",
+    async command => {
+      // Each alias starts a fresh powered-on session after the previous shutdown.
+      window.terminal.powerOff();
+      const screen = document.querySelector<HTMLElement>(".CRTScreen")!;
+      screen.inert = false;
+      screen.removeAttribute("aria-hidden");
+      delete screen.dataset.power;
+      store.system.state = "";
+      await store.system.addCommand("whoami", { route: false });
+      const homeRows = output().querySelectorAll(".ProjectRow").length;
+      vi.useFakeTimers();
+      store.system.animations = true;
+      const animation = vi.spyOn(window.terminal, "enterShutdownAnimation");
+      const task = store.system.addCommand(command, { animateCommand: false });
+      await vi.advanceTimersByTimeAsync(130);
+      expect(output().textContent).toContain("Wait ...");
+      expect(document.querySelector(".Experience")).toBeNull();
+      expect(store.system.isProcessing).toBe(true);
+      await vi.advanceTimersByTimeAsync(1000);
+      await task;
+      expect(animation).not.toHaveBeenCalled();
+      const dialog = document.querySelector<HTMLDialogElement>(
+        "dialog.Experience--shutdown",
+      )!;
+      expect(dialog.open).toBe(true);
+      expect(dialog.parentElement).toBe(document.querySelector(".CRTScreen"));
+      expect(document.getElementById("root")!.inert).toBe(true);
+      expect(dialog.querySelector("h2")?.textContent).toBe(
+        "It's now safe to turn offyour computer.",
+      );
+      expect(dialog.querySelector("h2 br")).not.toBeNull();
+      expect(dialog.querySelector("button")).toBeNull();
+      expect(output().querySelectorAll(".ProjectRow")).toHaveLength(homeRows);
+      expect(store.system.shutdown).toBe(true);
+      expect(document.activeElement).toBe(dialog);
+      expect(store.commands.getLines("shutdown")).toEqual(
+        store.commands.getLines("exit"),
+      );
+    },
+  );
 });

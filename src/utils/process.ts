@@ -31,6 +31,16 @@ export async function process(commandArgs: string): Promise<void> {
           continue;
         case "system":
           if (!store.system.isProcessing) return;
+          if (action.key === "shutdown-start" && !window.terminal.isWindows) {
+            // The terminal keeps its text-only shutdown. Only the desktop
+            // continues through the graphical shutdown actions below.
+            await store.system.wait(50);
+            if (!store.system.isProcessing) return;
+            await store.output.processLine({ value: "Wait ...", style });
+            await store.system.wait(1000);
+            if (store.system.isProcessing) store.system.setShutdown();
+            return;
+          }
           for (const systemLine of system(action.key, args)) {
             const output =
               typeof systemLine === "string"
