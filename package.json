@@ -14,17 +14,17 @@
   },
   "dependencies": {
     "front-matter": "^4.0.2",
-    "marked": "^18.1.2"
+    "marked": "^18.2.0"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^5.0.5",
+    "@vitest/coverage-v8": "^5.1.0",
     "happy-dom": "^21.0.4",
-    "oxfmt": "^0.75.0",
-    "oxlint": "^1.90.0",
-    "sass": "^1.106.1",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
+    "sass": "^1.108.2",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5",
-    "vitest": "^5.0.5"
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   },
   "packageManager": "pnpm@12.14.0",
   "engines": {
