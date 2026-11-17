@@ -98,34 +98,189 @@ test("filters folders without duplicating Explorer and supports list view", () =
   );
 });
 
-test("opens real project descriptions and safe demo/source links", () => {
+test("runs demos in project windows with links below the title bar and descriptions in Help", () => {
   for (const project of projects) {
     click(`project:${project.id}`, explorer());
     const win = desktop().querySelector<HTMLElement>(
       `[data-window="project:${project.id}"]`,
     )!;
-    expect(win.textContent).toContain(project.summary);
-    const expectedBody = document.createElement("div");
-    expectedBody.innerHTML = project.html;
-    expect(win.querySelector(".WinReadme")!.textContent).toBe(
-      expectedBody.textContent,
-    );
-    const links = [
-      ...win.querySelectorAll<HTMLAnchorElement>(".WinProjectLinks a"),
-    ];
+    expect(win.querySelector(".WinReadme")).toBeNull();
+    const toolbar = win.querySelector(".WinAppMenu")!;
+    expect(toolbar.previousElementSibling?.className).toBe("WinTitlebar");
+    expect(
+      toolbar.nextElementSibling?.classList.contains("WinWindowBody"),
+    ).toBe(true);
+    const links = [...toolbar.querySelectorAll<HTMLAnchorElement>("a")];
     expect(links.map(item => item.getAttribute("href"))).toContain(
       project.source,
     );
-    if (project.demo)
+    const iframe = win.querySelector("iframe");
+    if (project.demo) {
       expect(links.map(item => item.getAttribute("href"))).toContain(
         project.demo,
+      );
+      expect(iframe?.getAttribute("src")).toBe(project.demo);
+      expect(iframe?.title).toBe(`${project.name} demo`);
+      expect(iframe?.getAttribute("sandbox")).toContain("allow-downloads");
+    } else {
+      expect(iframe).toBeNull();
+      expect(win.textContent).toContain("This project has no browser demo.");
+    }
+    if (project.releases)
+      expect(links.map(item => item.getAttribute("href"))).toContain(
+        project.releases,
       );
     for (const anchor of links) {
       expect(anchor.target).toBe("_blank");
       expect(anchor.rel).toContain("noopener");
     }
+    const helpMenu = win.querySelector<HTMLDetailsElement>(".WinHelpMenu")!;
+    helpMenu.querySelector("summary")!.click();
+    expect(helpMenu.open).toBe(true);
+    click(`project-help:${project.id}`, helpMenu);
+    expect(helpMenu.open).toBe(false);
+    const help = desktop().querySelector<HTMLElement>(
+      `[data-window="help:${project.id}"]`,
+    )!;
+    expect(help.textContent).toContain(project.summary);
+    const expectedBody = document.createElement("div");
+    expectedBody.innerHTML = project.html;
+    expect(help.querySelector(".WinReadme")!.textContent).toBe(
+      expectedBody.textContent,
+    );
+    expect(win.querySelector("iframe")).toBe(iframe);
+    click("close", help);
     click("close", win);
+    expect(iframe?.isConnected ?? false).toBe(false);
   }
+});
+
+test("keeps a running iframe when reopening, minimizing, maximizing or reading Help", () => {
+  click("project:paintaz");
+  const win = desktop().querySelector<HTMLElement>(
+    '[data-window="project:paintaz"]',
+  )!;
+  const iframe = win.querySelector("iframe")!;
+  // Any reset of the body or src would discard unsaved application state.
+  const mutations = vi.fn();
+  const observer = new MutationObserver(mutations);
+  observer.observe(win.querySelector(".WinWindowBody")!, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+  });
+  click("minimize", win);
+  click("project:paintaz");
+  expect(win.hidden).toBe(false);
+  click("maximize", win);
+  click("maximize", win);
+  click("desktop");
+  click("project:paintaz");
+  click("project-help:paintaz", win);
+  click(
+    "close",
+    desktop().querySelector<HTMLElement>('[data-window="help:paintaz"]')!,
+  );
+  expect(document.activeElement).toBe(win);
+  expect(win.querySelector("iframe")).toBe(iframe);
+  expect(observer.takeRecords()).toHaveLength(0);
+  expect(mutations).not.toHaveBeenCalled();
+  observer.disconnect();
+});
+
+test("Help closes with Escape, outside interaction and keyboard focus leaving the menu", () => {
+  click("project:paintaz");
+  const win = desktop().querySelector<HTMLElement>(
+    '[data-window="project:paintaz"]',
+  )!;
+  const help = win.querySelector<HTMLDetailsElement>(".WinHelpMenu")!;
+  const summary = help.querySelector("summary")!;
+  summary.click();
+  click("project:statki", explorer());
+  const other = desktop().querySelector<HTMLElement>(
+    '[data-window="project:statki"]',
+  )!;
+  const otherHelp = other.querySelector<HTMLDetailsElement>(".WinHelpMenu")!;
+  expect(help.open).toBe(false);
+  otherHelp.querySelector("summary")!.click();
+  otherHelp.querySelector("button")!.dispatchEvent(
+    new KeyboardEvent("keydown", {
+      key: "Escape",
+      bubbles: true,
+      cancelable: true,
+    }),
+  );
+  expect(otherHelp.open).toBe(false);
+  expect(document.activeElement).toBe(otherHelp.querySelector("summary"));
+  summary.click();
+  desktop().dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+  expect(help.open).toBe(false);
+  summary.focus();
+  summary.click();
+  summary.dispatchEvent(
+    new KeyboardEvent("keydown", { key: "Tab", bubbles: true }),
+  );
+  explorer().focus();
+  expect(help.open).toBe(false);
+});
+
+test("focusing an embedded application activates its window without stealing focus", async () => {
+  click("project:paintaz");
+  const win = desktop().querySelector<HTMLElement>(
+    '[data-window="project:paintaz"]',
+  )!;
+  const iframe = win.querySelector("iframe")!;
+  click("project:statki", explorer());
+  click("start");
+  // Cross-document events do not bubble; emulate the browser's blur/focus handoff.
+  vi.spyOn(document, "activeElement", "get").mockReturnValue(iframe);
+  window.dispatchEvent(new Event("blur"));
+  await vi.waitFor(() => expect(win.dataset.active).toBe("true"));
+  expect(document.activeElement).toBe(iframe);
+  expect(desktop().querySelector<HTMLElement>(".WinStartMenu")!.hidden).toBe(
+    true,
+  );
+});
+
+test("leaving the desktop removes embedded applications and cancels pending activation", async () => {
+  click("project:paintaz");
+  const iframe = desktop().querySelector("iframe")!;
+  window.dispatchEvent(new Event("blur"));
+  window.terminal.closeWindows();
+  expect(iframe.isConnected).toBe(false);
+  await new Promise(resolve => window.setTimeout(resolve, 5));
+  expect(document.querySelector(".Win98")).toBeNull();
+});
+
+test("interaction inside same-origin demos switches windows and cleans up on navigation and close", () => {
+  const apps = ["paintaz", "statki"].map(id => {
+    click(`project:${id}`, explorer());
+    const win = desktop().querySelector<HTMLElement>(
+      `[data-window="project:${id}"]`,
+    )!;
+    const iframe = win.querySelector("iframe")!;
+    const content = document.implementation.createHTMLDocument();
+    const getter = vi
+      .spyOn(iframe, "contentDocument", "get")
+      .mockReturnValue(content);
+    iframe.dispatchEvent(new Event("load"));
+    return { win, iframe, content, getter };
+  });
+  for (const app of [...apps, ...apps]) {
+    app.content.dispatchEvent(new Event("pointerdown"));
+    expect(app.win.dataset.active).toBe("true");
+  }
+  const app = apps[0];
+  const navigated = document.implementation.createHTMLDocument();
+  app.getter.mockReturnValue(navigated);
+  app.iframe.dispatchEvent(new Event("load"));
+  app.content.dispatchEvent(new Event("pointerdown"));
+  expect(app.win.dataset.active).toBe("false");
+  navigated.dispatchEvent(new Event("focusin"));
+  expect(app.win.dataset.active).toBe("true");
+  click("close", app.win);
+  navigated.dispatchEvent(new Event("pointerdown"));
+  expect(apps[1].win.dataset.active).toBe("true");
 });
 
 test("minimizes, restores, maximizes and closes windows through the taskbar", () => {

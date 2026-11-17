@@ -32,6 +32,7 @@ type DesktopWindow = {
   maximize: HTMLButtonElement;
   folder?: Folder;
   list: boolean;
+  dispose?: () => void;
 };
 
 const button = (action: string, label: string, icon?: string, className = "") =>
@@ -39,7 +40,7 @@ const button = (action: string, label: string, icon?: string, className = "") =>
 const link = (url: string, label: string) =>
   `<a class="WinButton" href="${escape(url)}" target="_blank" rel="noopener noreferrer">${escape(label)} ↗</a>`;
 
-/** A self-contained desktop: no OS emulation, downloads or external requests. */
+/** A portfolio desktop with web demos embedded in project windows. */
 export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
   const element = document.createElement("section");
   element.className = "Win98";
@@ -119,6 +120,13 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     if (focus)
       (open ? menu.querySelector<HTMLButtonElement>("button") : start)?.focus();
   }
+  function closeHelpMenus(except?: Node) {
+    for (const help of element.querySelectorAll<HTMLDetailsElement>(
+      ".WinHelpMenu[open]",
+    )) {
+      if (!except || !help.contains(except)) help.open = false;
+    }
+  }
   function activate(win?: DesktopWindow, focus = true) {
     active = win?.id;
     for (const item of windows.values()) {
@@ -141,6 +149,7 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     if (!active) start.focus();
   }
   function closeWindow(win: DesktopWindow) {
+    win.dispose?.();
     win.element.remove();
     win.task.remove();
     windows.delete(win.id);
@@ -224,15 +233,66 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
       <div class="WinAddress"><span>Address</span><div>${windowsIcon(folder.icon)}C:\\Portfolio${id === "projects" ? "" : `\\${escape(folder.name)}`}</div></div>
       <div class="WinExplorer"><aside class="WinExplorerSide">${windowsIcon(folder.icon)}<h2>${escape(folder.name)}</h2><p>Curiosity, written in code.</p><hr><nav aria-label="Project folders">${folders.map(item => `<button type="button" data-win-action="folder:${item.id}" ${item.id === id ? 'aria-current="page"' : ""}>${windowsIcon(item.icon)}<span>${escape(item.name)}</span></button>`).join("")}</nav><small>${projects.length} personal projects<br>Made to be explored.</small></aside>
       <div class="WinFiles ${win.list ? "WinFiles--list" : ""}"><nav class="WinFolderStrip" aria-label="Folders">${(id === "projects" ? folders.slice(1) : []).map(item => button(`folder:${item.id}`, item.name, "folder", "WinShortcut")).join("")}</nav><div class="WinProjectGrid">${selected.map(project => `<button type="button" class="WinShortcut" data-win-action="project:${project.id}" title="${escape(project.summary)}">${windowsIcon(project.id)}<span>${escape(project.name)}</span>${win.list ? `<small>${escape(project.category)}</small>` : ""}</button>`).join("")}</div></div></div>`;
-    win.status.textContent = `${selected.length} object(s) · Click an icon to open · Demos open in a new tab`;
+    win.status.textContent = `${selected.length} object(s) · Click an icon to open · Web demos run in a window`;
   }
   function openProject(id: string) {
     const project = findProject(id);
     if (!project) return;
+    const existing = windows.get(`project:${id}`);
+    if (existing) {
+      activate(existing);
+      return;
+    }
     const win = createWindow(`project:${id}`, project.name, project.id);
-    win.body.innerHTML = `<article class="WinProject"><header>${windowsIcon(project.id)}<div><small>${escape(project.category)} / PERSONAL PROJECT</small><h2>${escape(project.name)}</h2></div></header><p class="WinSummary">${escape(project.summary)}</p><div class="WinTags">${project.stack.map(item => `<span>${escape(item)}</span>`).join("")}</div><div class="WinProjectLinks">${project.demo ? link(project.demo, "Open demo") : ""}${link(project.source, "Source code")}${project.releases ? link(project.releases, "Releases") : ""}</div><div class="WinReadme">${project.html}</div></article>`;
+    // Keep controls outside the scrolling body and never recreate a running demo.
+    win.body.insertAdjacentHTML(
+      "beforebegin",
+      `<nav class="WinAppMenu" aria-label="${escape(project.name)} menu">${project.demo ? link(project.demo, "Open in new tab") : ""}${link(project.source, "Source code")}${project.releases ? link(project.releases, "Releases") : ""}<details class="WinHelpMenu"><summary>Help</summary><div class="WinHelpDropdown">${button(`project-help:${id}`, `About ${project.name}…`, "info")}</div></details></nav>`,
+    );
+    win.body.classList.add("WinAppBody");
+    win.body.innerHTML = project.demo
+      ? `<iframe class="WinAppFrame" src="${escape(project.demo)}" title="${escape(project.name)} demo" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-pointer-lock" allow="fullscreen; clipboard-write" allowfullscreen></iframe>`
+      : `<div class="WinEmpty">${windowsIcon(project.id)}<h2>${escape(project.name)}</h2><p>This project has no browser demo.</p><p>Use ${project.releases ? "Releases or Source code" : "Source code"} above to explore it.<br>Open Help for the project description.</p></div>`;
+    const iframe = win.body.querySelector("iframe");
+    if (iframe) {
+      let contentEvents = new AbortController();
+      const focusApp = () => {
+        closeHelpMenus();
+        toggleStart(false);
+        if (active !== win.id) activate(win, false);
+      };
+      iframe.addEventListener("focus", focusApp);
+      iframe.addEventListener("load", () => {
+        contentEvents.abort();
+        contentEvents = new AbortController();
+        // Our demos share the portfolio origin. Listen in their documents too:
+        // switching directly between frames need not blur the parent window.
+        // Cross-origin demos still use the parent window's blur handler.
+        try {
+          const content = iframe.contentDocument;
+          for (const event of ["pointerdown", "focusin"])
+            content?.addEventListener(event, focusApp, {
+              capture: true,
+              signal: contentEvents.signal,
+            });
+        } catch {
+          // A redirected demo may have a different origin.
+        }
+      });
+      win.dispose = () => contentEvents.abort();
+    }
+    win.status.textContent = project.demo
+      ? "Web demo · Blank or unavailable? Use Open in new tab · Description in Help"
+      : "No browser demo · Description in Help";
+  }
+  function openProjectHelp(id: string) {
+    const project = findProject(id);
+    if (!project) return;
+    closeHelpMenus();
+    const win = createWindow(`help:${id}`, `${project.name} — Help`, "info");
+    win.body.innerHTML = `<article class="WinProject"><header>${windowsIcon(project.id)}<div><small>${escape(project.category)} / PERSONAL PROJECT</small><h2>${escape(project.name)}</h2></div></header><p class="WinSummary">${escape(project.summary)}</p><div class="WinTags">${project.stack.map(item => `<span>${escape(item)}</span>`).join("")}</div><div class="WinReadme">${project.html}</div></article>`;
     win.status.textContent =
-      "Project properties · External links open in a new tab";
+      "Project description · Your application stays open in its own window";
   }
   function openAbout() {
     const win = createWindow("about", "About Adam.txt — Notepad", "info");
@@ -261,6 +321,8 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     toggleStart(false);
     if (action.startsWith("folder:")) openFolder(action.slice(7) as Folder);
     else if (action.startsWith("project:")) openProject(action.slice(8));
+    else if (action.startsWith("project-help:"))
+      openProjectHelp(action.slice(13));
     else if (action === "about") openAbout();
     else if (action === "contact") openContact();
     else if (action === "exit") onExit();
@@ -286,6 +348,16 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     }
   });
   element.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      const help =
+        element.querySelector<HTMLDetailsElement>(".WinHelpMenu[open]");
+      if (help) {
+        event.preventDefault();
+        help.open = false;
+        help.querySelector("summary")!.focus();
+        return;
+      }
+    }
     if (event.key === "Escape" && !menu.hidden) {
       event.preventDefault();
       toggleStart(false, true);
@@ -318,6 +390,7 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     "pointerdown",
     event => {
       pointerInteraction = true;
+      closeHelpMenus(event.target instanceof Node ? event.target : undefined);
       if (
         event.target instanceof Node &&
         !menu.contains(event.target) &&
@@ -335,6 +408,8 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     { capture: true, signal: abort.signal },
   );
   element.addEventListener("focusout", event => {
+    if (!pointerInteraction && event.relatedTarget instanceof Node)
+      closeHelpMenus(event.relatedTarget);
     if (
       !pointerInteraction &&
       event.target instanceof Node &&
@@ -380,7 +455,29 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
   });
   element.addEventListener("pointerup", stopDrag);
   element.addEventListener("pointercancel", stopDrag);
-  window.addEventListener("blur", stopDrag, { signal: abort.signal });
+  window.addEventListener(
+    "blur",
+    () => {
+      stopDrag();
+      // Events inside an iframe do not bubble into the desktop. After focus has
+      // settled, activate its window without pulling keyboard focus out of the app.
+      window.setTimeout(() => {
+        if (abort.signal.aborted) return;
+        const focused = document.activeElement;
+        if (
+          !(focused instanceof HTMLIFrameElement) ||
+          !element.contains(focused)
+        )
+          return;
+        closeHelpMenus();
+        toggleStart(false);
+        const frame = focused.closest<HTMLElement>("[data-window]")!;
+        const win = windows.get(frame.dataset.window!);
+        if (win && active !== win.id) activate(win, false);
+      }, 0);
+    },
+    { signal: abort.signal },
+  );
   const observer = new ResizeObserver(() => {
     for (const win of windows.values()) {
       win.element.style.left = `${Math.max(0, Math.min(win.element.offsetLeft, workspace.clientWidth - win.element.offsetWidth))}px`;
@@ -395,6 +492,7 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     },
     dispose() {
       stopDrag();
+      for (const win of windows.values()) win.dispose?.();
       window.clearInterval(timer);
       observer.disconnect();
       abort.abort();
