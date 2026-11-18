@@ -22,6 +22,24 @@ test("all build and test consumers resolve the same patched picomatch", () => {
   expect(new Set(matcherPaths).size).toBe(1);
 });
 
+test.each<[string, string, Record<string, boolean>]>([
+  ["+(a[/]*b)", "a/ba/b", {}],
+  ['+(a*"x/y")', "ax/yax/y", {}],
+  ["+(a[bc]*d)", "abdabd", { regex: true }],
+  ['+(a*"\n")', "a\na\n", { bash: true }],
+  ['+(a*"\r")', "a\ra\r", { bash: true }],
+  ['+(a*"\u2028")', "a\u2028a\u2028", { bash: true }],
+  ['+(a*"\u2029")', "a\u2029a\u2029", { bash: true }],
+])(
+  "preserves repeated path and regex matches for %s",
+  (pattern, input, options) => {
+    const matcher = viteRequire("picomatch") as {
+      makeRe(pattern: string, options: Record<string, boolean>): RegExp;
+    };
+    expect(matcher.makeRe(pattern, options).test(input)).toBe(true);
+  },
+);
+
 test("hostile single-branch repeated globs finish within an isolated deadline", () => {
   // A separate process ensures a regression cannot hang Vitest or the build.
   const result = spawnSync(

@@ -28,11 +28,12 @@ require no external runtime requests.
 
 `pnpm-workspace.yaml` applies `patches/picomatch@4.0.7.patch` to every
 transitive copy used by Vite, Vitest, tinyglobby/fdir and Sass's watcher.
-The patch is the parser change proposed in upstream
+The patch adapts the parser change proposed in upstream
 [PR #254](https://github.com/micromatch/picomatch/pull/254), reviewed at
-`c63a5bf4e61dbdb81bc41e97dc2616c30acce337`. It removes the outer unbounded
-repetition around a single wildcard branch instead of producing nested
-quantifiers. This mitigates the single-branch cases in
+`c63a5bf4e61dbdb81bc41e97dc2616c30acce337`, with a stricter eligibility guard
+added after local review. It removes the outer unbounded repetition around
+a plain, path-separator-free single wildcard branch instead of producing
+nested quantifiers. This mitigates the reported plain single-branch cases in
 [GHSA-fc5q-39xc-vjpf](https://github.com/advisories/GHSA-fc5q-39xc-vjpf).
 It is a local mitigation, not an official upstream security release.
 
@@ -45,6 +46,13 @@ patterns do not rely on those captures. Explicitly setting
 `maxExtglobRecursion: false` still disables this protection, as upstream
 allows; do not use that option for untrusted patterns. This is not a claim
 that every possible regular expression or glob is safe.
+
+Branches containing slashes, backslashes, line terminators, character classes
+or nested groups, and patterns with `regex: true`, keep upstream matching
+behavior. Those forms are outside this mitigation. The tests include three
+review counterexamples with bracketed/quoted path separators and a regex
+quantifier, plus Bash-mode cases with all four JavaScript line terminators;
+all must retain their original positive matches.
 
 Scope: this patches the installed `picomatch` package. `oxfmt@0.75.0` also
 contains a bundled copy of the analyzer inside its Prettier implementation;
