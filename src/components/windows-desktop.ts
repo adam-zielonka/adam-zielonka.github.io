@@ -49,7 +49,7 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
   element.innerHTML = `
     <div class="WinWorkspace">
       <nav class="WinDesktopIcons" aria-label="Desktop shortcuts">
-        ${button("folder:projects", "My Computer", "computer", "WinShortcut")}
+        ${button("computer", "My Computer", "computer", "WinShortcut")}
         ${button("folder:projects", "My Projects", "folder", "WinShortcut")}
         ${button("folder:games", "Games", "games", "WinShortcut")}
         ${button("project:paintaz", "paintAZ", "paintaz", "WinShortcut")}
@@ -69,6 +69,7 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
         ${button("folder:games", "Games", "games")}
         ${button("folder:tools", "Tools", "tools")}
         ${button("about", "About this portfolio", "info")}
+        ${button("find", "Find projects…", "find")}
         ${button("contact", "Find me on GitHub", "mail")}
         <hr>${button("exit", "Restart in MS-DOS mode…", "terminal")}
         ${button("shutdown", "Shut Down…", "shutdown")}
@@ -218,22 +219,73 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     activate(win);
     return win;
   }
+  function openExplorer(name: string) {
+    const title = `${name} — Explorer`;
+    const win = createWindow("explorer", title, "folder");
+    win.title.textContent = title;
+    win.element.setAttribute("aria-label", title);
+    win.task.querySelector("span")!.textContent = name;
+    win.task.title = title;
+    for (const control of win.element.querySelectorAll<HTMLButtonElement>(
+      ".WinWindowControls button",
+    ))
+      control.setAttribute("aria-label", `${control.title} ${title}`);
+    return win;
+  }
+  function openComputer() {
+    const win = openExplorer("My Computer");
+    win.folder = undefined;
+    win.body.innerHTML = `<div class="WinAddress"><span>Address</span><div>${windowsIcon("computer")}My Computer</div></div>
+      <div class="WinFiles WinDriveList">${button("folder:projects", "Portfolio (C:)", "drive", "WinShortcut")}</div>`;
+    win.status.textContent = "1 drive";
+  }
+  function projectButton(project: Project, list: boolean) {
+    return `<button type="button" class="WinShortcut" data-win-action="project:${escape(project.id)}" title="${escape(project.summary)}">${windowsIcon(project.id)}<span>${escape(project.name)}</span>${list ? `<small>${escape(project.category)}</small>` : ""}</button>`;
+  }
   function openFolder(id: Folder) {
     const folder = folders.find(item => item.id === id)!;
-    const win = createWindow("explorer", "My Projects", "folder");
+    const win = openExplorer(folder.name);
     win.folder = id;
-    win.title.textContent = `${folder.name} — Explorer`;
-    win.element.setAttribute("aria-label", `${folder.name} — Explorer`);
     const selected = projects.filter(
       project =>
         !folder.categories.length ||
         folder.categories.includes(project.category),
     );
-    win.body.innerHTML = `<div class="WinToolbar">${button("folder:projects", "Up", "folder", "WinButton")}${button("view", win.list ? "Large icons" : "List", undefined, "WinButton")}${button("about", "About", "info", "WinButton")}</div>
+    win.body.innerHTML = `<div class="WinToolbar">${button(id === "projects" ? "computer" : "folder:projects", "Up", "folder", "WinButton")}${button("view", win.list ? "Large icons" : "List", undefined, "WinButton")}${button("about", "About", "info", "WinButton")}</div>
       <div class="WinAddress"><span>Address</span><div>${windowsIcon(folder.icon)}C:\\Portfolio${id === "projects" ? "" : `\\${escape(folder.name)}`}</div></div>
       <div class="WinExplorer"><aside class="WinExplorerSide">${windowsIcon(folder.icon)}<h2>${escape(folder.name)}</h2><p>Curiosity, written in code.</p><hr><nav aria-label="Project folders">${folders.map(item => `<button type="button" data-win-action="folder:${item.id}" ${item.id === id ? 'aria-current="page"' : ""}>${windowsIcon(item.icon)}<span>${escape(item.name)}</span></button>`).join("")}</nav><small>${projects.length} personal projects<br>Made to be explored.</small></aside>
-      <div class="WinFiles ${win.list ? "WinFiles--list" : ""}"><nav class="WinFolderStrip" aria-label="Folders">${(id === "projects" ? folders.slice(1) : []).map(item => button(`folder:${item.id}`, item.name, "folder", "WinShortcut")).join("")}</nav><div class="WinProjectGrid">${selected.map(project => `<button type="button" class="WinShortcut" data-win-action="project:${project.id}" title="${escape(project.summary)}">${windowsIcon(project.id)}<span>${escape(project.name)}</span>${win.list ? `<small>${escape(project.category)}</small>` : ""}</button>`).join("")}</div></div></div>`;
-    win.status.textContent = `${selected.length} object(s) · Click an icon to open · Web demos run in a window`;
+      <div class="WinFiles ${win.list ? "WinFiles--list" : ""}"><nav class="WinFolderStrip" aria-label="Folders">${(id === "projects" ? folders.slice(1) : []).map(item => button(`folder:${item.id}`, item.name, "folder", "WinShortcut")).join("")}</nav><div class="WinProjectGrid">${selected.map(project => projectButton(project, win.list)).join("")}</div></div></div>`;
+    const count =
+      selected.length + (id === "projects" ? folders.length - 1 : 0);
+    win.status.textContent = `${count} object(s) · Click an icon to open · Web demos run in a window`;
+  }
+  function openFind() {
+    const win = createWindow("find", "Find Projects", "find");
+    if (!win.body.querySelector("form")) {
+      win.body.innerHTML = `<form class="WinFindForm"><label for="win-find-query">Name or technology</label><input id="win-find-query" type="text" autocomplete="off"><button class="WinButton" type="submit">Find Now</button></form>
+        <div class="WinFiles WinFiles--list WinFindResults"><div class="WinProjectGrid"></div></div>`;
+      const form = win.body.querySelector("form")!;
+      const input = form.querySelector("input")!;
+      const results = win.body.querySelector<HTMLElement>(".WinProjectGrid")!;
+      win.status.setAttribute("role", "status");
+      win.status.textContent = "Look in: C:\\Portfolio";
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        const query = input.value.trim().toLowerCase();
+        const matches = projects.filter(project =>
+          [project.name, project.id, ...project.stack].some(value =>
+            value.toLowerCase().includes(query),
+          ),
+        );
+        results.innerHTML = matches
+          .map(project => projectButton(project, true))
+          .join("");
+        win.status.textContent = matches.length
+          ? `${matches.length} project${matches.length === 1 ? "" : "s"} found`
+          : "No projects found. Try another name or technology.";
+      });
+    }
+    win.body.querySelector("input")!.focus();
   }
   function openProject(id: string) {
     const project = findProject(id);
@@ -323,6 +375,8 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     else if (action.startsWith("project:")) openProject(action.slice(8));
     else if (action.startsWith("project-help:"))
       openProjectHelp(action.slice(13));
+    else if (action === "computer") openComputer();
+    else if (action === "find") openFind();
     else if (action === "about") openAbout();
     else if (action === "contact") openContact();
     else if (action === "exit") onExit();
@@ -348,6 +402,19 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     }
   });
   element.addEventListener("keydown", event => {
+    if (
+      event.key === "F3" &&
+      !event.ctrlKey &&
+      !event.altKey &&
+      !event.metaKey &&
+      !event.shiftKey
+    ) {
+      event.preventDefault();
+      toggleStart(false);
+      closeHelpMenus();
+      openFind();
+      return;
+    }
     if (event.key === "Escape") {
       const help =
         element.querySelector<HTMLDetailsElement>(".WinHelpMenu[open]");

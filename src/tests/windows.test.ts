@@ -98,6 +98,59 @@ test("filters folders without duplicating Explorer and supports list view", () =
   );
 });
 
+test("navigates up to My Computer and keeps Explorer captions in sync", () => {
+  const win = explorer();
+  const task = desktop().querySelector<HTMLButtonElement>(".WinTask")!;
+  click("folder:games");
+  expect(task.textContent).toBe("Games");
+  click("minimize", win);
+  task.click();
+  expect(win.hidden).toBe(false);
+  click("folder:projects", win.querySelector(".WinToolbar")!);
+  click("computer", win.querySelector(".WinToolbar")!);
+  expect(task.title).toBe("My Computer — Explorer");
+  expect(
+    win.querySelector('[data-win-action="close"]')?.getAttribute("aria-label"),
+  ).toBe("Close My Computer — Explorer");
+  click("folder:projects", win);
+  expect(explorer()).toBe(win);
+  expect(task.textContent).toBe("My Projects");
+  click("computer", desktop().querySelector(".WinDesktopIcons")!);
+  expect(win.textContent).toContain("Portfolio (C:)");
+});
+
+test("Find searches the catalog and retains results when reopening a running demo", () => {
+  click("start");
+  click("find", desktop().querySelector(".WinStartMenu")!);
+  const find = desktop().querySelector<HTMLElement>('[data-window="find"]')!;
+  const input = find.querySelector("input")!;
+  const search = (query: string) => {
+    input.value = query;
+    find.querySelector<HTMLButtonElement>('[type="submit"]')!.click();
+  };
+  expect(document.activeElement).toBe(input);
+  search("no match here");
+  expect(find.querySelector('[role="status"]')?.textContent).toContain(
+    "No projects found",
+  );
+  search("");
+  expect(find.querySelectorAll(".WinProjectGrid button")).toHaveLength(
+    projects.length,
+  );
+  search("  PAINTaz ");
+  expect(find.querySelectorAll(".WinProjectGrid button")).toHaveLength(1);
+  click("project:paintaz", find);
+  const frame = desktop().querySelector("iframe");
+  desktop().dispatchEvent(
+    new KeyboardEvent("keydown", { key: "F3", bubbles: true }),
+  );
+  expect(document.activeElement).toBe(input);
+  expect(find.querySelectorAll(".WinProjectGrid button")).toHaveLength(1);
+  search("webassembly");
+  click("project:paintaz", find);
+  expect(desktop().querySelector("iframe")).toBe(frame);
+});
+
 test("runs demos in project windows with links below the title bar and descriptions in Help", () => {
   for (const project of projects) {
     click(`project:${project.id}`, explorer());

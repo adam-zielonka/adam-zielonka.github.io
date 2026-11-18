@@ -70,7 +70,8 @@ Desktop icons fill each column from top to bottom, then continue in the next
 column; they scroll only when the available desktop space is exhausted.
 The desktop includes original pixel SVG icons,
 a Start menu, taskbar with a live clock, and an Explorer containing all projects
-from the existing Markdown catalog. Browse Games, Applications, Tools, or
+from the existing Markdown catalog. Open My Computer to browse the Portfolio drive,
+or use Start → Find projects… (F3) to search by name or technology. Browse Games, Applications, Tools, or
 Experiments & Learning; switch between icons and a list; open descriptions,
 demos and repositories. External links open in a new tab.
 

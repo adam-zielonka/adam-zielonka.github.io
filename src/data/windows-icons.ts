@@ -107,6 +107,19 @@ const documentIcon = art(
 );
 
 const icons: Readonly<Record<string, string>> = {
+  find: art(
+    path("M4 5h10v2h3v3h2v9h-2v3h-3v2H5v-2H2v-3H0v-9h2V7h2Z", p.charcoal),
+    bevel(3, 8, 13, 12, p.cyan),
+    rect(5, 10, 6, 2, p.white),
+    path("M16 18h3v2h2v2h3v2h3v2h2v4h-5v-2h-2v-2h-3v-3h-3Z", p.navy),
+  ),
+  drive: art(
+    path("M8 7h17l6 10v9H1v-9Z", p.charcoal),
+    path("M9 8h15l5 9H3Z", p.silver),
+    bevel(2, 17, 28, 8),
+    rect(5, 20, 13, 2, p.black),
+    rect(24, 20, 3, 2, p.lime),
+  ),
   computer: art(
     rect(6, 4, 24, 21, p.charcoal),
     bevel(3, 1, 24, 22),
