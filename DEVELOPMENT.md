@@ -59,9 +59,8 @@ contains a bundled copy of the analyzer inside its Prettier implementation;
 that embedded code is not replaced by a `picomatch` dependency patch. Its
 reachability from formatter inputs has not been established here.
 
-Keep the full audit in `.github/workflows/pages.yml`. As of 2026-11-18 the
-advisory still marks version 4.0.7 as vulnerable and lists no patched release,
-so a version-based audit can remain blocked despite the local patch. There
-is no ignored advisory or audit exception in this project. Remove the patch
-only after upgrading to a verified upstream fix and running the regression
-checks and full validation again.
+GitHub withdrew GHSA-fc5q-39xc-vjpf on 2026-11-18. The npm registry still
+returns the withdrawn record. The Pages workflow filters that ID from the
+full dependency audit and runs a separate, unfiltered production audit.
+Remove the filter once the npm advisory endpoint stops returning the record.
+The local patch remains installed to prevent the covered slow matches.
