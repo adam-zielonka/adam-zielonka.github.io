@@ -6,6 +6,7 @@ summary: "A Pascal brick-breaking game from 2011, preserved for the browser."
 stack: ["Pascal", "DOSBox", "js-dos"]
 source: "https://github.com/adam-zielonka/deska"
 demo: "https://adam-zielonka.github.io/deska/"
+windowsDemo: "https://adam-zielonka.github.io/deska/full-screen/"
 order: 14
 ---
 

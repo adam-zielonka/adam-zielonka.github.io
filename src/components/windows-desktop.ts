@@ -30,6 +30,7 @@ type DesktopWindow = {
   title: HTMLElement;
   status: HTMLElement;
   maximize: HTMLButtonElement;
+  gameFrame?: HTMLIFrameElement;
   folder?: Folder;
   list: boolean;
   dispose?: () => void;
@@ -138,7 +139,7 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     if (!win) return;
     win.element.hidden = false;
     win.element.style.zIndex = String(++zIndex);
-    if (focus) win.element.focus({ preventScroll: true });
+    if (focus) (win.gameFrame ?? win.element).focus({ preventScroll: true });
   }
   function nextWindow() {
     const visible = [...windows.values()].filter(win => !win.element.hidden);
@@ -164,6 +165,7 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     );
     win.maximize.title = maximized ? "Restore" : "Maximize";
     win.maximize.textContent = maximized ? "❐" : "□";
+    win.gameFrame?.focus({ preventScroll: true });
   }
   function createWindow(
     id: string,
@@ -296,14 +298,15 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
       return;
     }
     const win = createWindow(`project:${id}`, project.name, project.id);
+    const demo = project.windowsDemo ?? project.demo;
     // Keep controls outside the scrolling body and never recreate a running demo.
     win.body.insertAdjacentHTML(
       "beforebegin",
       `<nav class="WinAppMenu" aria-label="${escape(project.name)} menu">${project.demo ? link(project.demo, "Open in new tab") : ""}${link(project.source, "Source code")}${project.releases ? link(project.releases, "Releases") : ""}<details class="WinHelpMenu"><summary>Help</summary><div class="WinHelpDropdown">${button(`project-help:${id}`, `About ${project.name}…`, "info")}</div></details></nav>`,
     );
     win.body.classList.add("WinAppBody");
-    win.body.innerHTML = project.demo
-      ? `<iframe class="WinAppFrame" src="${escape(project.demo)}" title="${escape(project.name)} demo" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-pointer-lock" allow="fullscreen; clipboard-write" allowfullscreen></iframe>`
+    win.body.innerHTML = demo
+      ? `<iframe class="WinAppFrame" src="${escape(demo)}" title="${escape(project.name)} demo" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-pointer-lock" allow="fullscreen; clipboard-write" allowfullscreen></iframe>`
       : `<div class="WinEmpty">${windowsIcon(project.id)}<h2>${escape(project.name)}</h2><p>This project has no browser demo.</p><p>Use ${project.releases ? "Releases or Source code" : "Source code"} above to explore it.<br>Open Help for the project description.</p></div>`;
     const iframe = win.body.querySelector("iframe");
     if (iframe) {
@@ -331,9 +334,13 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
           // A redirected demo may have a different origin.
         }
       });
+      if (project.windowsDemo) {
+        win.gameFrame = iframe;
+        iframe.focus({ preventScroll: true });
+      }
       win.dispose = () => contentEvents.abort();
     }
-    win.status.textContent = project.demo
+    win.status.textContent = demo
       ? "Web demo · Blank or unavailable? Use Open in new tab · Description in Help"
       : "No browser demo · Description in Help";
   }
@@ -497,6 +504,10 @@ export function WindowsDesktop(onExit: () => void, onShutdown: () => void) {
     const handle = target.closest<HTMLElement>(".WinTitlebar");
     if (!handle || target.closest("button") || event.button !== 0) return;
     const win = windows.get(handle.parentElement!.dataset.window!)!;
+    if (win.gameFrame) {
+      event.preventDefault();
+      win.gameFrame.focus({ preventScroll: true });
+    }
     if (
       win.element.classList.contains("WinWindow--maximized") ||
       workspace.clientWidth <= 540

@@ -169,10 +169,14 @@ test("runs demos in project windows with links below the title bar and descripti
     );
     const iframe = win.querySelector("iframe");
     if (project.demo) {
-      expect(links.map(item => item.getAttribute("href"))).toContain(
-        project.demo,
+      const expectedDemo = ["deska", "saper"].includes(project.id)
+        ? new URL("full-screen/", project.demo).href
+        : project.demo;
+      const openInNewTab = links.find(item =>
+        item.textContent.includes("Open in new tab"),
       );
-      expect(iframe?.getAttribute("src")).toBe(project.demo);
+      expect(openInNewTab?.getAttribute("href")).toBe(project.demo);
+      expect(iframe?.getAttribute("src")).toBe(expectedDemo);
       expect(iframe?.title).toBe(`${project.name} demo`);
       expect(iframe?.getAttribute("sandbox")).toContain("allow-downloads");
     } else {
@@ -207,6 +211,26 @@ test("runs demos in project windows with links below the title bar and descripti
     expect(iframe?.isConnected ?? false).toBe(false);
   }
 });
+
+test.each(["deska", "saper"])(
+  "gives %s keyboard focus on launch and restore",
+  id => {
+    click(`project:${id}`);
+    const win = desktop().querySelector<HTMLElement>(
+      `[data-window="project:${id}"]`,
+    )!;
+    const frame = win.querySelector("iframe")!;
+    expect(document.activeElement).toBe(frame);
+    click("minimize", win);
+    expect(document.activeElement).not.toBe(frame);
+    desktop()
+      .querySelector<HTMLButtonElement>(
+        `.WinTask[title="${win.getAttribute("aria-label")}"]`,
+      )!
+      .click();
+    expect(document.activeElement).toBe(frame);
+  },
+);
 
 test("keeps a running iframe when reopening, minimizing, maximizing or reading Help", () => {
   click("project:paintaz");

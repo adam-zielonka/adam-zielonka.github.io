@@ -6,6 +6,7 @@ summary: "A Pascal Minesweeper game from 2011, running in the browser."
 stack: ["Pascal", "DOSBox", "js-dos"]
 source: "https://github.com/adam-zielonka/saper"
 demo: "https://adam-zielonka.github.io/saper/"
+windowsDemo: "https://adam-zielonka.github.io/saper/full-screen/"
 order: 15
 ---
 

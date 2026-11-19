@@ -9,6 +9,7 @@ export type Project = {
   stack: string[];
   source: string;
   demo?: string;
+  windowsDemo?: string;
   releases?: string;
   featured?: boolean;
   order: number;

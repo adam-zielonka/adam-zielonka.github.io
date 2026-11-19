@@ -68,6 +68,9 @@ export function parseProjectCatalog(files: ProjectFiles): Project[] {
         stack,
         source: url("source"),
         ...(attributes.demo === undefined ? {} : { demo: url("demo") }),
+        ...(attributes.windowsDemo === undefined
+          ? {}
+          : { windowsDemo: url("windowsDemo") }),
         ...(attributes.releases === undefined
           ? {}
           : { releases: url("releases") }),
