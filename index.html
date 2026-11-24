@@ -35,6 +35,105 @@
       </style></noscript
     >
     <a class="SkipLink" href="#terminal">Skip to terminal</a>
+    <svg width="0" height="0" aria-hidden="true" style="position: absolute">
+      <defs>
+        <filter
+          id="crt-curvature"
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          color-interpolation-filters="sRGB"
+        >
+          <!-- In normalized coordinates (-1 to 1), R encodes x*y² and G
+               encodes y*x². The axes stay straight and the corners bend inward. -->
+          <feImage
+            href="./crt-displacement.png"
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+            preserveAspectRatio="none"
+            result="bend"
+          />
+          <!-- Displacement may sample whole pixels. Average four subpixel
+               phases so thin borders keep their coverage as they bend.
+               Channel intercepts are pixel offsets divided by the scale (18). -->
+          <feComponentTransfer in="bend" result="mapA">
+            <feFuncR type="linear" intercept="-0.020833" />
+            <feFuncG type="linear" intercept="-0.006944" />
+          </feComponentTransfer>
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="mapA"
+            scale="18"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="sampleA"
+          />
+          <feComponentTransfer in="bend" result="mapB">
+            <feFuncR type="linear" intercept="-0.006944" />
+            <feFuncG type="linear" intercept="0.020833" />
+          </feComponentTransfer>
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="mapB"
+            scale="18"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="sampleB"
+          />
+          <feComponentTransfer in="bend" result="mapC">
+            <feFuncR type="linear" intercept="0.006944" />
+            <feFuncG type="linear" intercept="-0.020833" />
+          </feComponentTransfer>
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="mapC"
+            scale="18"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="sampleC"
+          />
+          <feComponentTransfer in="bend" result="mapD">
+            <feFuncR type="linear" intercept="0.020833" />
+            <feFuncG type="linear" intercept="0.006944" />
+          </feComponentTransfer>
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="mapD"
+            scale="18"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="sampleD"
+          />
+          <feComposite
+            in="sampleA"
+            in2="sampleB"
+            operator="arithmetic"
+            k2=".5"
+            k3=".5"
+            result="ab"
+          />
+          <feComposite
+            in="sampleC"
+            in2="sampleD"
+            operator="arithmetic"
+            k2=".5"
+            k3=".5"
+            result="cd"
+          />
+          <feComposite
+            in="ab"
+            in2="cd"
+            operator="arithmetic"
+            k2=".5"
+            k3=".5"
+            result="picture"
+          />
+        </filter>
+      </defs>
+    </svg>
     <div class="SiteShell">
       <main>
         <section
@@ -43,40 +142,44 @@
           aria-label="Interactive portfolio"
           tabindex="-1"
         >
-          <div class="CRTScreen">
-            <header class="TerminalBar">
-              <span class="TerminalTitle">adam@portfolio <span>~/</span></span>
-              <div class="TerminalControls">
-                <button type="button" data-skip-animation hidden>
-                  Skip animation</button
-                ><button type="button" data-toggle-motion aria-pressed="true">
-                  Animations: on
+          <div class="CRTGlass">
+            <div class="CRTScreen">
+              <header class="TerminalBar">
+                <span class="TerminalTitle"
+                  >adam@portfolio <span>~/</span></span
+                >
+                <div class="TerminalControls">
+                  <button type="button" data-skip-animation hidden>
+                    Skip animation</button
+                  ><button type="button" data-toggle-motion aria-pressed="true">
+                    Animations: on
+                  </button>
+                </div>
+              </header>
+              <nav class="QuickCommands" aria-label="Command shortcuts">
+                <span>try</span><a href="#home" data-command="whoami">whoami</a
+                ><a href="#projects" data-command="projects">projects</a
+                ><a href="#about" data-command="about">about</a
+                ><a href="#contact" data-command="contact">contact</a
+                ><a href="#windows" data-command="windows">windows</a
+                ><button type="button" data-command="help">
+                  help <span aria-hidden="true">?</span>
                 </button>
-              </div>
-            </header>
-            <nav class="QuickCommands" aria-label="Command shortcuts">
-              <span>try</span><a href="#home" data-command="whoami">whoami</a
-              ><a href="#projects" data-command="projects">projects</a
-              ><a href="#about" data-command="about">about</a
-              ><a href="#contact" data-command="contact">contact</a
-              ><a href="#windows" data-command="windows">windows</a
-              ><button type="button" data-command="help">
-                help <span aria-hidden="true">?</span>
-              </button>
-            </nav>
-            <div id="fallback"><portfolio-fallback /></div>
-            <div id="root"></div>
-            <footer class="TerminalHints" id="terminal-hint">
-              <span
-                ><kbd>Enter</kbd> run
-                <span class="HintDesktop"
-                  >· <kbd>↑</kbd> <kbd>↓</kbd> history ·
-                  <kbd>Tab</kbd> complete</span
-                ></span
-              ><span class="LocalSession"
-                ><i aria-hidden="true"></i> local session</span
-              >
-            </footer>
+              </nav>
+              <div id="fallback"><portfolio-fallback /></div>
+              <div id="root"></div>
+              <footer class="TerminalHints" id="terminal-hint">
+                <span
+                  ><kbd>Enter</kbd> run
+                  <span class="HintDesktop"
+                    >· <kbd>↑</kbd> <kbd>↓</kbd> history ·
+                    <kbd>Tab</kbd> complete</span
+                  ></span
+                ><span class="LocalSession"
+                  ><i aria-hidden="true"></i> local session</span
+                >
+              </footer>
+            </div>
           </div>
           <div class="CRTChin">
             <div class="CRTBadge" aria-hidden="true">

@@ -22,6 +22,29 @@ body {
     0 3px 5px #000a;
 }
 
+.CRTGlass {
+  --glass-rim: url("../assets/crt-rim.svg") center / 100% 100% no-repeat;
+  --glass-reflection: radial-gradient(
+    ellipse 78% 85% at 30% 8%,
+    #e9ffea0e,
+    transparent 72%
+  );
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  isolation: isolate;
+  min-width: 0;
+  border: 10px solid #484b3f;
+  border-top-color: #626355;
+  border-bottom-color: #8e8d79;
+  border-radius: 48px / 32px;
+  overflow: hidden;
+  background: #0b160f;
+  box-shadow:
+    0 0 0 2px #8c8976,
+    0 2px 1px 2px #e4ddc799;
+}
+
 .CRTScreen {
   --terminal: #0b160f;
   --text: #b2df96;
@@ -32,23 +55,15 @@ body {
   --mono:
     "Courier New", Courier, "Liberation Mono", "DejaVu Sans Mono", monospace;
   --sans: var(--mono);
-  position: relative;
+  position: absolute;
+  inset: 0;
   container-type: inline-size;
-  isolation: isolate;
-  min-width: 0;
-  border: 10px solid #484b3f;
-  border-top-color: #626355;
-  border-bottom-color: #8e8d79;
-  border-radius: 48px / 32px;
-  overflow: hidden;
+  filter: url(#crt-curvature);
   color: var(--text);
   background:
     radial-gradient(ellipse at 50% 45%, #203b2166, transparent 80%),
     var(--terminal);
-  box-shadow:
-    0 0 0 2px #8c8976,
-    0 2px 1px 2px #e4ddc799,
-    inset 0 0 24px #000;
+  box-shadow: inset 0 0 24px #000;
   text-shadow: 0 0 5px #9eea7b25;
 }
 
@@ -63,21 +78,28 @@ body {
 .CRTScreen[data-power="off"] > * {
   visibility: hidden;
 }
-.CRTScreen[data-power="off"]::after {
-  background: linear-gradient(125deg, #d8ffd305, transparent 38%);
+.CRTGlass:has(> [data-power="off"])::after {
+  background: var(--glass-rim), var(--glass-reflection);
 }
 
-// Fixed to the glass rather than the scrolling output; never intercept input.
-.CRTScreen::after {
+.CRTScreen::after,
+.CRTGlass::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 2;
-  border-radius: inherit;
   pointer-events: none;
+}
+
+// The raster shares the picture's curvature and stays fixed during scrolling.
+.CRTScreen:not([data-power="off"])::after {
+  background: repeating-linear-gradient(0deg, #0000 0 2px, #0002 2px 3px);
+}
+
+.CRTGlass::after {
   background:
-    linear-gradient(125deg, #d8ffd308, transparent 38%),
-    repeating-linear-gradient(0deg, #0000 0 2px, #0002 2px 3px);
+    var(--glass-rim), var(--glass-reflection),
+    radial-gradient(ellipse at center, transparent 55%, #0004 100%);
   box-shadow:
     inset 0 0 12px 4px #0008,
     inset 0 0 60px #0004;
@@ -272,11 +294,11 @@ body {
     padding: 10px 10px 0;
     border-radius: 22px 22px 16px 16px;
   }
-  .CRTScreen {
+  .CRTGlass {
     border-width: 6px;
     border-radius: 24px / 20px;
   }
-  .CRTScreen::after {
+  .CRTGlass::after {
     box-shadow: inset 0 0 10px 2px #0006;
   }
   .CRTChin {
@@ -308,9 +330,11 @@ body {
 
 @media (prefers-contrast: more), (forced-colors: active) {
   .CRTScreen {
+    filter: none;
     text-shadow: none;
   }
-  .CRTScreen::after {
+  .CRTScreen::after,
+  .CRTGlass::after {
     display: none;
   }
 }

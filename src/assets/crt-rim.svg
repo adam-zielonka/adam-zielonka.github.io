@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="rubber" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#282b24"/>
+      <stop offset="1" stop-color="#42453b"/>
+    </linearGradient>
+  </defs>
+  <!-- The inner lip bows away from the picture at the middle of each edge. -->
+  <path fill="url(#rubber)" fill-rule="evenodd" d="
+    M0 0H1000V1000H0Z
+    M38 10 Q500 -8 962 10 Q986 11 990 38
+    Q1008 500 990 962 Q988 985 962 990
+    Q500 1008 38 990 Q12 985 10 962
+    Q-8 500 10 38 Q12 12 38 10Z"/>
+</svg>
