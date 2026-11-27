@@ -226,4 +226,16 @@ O O O . .  -->  . O O . .
  [* *] . . . [# #]
        [:::] 6`,
   },
+  tysiac: {
+    description:
+      "A king and queen of the same suit beside a score sheet climbing to 1000",
+    drawing: String.raw` .-----.-----.  .-------.
+ | K   | Q   |  | SCORE |
+ |  <> |  <> |  |-------|
+ |     |     |  |   120 |
+ |   K |   Q |  |   340 |
+ '-----'-----'  |   620 |
+  marriage 100  |  1000 |
+                '-------'`,
+  },
 } satisfies Record<string, ProjectArt>;

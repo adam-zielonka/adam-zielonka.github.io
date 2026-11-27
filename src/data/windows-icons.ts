@@ -577,6 +577,22 @@ const icons: Readonly<Record<string, string>> = {
     rect(22, 26, 2, 1, p.black),
     rect(26, 26, 1, 1, p.black),
   ),
+  tysiac: art(
+    rect(4, 4, 27, 27, p.charcoal),
+    bevel(1, 1, 27, 27, p.green, p.lime, p.teal),
+    rect(6, 6, 9, 13, p.charcoal),
+    bevel(4, 4, 9, 13, p.white),
+    pixels(["#.#", "##.", "#.#"], 6, 6, p.maroon),
+    pixels(["##.##", "#####", ".###.", "..#.."], 6, 11, p.red),
+    rect(15, 6, 9, 13, p.charcoal),
+    bevel(13, 4, 9, 13, p.white),
+    pixels([".#.", "#.#", ".##"], 15, 6, p.maroon),
+    pixels(["##.##", "#####", ".###.", "..#.."], 15, 11, p.red),
+    pixels([".#.", "##.", ".#.", ".#.", "###"], 6, 21, p.yellow),
+    ...[10, 14, 18].map(x =>
+      pixels(["###", "#.#", "#.#", "#.#", "###"], x, 21, p.yellow),
+    ),
+  ),
 };
 
 /** Decorative artwork: the containing control supplies its accessible label. */
