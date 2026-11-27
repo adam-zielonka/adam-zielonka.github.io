@@ -1,8 +1,34 @@
 // Original UI inspired by the classic Windows desktop. Scoped to the CRT overlay.
+// 1 px checkerboards: white and silver (pushed toggles, scrollbar tracks),
+// and black and grey (a scrollbar track being held).
+$dither-light: conic-gradient(#fff 25%, #c0c0c0 0 50%, #fff 0 75%, #c0c0c0 0) 0
+  0 / 2px 2px;
+$dither-dark: conic-gradient(#000 25%, #808080 0 50%, #000 0 75%, #808080 0) 0
+  0 / 2px 2px;
 .Win98 {
   --win-face: #c0c0c0;
   --win-blue: #000080;
   --accent: #000080;
+  // Windows 98 3D edges: buttons, window frames and menus, pushed buttons,
+  // sunken client edges and fields, and 1 px status panes.
+  --win-raised:
+    inset -1px -1px #000, inset 1px 1px #fff, inset -2px -2px #808080,
+    inset 2px 2px #dfdfdf;
+  --win-raised-window:
+    inset -1px -1px #000, inset 1px 1px #dfdfdf, inset -2px -2px #808080,
+    inset 2px 2px #fff;
+  --win-pressed:
+    inset -1px -1px #fff, inset 1px 1px #000, inset -2px -2px #dfdfdf,
+    inset 2px 2px #808080;
+  --win-sunken:
+    inset -1px -1px #fff, inset 1px 1px #808080, inset -2px -2px #dfdfdf,
+    inset 2px 2px #000;
+  --win-status: inset -1px -1px #dfdfdf, inset 1px 1px #808080;
+  // The 50% white and silver checkerboard of pushed toggles and tracks.
+  --win-dither: #{$dither-light};
+  --win-dither-dark: #{$dither-dark};
+  // System fonts only: the classic UI face where it exists.
+  --win-font: "Microsoft Sans Serif", Tahoma, Geneva, Arial, sans-serif;
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -11,11 +37,7 @@
   color: #000;
   background: #008080;
   color-scheme: light;
-  font:
-    12px/1.4 Tahoma,
-    "MS Sans Serif",
-    Arial,
-    sans-serif;
+  font: 12px/1.4 var(--win-font);
   text-shadow: none;
   letter-spacing: normal;
   overflow: hidden;
@@ -29,6 +51,11 @@
   button {
     color: inherit;
     border-radius: 0;
+  }
+  // The arrow everywhere but on hyperlinks, as in Windows 98 (:where keeps
+  // this weak, so link-styled buttons can ask for the hand).
+  :where(button, summary, [role^="menuitem"], [role="option"], [role="tab"]) {
+    cursor: default;
   }
   button:disabled {
     cursor: default;
@@ -61,6 +88,11 @@
   flex-shrink: 0;
   image-rendering: pixelated;
 }
+// Hand-drawn 16 px art (windowsIcon(name, 16)): never stretched to 32.
+.Win98Icon--small {
+  width: 16px;
+  height: 16px;
+}
 .WinWorkspace {
   // Keep window z-indices below Start, even after many activations.
   isolation: isolate;
@@ -83,9 +115,17 @@
   gap: 8px;
   overflow: auto;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
 }
 
+.WinFilters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+// List-view items (Classic style): no hover fill. The selection is a navy
+// label and a navy-dithered icon while its list has focus, and a silver
+// label otherwise; the focus rectangle surrounds the label only.
 .WinShortcut {
   display: flex;
   flex-direction: column;
@@ -94,23 +134,68 @@
   gap: 5px;
   padding: 7px 3px;
   min-width: 0;
+  border: 0;
   background: transparent;
   text-align: center;
   span {
     padding: 1px 3px;
     overflow-wrap: anywhere;
   }
-  &:hover span,
+  &:focus-visible {
+    outline: none;
+  }
   &:focus-visible span {
-    color: white;
-    background: #000080;
+    outline: 1px dotted currentColor;
+    outline-offset: -1px;
   }
 }
+// Details highlights the selected item's name only (no full-row select).
+[data-listview] {
+  [aria-selected="true"] > span,
+  tr[aria-selected="true"] .WinDetailsName > span {
+    color: #000;
+    background: #c0c0c0;
+    text-shadow: none;
+  }
+  &:focus-within {
+    [aria-selected="true"] > span,
+    tr[aria-selected="true"] .WinDetailsName > span {
+      color: #fff;
+      background: #000080;
+    }
+    [aria-selected="true"] > .Win98Icon,
+    tr[aria-selected="true"] .Win98Icon {
+      filter: url(#win-selected);
+    }
+  }
+  &:focus-visible {
+    outline: 1px dotted currentColor;
+    outline-offset: -2px;
+  }
+}
+// Windows 98 icon labels have no shadow, only the selection colours.
 .WinDesktopIcons .WinShortcut {
   color: white;
   min-height: 72px;
   flex-shrink: 0;
-  text-shadow: 1px 1px #005050;
+}
+// Large icons show two lines of label at most, ending in an ellipsis; the
+// selected or focused icon shows its whole label over its neighbours.
+:is(.WinDesktopIcons, .WinFileList--large) .WinShortcut {
+  > span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  &:is([aria-selected="true"], :focus) {
+    position: relative;
+    z-index: 1;
+    > span {
+      -webkit-line-clamp: none;
+      overflow: visible;
+    }
+  }
 }
 .WinWallpaper {
   position: absolute;
@@ -154,19 +239,19 @@
   min-height: 0;
   padding: 3px;
   background: #c0c0c0;
-  box-shadow:
-    inset -1px -1px #000,
-    inset 1px 1px #dfdfdf,
-    inset -2px -2px #808080,
-    inset 2px 2px #fff,
-    2px 2px #0005;
+  // The 3D frame is the only edge: Windows 98 windows cast no shadow.
+  box-shadow: var(--win-raised-window);
+  // Windows 98 standard scheme: grey caption with silver text when inactive.
   &[data-active="false"] .WinTitlebar {
-    background: linear-gradient(90deg, #808080, #b5b5b5);
+    color: #c0c0c0;
+    background: linear-gradient(90deg, #808080, #c0c0c0);
   }
+  // A maximized window pushes its sizing frame past the workspace edges,
+  // where .WinWorkspace clips it: the caption meets the top of the screen.
   &--maximized {
-    inset: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
+    inset: -3px !important;
+    width: calc(100% + 6px) !important;
+    height: calc(100% + 6px) !important;
   }
   &:focus-visible {
     outline: none;
@@ -176,16 +261,13 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  min-height: 25px;
+  min-height: 32px;
   padding: 3px;
   color: white;
   background: linear-gradient(90deg, #000080, #1084d0);
   user-select: none;
+  -webkit-touch-callout: none;
   touch-action: none;
-  > .Win98Icon {
-    width: 16px;
-    height: 16px;
-  }
   strong {
     flex: 1;
     overflow: hidden;
@@ -195,6 +277,7 @@
 }
 .WinWindowControls {
   display: flex;
+  flex: none;
   gap: 2px;
 }
 .WinWindowControls button,
@@ -202,28 +285,36 @@
   background: #c0c0c0;
   color: #000;
   border: 0;
-  box-shadow:
-    inset -1px -1px #000,
-    inset 1px 1px #fff,
-    inset -2px -2px #808080,
-    inset 2px 2px #dfdfdf;
+  box-shadow: var(--win-raised);
   &:active,
   &[aria-pressed="true"],
   &[aria-expanded="true"] {
-    box-shadow:
-      inset 1px 1px #000,
-      inset -1px -1px #fff,
-      inset 2px 2px #808080;
-    background: #d4d4d4;
+    box-shadow: var(--win-pressed);
+    background: #c0c0c0;
   }
 }
+// A pushed button's label moves down and right by one pixel.
+.WinButton:is(:active, [aria-pressed="true"], [aria-expanded="true"]) > *,
+.WinWindowControls button:active > .WinCaptionGlyph {
+  translate: 1px 1px;
+}
+// Caption buttons: comfortable 28 x 26 targets, exact 16 x 14 on fine
+// pointers (below). The 16 x 14 pixel glyph stays centred.
 .WinWindowControls button {
-  width: 21px;
-  height: 19px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 26px;
   padding: 0;
-  font:
-    bold 15px/18px Arial,
-    sans-serif;
+  // Unavailable: grey with a white emboss.
+  &:disabled .WinCaptionGlyph {
+    color: #808080;
+    filter: drop-shadow(1px 1px #fff);
+  }
+}
+.WinCaptionGlyph {
+  display: block;
+  flex: none;
 }
 .WinButton {
   display: inline-flex;
@@ -240,91 +331,11 @@
   min-height: 0;
   overflow: auto;
 }
-.WinToolbar {
-  display: flex;
-  gap: 4px;
-  padding: 5px 3px;
-  border-bottom: 1px solid #808080;
-}
-.WinToolbar .Win98Icon {
-  width: 16px;
-  height: 16px;
-}
-.WinAppMenu {
-  display: flex;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 2px;
-  padding: 3px 2px;
-  border-bottom: 1px solid #808080;
-  position: relative;
-  z-index: 1;
-  .WinButton,
-  summary {
-    padding: 5px 8px;
-    min-height: 28px;
-    background: transparent;
-    box-shadow: none;
-    cursor: pointer;
-    text-decoration: none;
-  }
-  .WinButton:hover,
-  summary:hover,
-  .WinHelpMenu[open] summary {
-    color: white;
-    background: #000080;
-  }
-}
-.WinHelpMenu {
-  position: relative;
-  margin-left: auto;
-  summary {
-    display: flex;
-    align-items: center;
-    list-style: none;
-  }
-  summary::-webkit-details-marker {
-    display: none;
-  }
-}
-.WinHelpDropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  width: max-content;
-  max-width: min(260px, 65cqw);
-  padding: 3px;
-  background: #c0c0c0;
-  box-shadow:
-    inset 1px 1px #fff,
-    inset -1px -1px #000,
-    2px 2px #0005;
-  button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    padding: 8px;
-    background: transparent;
-    text-align: left;
-    overflow-wrap: anywhere;
-  }
-  button:hover,
-  button:focus-visible {
-    color: white;
-    background: #000080;
-  }
-  .Win98Icon {
-    width: 16px;
-    height: 16px;
-  }
-}
 .WinAppBody {
   margin: 3px 2px 0;
+  padding: 2px;
   background: white;
-  border: 2px solid;
-  border-color: #808080 #fff #fff #808080;
+  box-shadow: var(--win-sunken);
   &:has(.WinAppFrame) {
     position: relative;
     overflow: hidden;
@@ -333,144 +344,44 @@
 .WinAppFrame {
   display: block;
   position: absolute;
-  top: 0;
-  left: 0;
+  // Inside the 2 px sunken client edge.
+  top: 2px;
+  left: 2px;
   // Expand the app's viewport before scaling so it still fills the window.
-  width: calc(100% / 0.75);
-  height: calc(100% / 0.75);
+  width: calc((100% - 4px) / 0.75);
+  height: calc((100% - 4px) / 0.75);
   transform: scale(0.75);
   transform-origin: top left;
   min-height: 0;
   border: 0;
   background: white;
 }
-.WinAddress {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px;
-  > div {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    background: white;
-    flex: 1;
-    min-width: 0;
-    padding: 4px 6px;
-    overflow-wrap: anywhere;
-    box-shadow:
-      inset 1px 1px #808080,
-      inset -1px -1px #fff;
-  }
-  .Win98Icon {
-    width: 16px;
-    height: 16px;
-  }
-}
-.WinExplorer {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  margin: 0 3px;
-  background: white;
-  border: 2px solid;
-  border-color: #808080 #fff #fff #808080;
-}
-.WinExplorerSide {
-  flex: 0 0 174px;
-  padding: 18px 12px;
-  overflow-y: auto;
-  background: linear-gradient(130deg, #fff, #e5e9ed);
-  border-right: 1px solid #d3d3d3;
-  h2 {
-    margin: 12px 0 8px;
-  }
-  p {
-    font-size: 11px;
-    color: #505050;
-  }
-  nav {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    margin: 12px -6px;
-  }
-  button {
-    display: flex;
-    text-align: left;
-    gap: 5px;
-    align-items: center;
-    background: transparent;
-    padding: 6px;
-  }
-  button .Win98Icon {
-    width: 16px;
-    height: 16px;
-  }
-  button:hover,
-  button[aria-current] {
-    background: #000080;
-    color: white;
-  }
-  small {
-    color: #555;
-    font-size: 10px;
-  }
-}
-.WinFiles {
-  flex: 1;
-  min-width: 0;
-  overflow-y: auto;
-  padding: 10px;
-}
-.WinFolderStrip,
-.WinProjectGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
-  gap: 5px;
-  align-content: start;
-}
-.WinFolderStrip:has(button) {
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 12px;
-}
-.WinProjectGrid .WinShortcut {
-  min-height: 82px;
-}
-.WinFiles--list .WinProjectGrid {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  .WinShortcut {
-    flex-direction: row;
-    text-align: left;
-    min-height: 32px;
-  }
-  .Win98Icon {
-    width: 16px;
-    height: 16px;
-  }
-  small {
-    margin-left: auto;
-    color: #555;
-    padding-right: 8px;
-  }
-}
 .WinStatus {
   margin: 4px 2px 0;
   padding: 4px 6px;
-  box-shadow:
-    inset 1px 1px #808080,
-    inset -1px -1px #fff;
+  box-shadow: var(--win-status);
   font-size: 11px;
+  // One line, as Windows 98 status bars: long hints end in an ellipsis.
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  &[hidden] {
+    display: none;
+  }
 }
-.WinProject,
-.WinNotepad {
-  margin: 4px 2px 0;
-  padding: 22px;
-  background: white;
+// Help, Address Book and project pages sit inside a sunken client edge and
+// scroll inside it, like Notepad.
+.WinWindowBody:has(> .WinProject) {
+  overflow: hidden;
+}
+.WinProject {
   flex: 1;
+  min-height: 0;
+  margin: 3px 2px 0;
+  padding: 22px;
+  overflow: auto;
+  background: white;
+  box-shadow: var(--win-sunken);
 }
 .WinProject {
   > header {
@@ -481,8 +392,8 @@
     border-bottom: 1px solid #c0c0c0;
   }
   header > .Win98Icon {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
   }
   h2 {
     margin: 5px 0 0;
@@ -528,16 +439,6 @@
 .WinReadme pre {
   white-space: pre-wrap;
 }
-.WinNotepad {
-  font:
-    13px/1.6 "Courier New",
-    monospace;
-}
-.WinNotepad h2 {
-  font:
-    bold 19px/1.3 "Courier New",
-    monospace;
-}
 .WinEmpty {
   margin: auto;
   padding: 30px;
@@ -546,48 +447,114 @@
 .WinEmpty > .Win98Icon {
   margin: auto;
 }
+// The taskbar's top edge is a light line over a white one.
 .WinTaskbar {
   display: flex;
   flex-shrink: 0;
   align-items: center;
   gap: 5px;
   min-height: 36px;
-  padding: 3px 8px;
+  padding: 5px 8px 3px;
   background: #c0c0c0;
-  border-top: 2px solid #fff;
+  box-shadow:
+    inset 0 1px #dfdfdf,
+    inset 0 2px #fff;
   z-index: 100;
 }
 .WinStart {
+  gap: 4px;
   padding: 3px 7px;
   font-size: 13px;
 }
 .WinStart .Win98Icon {
-  object-fit: contain;
-  image-rendering: auto;
-  width: 22px;
-  height: 22px;
+  width: 16px;
+  height: 16px;
 }
-.WinShowDesktop {
-  padding: 3px 6px;
+// Quick Launch: a raised grip and flat buttons. Its ::after is the task
+// band's grip: each taskbar toolbar band starts with one.
+.WinQuickLaunch {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 1px;
+  padding-left: 7px;
+  &::before {
+    content: "";
+    position: absolute;
+    left: 1px;
+    top: 50%;
+    width: 3px;
+    height: 18px;
+    translate: 0 -50%;
+    box-shadow:
+      inset 1px 1px #fff,
+      inset -1px -1px #808080;
+  }
+  &::after {
+    content: "";
+    flex: none;
+    width: 3px;
+    height: 18px;
+    margin-left: 4px;
+    box-shadow:
+      inset 1px 1px #fff,
+      inset -1px -1px #808080;
+  }
+}
+.WinQuickButton {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
   background: transparent;
-  border-right: 1px solid #808080 !important;
+  cursor: default;
+  &:focus-visible {
+    outline-offset: -3px;
+  }
+  &:active {
+    box-shadow:
+      inset 1px 1px #808080,
+      inset -1px -1px #fff;
+    > .Win98Icon {
+      translate: 1px 1px;
+    }
+  }
+  .Win98Icon {
+    width: 16px;
+    height: 16px;
+  }
 }
-.WinShowDesktop .Win98Icon {
-  width: 18px;
-  height: 18px;
+@media (hover: hover) {
+  .WinQuickButton:hover:not(:active) {
+    box-shadow:
+      inset 1px 1px #fff,
+      inset -1px -1px #808080;
+  }
 }
+// The task band never grows: no scrollbar, tasks shrink to their icon.
+// Its top padding (cancelled by the margin) keeps the CRT hit areas of the
+// tasks, drawn a few pixels higher near the screen's bottom edge, inside the
+// band's scrollport (crt.scss [data-crt-hit]).
 .WinTasks {
   display: flex;
   gap: 3px;
   flex: 1;
   min-width: 0;
+  margin-top: -4px;
+  padding-top: 4px;
   overflow-x: auto;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 .WinTask {
   justify-content: flex-start;
-  flex: 0 1 150px;
-  min-width: 60px;
+  flex: 0 1 160px;
+  min-width: 40px;
   padding: 4px 8px;
 }
 .WinTask span {
@@ -600,132 +567,198 @@
   width: 16px;
   height: 16px;
 }
+// The foreground task: pushed in, with a light dither and bold text.
 .WinTask[aria-pressed="true"] {
   font-weight: bold;
-  background: #dfdfdf;
+  background: var(--win-dither);
 }
 .WinTray {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 9px;
+  padding: 3px 5px 3px 9px;
   box-shadow:
     inset 1px 1px #808080,
     inset -1px -1px #fff;
   white-space: nowrap;
   font-size: 11px;
 }
-.WinStartMenu {
+.WinClock {
+  padding: 2px;
+  cursor: default;
+}
+
+// Tooltips: pale yellow with a black line and 8 pt text, no shadow.
+.WinTooltip {
   position: absolute;
-  bottom: 36px;
-  left: 4px;
-  display: flex;
-  width: 272px;
-  max-width: calc(100% - 8px);
-  max-height: calc(100% - 42px);
-  padding: 3px;
-  background: #c0c0c0;
-  box-shadow:
-    inset 1px 1px #fff,
-    inset -1px -1px #000,
-    2px 2px #0005;
-  z-index: 101;
+  z-index: 350;
+  width: max-content;
+  max-width: min(300px, 80%);
+  padding: 1px 3px;
+  border: 1px solid #000;
+  color: #000;
+  background: #ffffe1;
+  font: 11px/13px var(--win-font);
+  pointer-events: none;
 }
-.WinStartRail {
-  background: linear-gradient(#000080, #1084d0);
-  color: #c0c0c0;
-  font-size: 22px;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  padding: 12px 4px;
+
+// Shut Down: a solid 50% dither over everything, then the dialog.
+.WinDither {
+  --dither: conic-gradient(#000 25%, #0000 0 50%, #000 0 75%, #0000 0) 0 0 / 2px
+    2px;
+  position: absolute;
+  inset: 0;
+  z-index: 150;
+  background: var(--dither);
 }
-.WinStartRail strong {
-  color: white;
+// The CRT filter resamples the picture and turns a 1 px checkerboard into
+// moiré waves, so while it bends the picture the dither is drawn as the even
+// 50% dim it stands for. crt.scss drops the filter with display effects off,
+// more contrast or forced colours, and the checkerboard returns.
+html:not([data-crt="off"]) .CRTScreen .WinDither {
+  background: #00000080;
 }
-.WinStartItems {
-  flex: 1;
-  min-width: 0;
-  overflow-y: auto;
+// The same holds for the 1 px track and task dithers: their even average.
+html:not([data-crt="off"]) .CRTScreen .Win98 {
+  --win-dither: #e0e0e0;
+  --win-dither-dark: #404040;
 }
-.WinStartUser {
-  padding: 12px;
-  font-weight: bold;
-  border-bottom: 1px solid #808080;
+@media (prefers-contrast: more), (forced-colors: active) {
+  html:not([data-crt="off"]) .CRTScreen .WinDither {
+    background: var(--dither);
+  }
+  html:not([data-crt="off"]) .CRTScreen .Win98 {
+    --win-dither: #{$dither-light};
+    --win-dither-dark: #{$dither-dark};
+  }
 }
-.WinStartUser small {
-  display: block;
-  font-size: 10px;
-  font-weight: normal;
-  color: #444;
+// WebKit never gets the filter (crt.scss), so the checkerboards stay there.
+html[data-crt-curvature="off"] .CRTScreen .WinDither {
+  background: var(--dither);
 }
-.WinStartItems button {
+html[data-crt-curvature="off"] .CRTScreen .Win98 {
+  --win-dither: #{$dither-light};
+  --win-dither-dark: #{$dither-dark};
+}
+.WinShutDown fieldset {
+  display: grid;
+  gap: 2px;
+  margin: 6px 0 0;
+  padding: 0;
+  border: 0;
+}
+.WinShutDown label,
+.WinRunField {
   display: flex;
   align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 10px;
-  text-align: left;
-  background: transparent;
+  gap: 6px;
+  min-height: 40px;
 }
-.WinStartItems button:hover,
-.WinStartItems button:focus-visible {
-  color: white;
-  background: #000080;
+// Win98 option buttons: a 12 px white circle in a two-tone sunken edge,
+// with a black dot when chosen (original pixel art). The focused one has a
+// dotted rectangle around its label, shown whenever it has focus, as in
+// Windows 98.
+$radio: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' shape-rendering='crispEdges'%3E%3Cpath fill='%23808080' d='M4 0h4v1H4zM2 1h2v1H2zM8 1h2v1H8zM1 2h1v2H1zM0 4h1v4H0zM1 8h1v2H1z'/%3E%3Cpath fill='%23fff' d='M10 2h1v2H10zM11 4h1v4H11zM10 8h1v2H10zM2 10h2v1H2zM8 10h2v1H8zM4 11h4v1H4z'/%3E%3Cpath fill='%23000' d='M4 1h4v1H4zM2 2h2v1H2zM8 2h2v1H8zM2 3h1v1H2zM1 4h1v4H1zM2 8h1v2H2z'/%3E%3Cpath fill='%23dfdfdf' d='M9 3h1v1H9zM10 4h1v4H10zM9 8h1v1H9zM3 9h1v1H3zM8 9h2v1H8zM4 10h4v1H4z'/%3E%3Cpath fill='%23fff' d='M4 2h4v1H4zM3 3h6v1H3zM2 4h8v4H2zM3 8h6v1H3zM4 9h4v1H4z'/%3E%3C/svg%3E");
+$radio-dot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M5 4h2v1H5zM4 5h4v2H4zM5 7h2v1H5z'/%3E%3C/svg%3E");
+.WinShutDown input {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin: 0 0 0 2px;
+  appearance: none;
+  background: $radio center / 12px 12px no-repeat;
+  &:checked {
+    background:
+      $radio-dot center / 12px 12px no-repeat,
+      $radio center / 12px 12px no-repeat;
+  }
+  &:focus {
+    outline: none;
+  }
+  &:focus + span {
+    outline: 1px dotted #000;
+    outline-offset: 1px;
+  }
 }
-.WinStartItems .Win98Icon {
-  width: 24px;
-  height: 24px;
+.WinRun {
+  max-width: 300px;
+}
+.WinRunField input {
+  flex: 1;
+  min-width: 0;
+  min-height: 32px;
+  padding: 3px 4px;
+  border: 0;
+  color: #000;
+  background: #fff;
+  box-shadow: var(--win-sunken);
+  &:focus {
+    outline: none;
+  }
+}
+// Stand by: the screen goes dark until a key or press.
+.WinStandby {
+  position: absolute;
+  inset: 0;
+  z-index: 400;
+  background: #000;
+  cursor: none;
+  &:focus {
+    outline: none;
+  }
+}
+.WinHelp {
+  h3 {
+    margin: 18px 0 6px;
+    font-size: 13px;
+  }
+  p {
+    margin: 0 0 8px;
+  }
+}
+.WinHelpKeys {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 14px;
+  margin: 0 0 8px;
+  dt {
+    font-weight: bold;
+  }
+  dd {
+    margin: 0;
+  }
 }
 @container (max-width: 700px) {
-  .WinExplorerSide {
-    flex-basis: 134px;
-    padding: 12px 8px;
-  }
   .WinWindow {
     width: calc(100% - 118px);
   }
-  .WinFolderStrip,
-  .WinProjectGrid {
-    grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
-  }
 }
 @container (max-width: 540px) {
+  // Phones own the layout; model positions and sizes return on wider screens.
   .WinWindow {
     left: 4px !important;
     top: 6px !important;
-    width: calc(100% - 8px);
-    height: calc(100% - 12px);
+    width: calc(100% - 8px) !important;
+    height: calc(100% - 12px) !important;
   }
   .WinWindow--maximized {
-    inset: 0 !important;
-    width: 100%;
-    height: 100%;
+    inset: -3px !important;
+    width: calc(100% + 6px) !important;
+    height: calc(100% + 6px) !important;
   }
-  .WinExplorerSide {
-    display: none;
-  }
-  .WinTitlebar {
-    min-height: 32px;
-  }
-  .WinWindowControls button {
-    width: 28px;
-    height: 26px;
-  }
-  .WinToolbar .WinButton,
-  .WinAppMenu .WinButton,
-  .WinAppMenu summary {
-    min-height: 34px;
-  }
-  .WinProject,
-  .WinNotepad {
+  .WinProject {
     padding: 16px;
   }
   .WinTray {
     padding: 6px;
   }
   .WinTray > .Win98Icon,
-  .WinShowDesktop {
+  .WinQuickButton:not([data-win-action="desktop"]) {
     display: none;
+  }
+  .WinQuickButton {
+    min-width: 36px;
+    height: 36px;
   }
   .WinTaskbar {
     padding-inline: 4px;
@@ -735,23 +768,1850 @@
   }
 }
 
-.WinFindForm {
+// Shared popup menus, menu bars and message boxes (src/components/win98).
+// Comfortable sizes by default; exact Windows 98 metrics only for fine
+// pointers in wide containers, so touch targets stay large.
+$menu-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' shape-rendering='crispEdges'%3E%3Cpath d='M6 0h1v1H6zM5 1h2v1H5zM0 2h1v1H0zM4 2h3v1H4zM0 3h2v1H0zM3 3h3v1H3zM0 4h5v1H0zM1 5h3v1H1zM2 6h1v1H2z'/%3E%3C/svg%3E");
+$menu-radio: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h4v1H1zM0 1h6v4H0zM1 5h4v1H1z'/%3E%3C/svg%3E");
+$menu-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h1v7H0zM1 1h1v5H1zM2 2h1v3H2zM3 3h1v1H3z'/%3E%3C/svg%3E");
+$raised-window: var(--win-raised-window);
+$raised-button: var(--win-raised);
+$default-button:
+  inset 0 0 0 1px #000,
+  inset -2px -2px #000,
+  inset 2px 2px #fff,
+  inset -3px -3px #808080,
+  inset 3px 3px #dfdfdf;
+$default-button-pressed:
+  inset 0 0 0 1px #000,
+  inset 0 0 0 2px #808080;
+
+@mixin pixel-glyph($image, $width, $height) {
+  background: currentColor;
+  -webkit-mask: $image center / $width $height no-repeat;
+  mask: $image center / $width $height no-repeat;
+}
+
+.WinMenu {
+  position: absolute;
+  z-index: 300;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 6px;
-  input {
-    flex: 1 1 120px;
-    min-width: 0;
-    padding: 4px 6px;
-    border: 2px inset var(--win-face);
-    background: white;
-    color: black;
+  flex-direction: column;
+  min-width: 140px;
+  padding: 3px;
+  color: #000;
+  background: #c0c0c0;
+  box-shadow: $raised-window;
+  font-size: 12px;
+  line-height: 16px;
+  &:focus {
+    outline: none;
   }
 }
-.WinFindResults,
-.WinDriveList {
+.WinMenuItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 26px 4px 4px;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: default;
+  // One hot item: hover moves focus, so only focus is highlighted.
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+  &:focus,
+  &[aria-expanded="true"] {
+    color: #fff;
+    background: #000080;
+  }
+  &[aria-disabled="true"] {
+    color: #808080;
+    text-shadow: 1px 1px #fff;
+  }
+  &[aria-disabled="true"]:focus {
+    text-shadow: none;
+  }
+  > .Win98Icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+.WinMenuItem--default .WinMenuLabel {
+  font-weight: bold;
+}
+.WinMenuCheck {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+// The system menu's Restore, Minimize, Maximize and Close glyphs.
+.WinMenuCheck > .WinCaptionGlyph {
+  flex: none;
+}
+[aria-checked="true"] > .WinMenuCheck {
+  @include pixel-glyph($menu-check, 7px, 7px);
+}
+[role="menuitemradio"][aria-checked="true"] > .WinMenuCheck {
+  @include pixel-glyph($menu-radio, 6px, 6px);
+}
+[aria-disabled="true"] > .WinMenuCheck {
+  filter: drop-shadow(1px 1px #fff);
+}
+.WinMenuLabel {
+  flex: 1;
+}
+.WinMenuShortcut {
+  padding-left: 24px;
+}
+.WinMenuArrow {
+  position: absolute;
+  right: 8px;
+  inset-block: 0;
+  width: 4px;
+  @include pixel-glyph($menu-arrow, 4px, 7px);
+}
+.WinMenuSeparator {
+  flex: none;
+  height: 0;
+  margin: 3px 1px;
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #fff;
+}
+.WinMenuBar {
+  display: flex;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  padding: 1px 0;
+}
+.WinMenuBarItem {
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 0;
+  color: #000;
+  background: transparent;
+  font: inherit;
+  cursor: default;
+  &:focus-visible {
+    outline: none;
+  }
+  // Hot items rise by one pixel; the open menu's title is pressed in.
+  &:hover,
+  &:focus-visible {
+    box-shadow:
+      inset 1px 1px #fff,
+      inset -1px -1px #808080;
+  }
+  &[aria-expanded="true"] {
+    box-shadow:
+      inset 1px 1px #808080,
+      inset -1px -1px #fff;
+  }
+}
+
+.WinModal {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  // Flex, not grid: the box's percentage max-width needs a definite container.
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+.WinMessageBox {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  min-width: min(250px, 100%);
+  max-width: min(420px, 90%);
+  max-height: 100%;
+  padding: 3px;
+  background: #c0c0c0;
+  box-shadow: $raised-window;
+  &:focus {
+    outline: none;
+  }
+  // A box that opened another one is no longer the foreground window.
+  &[data-active="false"] .WinTitlebar {
+    color: #c0c0c0;
+    background: linear-gradient(90deg, #808080, #c0c0c0);
+  }
+}
+.WinMessageBoxContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-height: 0;
+  padding: 14px 12px 4px;
+  overflow: auto;
+}
+.WinMessageBoxText {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  > p {
+    margin: 0 0 8px;
+  }
+}
+.WinMessageBoxButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px 10px;
+  .WinButton {
+    min-width: 75px;
+  }
+  // Like Windows, the focused push button becomes the default one.
+  &:focus-within .WinButton--default:not(:focus) {
+    box-shadow: $raised-button;
+  }
+  .WinButton:focus {
+    box-shadow: $default-button;
+  }
+  .WinButton:active {
+    background: #c0c0c0;
+    box-shadow: $default-button-pressed;
+  }
+}
+// Dialogs and property sheets right-align their buttons; a sheet shows its
+// one tab, raised and joined to the page below it.
+.WinMessageBox--dialog .WinMessageBoxButtons {
+  justify-content: flex-end;
+}
+.WinSheetTabs {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  margin: 8px 8px 0;
+  > span {
+    margin-bottom: -2px;
+    padding: 3px 8px 4px;
+    background: #c0c0c0;
+    box-shadow:
+      inset 1px 1px #fff,
+      inset -1px 0 #000,
+      inset -2px 0 #808080;
+  }
+}
+.WinSheetPage {
+  margin: 0 8px;
+  padding: 12px;
+  box-shadow: $raised-window;
+}
+.WinButton--default {
+  box-shadow: $default-button;
+}
+// Unavailable push buttons: embossed grey text.
+.WinButton:disabled {
+  color: #808080;
+  text-shadow: 1px 1px #fff;
+}
+
+// Start: a 2px raised panel with a vertical banner and 32px icons.
+.WinStartMenu {
+  // Inside the taskbar's stacking context, above the workspace.
+  z-index: 1;
+  min-width: 200px;
+  padding-left: 24px;
+  > .WinMenuItem {
+    gap: 10px;
+    min-height: 44px;
+    padding: 4px 26px 4px 6px;
+    > .Win98Icon {
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
+.WinMenuBanner {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 21px;
+  padding-bottom: 6px;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(to top, #000080, #1084d0);
+  font:
+    16px/21px Tahoma,
+    "MS Sans Serif",
+    Arial,
+    sans-serif;
+  white-space: nowrap;
+  > span {
+    // Reads bottom to top, like the Windows 98 banner.
+    writing-mode: vertical-rl;
+    rotate: 180deg;
+  }
+  b {
+    color: #c0c0c0;
+  }
+}
+// Pushed-in panels: a Back row and large rows for touch.
+.WinMenu--push .WinMenuItem,
+.WinMenu--push.WinStartMenu > .WinMenuItem {
+  min-height: 44px;
+}
+.WinMenuBack {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  @include pixel-glyph(
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7' shape-rendering='crispEdges'%3E%3Cpath d='M3 0h1v7H3zM2 1h1v5H2zM1 2h1v3H1zM0 3h1v1H0z'/%3E%3C/svg%3E"),
+    4px,
+    7px
+  );
+}
+
+// Explorer: a menu bar, rebar bands with grips (Standard Buttons and
+// Address), then the Web View panel beside the file pane, and status panes.
+$drop-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h7v1H0zM1 1h5v1H1zM2 2h3v1H2zM3 3h1v1H3z'/%3E%3C/svg%3E");
+$sunken-field: var(--win-sunken);
+$hot:
+  inset 1px 1px #fff,
+  inset -1px -1px #808080;
+$pushed:
+  inset 1px 1px #808080,
+  inset -1px -1px #fff;
+
+// Explorer's menu bar is a rebar band too, with its own grip.
+.WinWindow--explorer .WinMenuBar {
+  position: relative;
+  padding-left: 9px;
+  box-shadow:
+    inset 0 1px #fff,
+    inset 0 -1px #808080;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: 3px;
+    box-shadow: $hot;
+  }
+}
+.WinRebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  &[hidden] {
+    display: none;
+  }
+}
+.WinRebarBand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 4px 3px 2px 11px;
+  // Bands are separated by etched lines; each starts with a raised grip.
+  box-shadow:
+    inset 0 1px #fff,
+    inset 0 -1px #808080;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    bottom: 3px;
+    left: 3px;
+    width: 3px;
+    box-shadow: $hot;
+  }
+}
+.WinToolBand {
+  gap: 1px;
+  overflow: hidden;
+}
+.WinToolButton {
+  display: inline-flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 48px;
+  min-height: 40px;
+  padding: 2px 6px;
+  border: 0;
+  color: #000;
+  background: transparent;
+  box-shadow: none;
+  cursor: default;
+  .Win98Icon {
+    width: 20px;
+    height: 20px;
+  }
+  &:focus-visible {
+    outline: 1px dotted #000;
+    outline-offset: -3px;
+  }
+  &:not([aria-disabled="true"]):active,
+  &[aria-expanded="true"] {
+    box-shadow: $pushed;
+    > * {
+      translate: 1px 1px;
+    }
+  }
+  &[aria-disabled="true"] {
+    color: #808080;
+    text-shadow: 1px 1px #fff;
+    .Win98Icon {
+      filter: url(#win-disabled);
+    }
+  }
+}
+@media (hover: hover) {
+  .WinToolButton:not(
+      [aria-disabled="true"],
+      :active,
+      [aria-expanded="true"]
+    ):hover {
+    box-shadow: $hot;
+  }
+}
+// Explorer's glyphs rest in grey and take their colours under the mouse,
+// as in the Windows 98 shell (fine pointers that hover only).
+@media (hover: hover) and (pointer: fine) {
+  .WinToolButton:not(
+      :hover,
+      :focus-visible,
+      [aria-expanded="true"],
+      [aria-disabled="true"]
+    )
+    .Win98Icon {
+    filter: grayscale(1);
+  }
+}
+// The Views split button's arrow part.
+.WinToolDrop {
+  align-self: stretch;
+  min-width: 13px;
+  width: 13px;
+  margin-left: -1px;
+  padding: 0;
+  &::after {
+    content: "";
+    width: 7px;
+    height: 4px;
+    @include pixel-glyph($drop-arrow, 7px, 4px);
+  }
+}
+.WinToolSeparator {
+  flex: none;
+  align-self: stretch;
+  width: 2px;
+  margin: 2px 4px;
+  box-shadow:
+    inset 1px 0 #808080,
+    inset -1px 0 #fff;
+}
+.WinAddressBand {
+  gap: 4px;
+  label {
+    flex: none;
+    padding: 0 2px;
+  }
+}
+.WinCombo {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+  min-height: 34px;
+  padding: 2px;
+  background: #fff;
+  box-shadow: $sunken-field;
+  input {
+    flex: 1;
+    align-self: stretch;
+    min-width: 0;
+    padding: 0 4px;
+    border: 0;
+    color: #000;
+    background: transparent;
+    // Text fields show focus with the caret or selected text only.
+    &:focus {
+      outline: none;
+    }
+  }
+  .Win98Icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 2px;
+  }
+}
+.WinComboButton {
+  flex: none;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  padding: 0;
+  border: 0;
+  background: #c0c0c0;
+  box-shadow: $raised-window;
+  cursor: default;
+  &::after {
+    content: "";
+    width: 7px;
+    height: 4px;
+    @include pixel-glyph($drop-arrow, 7px, 4px);
+  }
+  &:active,
+  &[aria-expanded="true"] {
+    box-shadow: inset 0 0 0 1px #808080;
+    &::after {
+      translate: 1px 1px;
+    }
+  }
+  &:focus-visible {
+    outline: 1px dotted #000;
+    outline-offset: -4px;
+  }
+}
+// Address list: it drops like a combo box's list, white in a 1 px black
+// frame and as wide as the field; places are indented by level and the
+// current one is highlighted on open.
+.WinAddressMenu {
+  padding: 0;
+  border: 1px solid #000;
+  background: #fff;
+  box-shadow: none;
+  .WinMenuItem {
+    padding-right: 8px;
+  }
+  .WinMenuItem[aria-disabled="true"] {
+    color: #808080;
+    text-shadow: none;
+  }
+}
+.WinAddressMenu .WinMenuItem > .Win98Icon {
+  margin-left: calc(var(--menu-indent, 0) * 10px);
+}
+
+.WinExplorerBody {
+  overflow: hidden;
+}
+.WinExplorer {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  margin: 2px 2px 0;
+  padding: 2px;
   background: white;
-  border: 2px inset var(--win-face);
+  box-shadow: $sunken-field;
+}
+.WinWebView {
+  flex: 0 0 180px;
+  min-width: 0;
+  padding: 12px 10px;
+  overflow-y: auto;
+  background: #fff;
+  &[hidden] {
+    display: none;
+  }
+  > .Win98Icon {
+    width: 32px;
+    height: 32px;
+  }
+  h2 {
+    margin: 6px 0 6px;
+    font-size: 18px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  hr {
+    margin: 0 0 10px;
+    border-bottom: 0;
+  }
+  p {
+    margin: 0 0 8px;
+    font-size: 11px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+  .WinTags {
+    margin: 0 0 8px;
+    span {
+      padding: 1px 4px;
+      font-size: 10px;
+    }
+  }
+  .WinButton {
+    min-height: 23px;
+    padding: 0 10px;
+  }
+  .WinButton:disabled {
+    color: #808080;
+    text-shadow: 1px 1px #fff;
+  }
+}
+// Web View panels were HTML: their links are plain hyperlinks, buttons and
+// anchors alike (.Win98 raises it over the desktop's button colour).
+.Win98 .WinWebLink {
+  padding: 0;
+  border: 0;
+  color: #00f;
+  background: none;
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+  &:hover {
+    color: #00f;
+  }
+  &:focus-visible {
+    outline-offset: 1px;
+  }
+}
+.WinSeeAlso {
+  margin-top: 14px;
+  font-size: 11px;
+  p {
+    margin: 0 0 4px;
+  }
+  ul {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+.WinDiskBar {
+  display: flex;
+  height: 14px;
+  margin: 0 0 6px;
+  padding: 2px;
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #dfdfdf;
+  span {
+    min-width: 2px;
+  }
+}
+.WinDiskLegend {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 8px;
+  padding: 0;
+  font-size: 11px;
+  list-style: none;
+  li {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  span {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    outline: 1px solid #000;
+  }
+}
+.WinFiles {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: 6px;
+  &[data-view="details"] {
+    padding: 0;
+  }
+}
+.WinFileList {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  min-height: 100%;
+  &:focus-visible {
+    outline-offset: -1px;
+  }
+}
+.WinFileList--large {
+  grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+  .WinShortcut {
+    min-height: 82px;
+  }
+}
+.WinFileList--small {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-auto-rows: 32px;
+  column-gap: 8px;
+}
+// List: small icons flowing down, then into further columns.
+.WinFileList--list {
+  height: 100%;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(auto-fill, 32px);
+  grid-auto-columns: minmax(150px, max-content);
+  justify-content: start;
+  column-gap: 16px;
+}
+.WinFileList--small,
+.WinFileList--list {
+  .WinShortcut {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    padding: 0 2px;
+    text-align: left;
+    span {
+      padding: 0 2px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  .Win98Icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+.WinDetails {
+  width: 100%;
+  min-width: 420px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  .WinColName {
+    width: 32%;
+  }
+  .WinColType {
+    width: 18%;
+  }
+  .WinColStack {
+    width: 36%;
+  }
+  .WinColDemo {
+    width: 14%;
+  }
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 0;
+    background: #c0c0c0;
+    font-weight: normal;
+    text-align: left;
+  }
+  td {
+    height: 32px;
+    padding: 0 6px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  tr:focus {
+    outline: none;
+  }
+  tr:focus-visible .WinDetailsName > span {
+    outline: 1px dotted currentColor;
+    outline-offset: -1px;
+  }
+}
+.WinColumnHeader {
+  display: block;
+  width: 100%;
+  min-height: 32px;
+  padding: 0 6px;
+  overflow: hidden;
+  border: 0;
+  color: #000;
+  background: #c0c0c0;
+  white-space: nowrap;
+  text-align: left;
+  text-overflow: ellipsis;
+  cursor: default;
+  box-shadow:
+    inset -1px -1px #000,
+    inset 1px 1px #fff,
+    inset -2px -2px #808080;
+  &:active {
+    box-shadow: inset 0 0 0 1px #808080;
+    padding: 1px 5px 0 7px;
+  }
+  &:focus-visible {
+    outline-offset: -4px;
+  }
+}
+.WinDetailsName {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  vertical-align: middle;
+  .Win98Icon {
+    width: 16px;
+    height: 16px;
+  }
+  > span {
+    padding: 0 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+// Status panes: count or selection | type | zone.
+.WinStatus--panes {
+  display: flex;
+  gap: 2px;
+  min-width: 0;
+  padding: 0;
+  box-shadow: none;
+  &[hidden] {
+    display: none;
+  }
+}
+.WinStatusField {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 3px 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  box-shadow: var(--win-status);
+  &:first-child {
+    flex-grow: 2;
+  }
+}
+.WinStatusZone {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  .Win98Icon {
+    flex: none;
+    width: 16px;
+    height: 16px;
+  }
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+.WinStatusSummary {
+  display: none;
+}
+@container (max-width: 700px) {
+  .WinWebView {
+    flex-basis: 140px;
+    padding: 10px 8px;
+  }
+  .WinFileList--large {
+    grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+  }
+}
+// Phones: the Web View is hidden and the first status pane shows the
+// selected item's summary instead; tool buttons show their icons only.
+@container (max-width: 540px) {
+  .WinWebView {
+    display: none;
+  }
+  .WinToolButton {
+    min-width: 40px;
+    min-height: 40px;
+  }
+  .WinToolLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .WinToolDrop {
+    min-width: 24px;
+    width: 24px;
+  }
+  .WinStatusSummary:not(:empty) {
+    display: inline;
+  }
+  .WinStatusSummary:not(:empty) + .WinStatusCount,
+  .WinStatusKind,
+  .WinStatusZone {
+    display: none;
+  }
+}
+
+// Window chrome: the system-menu icon, resize handles and the size grip.
+// The icon is a 16 px button without a bevel.
+.WinSysMenu {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: default;
+  .Win98Icon {
+    width: 16px;
+    height: 16px;
+  }
+  &:focus-visible {
+    outline: 1px dotted currentColor;
+    outline-offset: 0;
+  }
+}
+// Eight invisible handles straddle the 3 px frame: 6 px edges and
+// 12 px corners, with the matching resize cursors.
+.WinResize {
+  position: absolute;
+  z-index: 2;
+  touch-action: none;
+}
+.WinResize--n,
+.WinResize--s {
+  left: 9px;
+  right: 9px;
+  height: 6px;
+  cursor: ns-resize;
+}
+.WinResize--n {
+  top: -3px;
+}
+.WinResize--s {
+  bottom: -3px;
+}
+.WinResize--e,
+.WinResize--w {
+  top: 9px;
+  bottom: 9px;
+  width: 6px;
+  cursor: ew-resize;
+}
+.WinResize--e {
+  right: -3px;
+}
+.WinResize--w {
+  left: -3px;
+}
+// Corners are L-shaped along the frame, so they never cover the
+// system-menu icon or the Close button.
+.WinResize--nw,
+.WinResize--ne,
+.WinResize--sw,
+.WinResize--se {
+  width: 12px;
+  height: 12px;
+}
+.WinResize--nw {
+  top: -3px;
+  left: -3px;
+  cursor: nwse-resize;
+  clip-path: polygon(0 0, 100% 0, 100% 6px, 6px 6px, 6px 100%, 0 100%);
+}
+.WinResize--se {
+  right: -3px;
+  bottom: -3px;
+  cursor: nwse-resize;
+  clip-path: polygon(
+    calc(100% - 6px) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 calc(100% - 6px),
+    calc(100% - 6px) calc(100% - 6px)
+  );
+}
+.WinResize--ne {
+  top: -3px;
+  right: -3px;
+  cursor: nesw-resize;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    calc(100% - 6px) 100%,
+    calc(100% - 6px) 6px,
+    0 6px
+  );
+}
+.WinResize--sw {
+  bottom: -3px;
+  left: -3px;
+  cursor: nesw-resize;
+  clip-path: polygon(
+    0 0,
+    6px 0,
+    6px calc(100% - 6px),
+    100% calc(100% - 6px),
+    100% 100%,
+    0 100%
+  );
+}
+// The size grip: three diagonal highlight and shadow line pairs at the
+// right end of the status bar. It acts as the bottom-right handle.
+$size-grip: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' shape-rendering='crispEdges'%3E%3Cpath fill='%23fff' d='M0 10h1v1h-1zM1 9h1v1h-1zM2 8h1v1h-1zM3 7h1v1h-1zM4 6h1v1h-1zM5 5h1v1h-1zM6 4h1v1h-1zM7 3h1v1h-1zM8 2h1v1h-1zM9 1h1v1h-1zM10 0h1v1h-1zM3 11h1v1h-1zM4 10h1v1h-1zM5 9h1v1h-1zM6 8h1v1h-1zM7 7h1v1h-1zM8 6h1v1h-1zM9 5h1v1h-1zM10 4h1v1h-1zM11 3h1v1h-1zM7 11h1v1h-1zM8 10h1v1h-1zM9 9h1v1h-1zM10 8h1v1h-1zM11 7h1v1h-1z'/%3E%3Cpath fill='%23808080' d='M0 11h1v1h-1zM1 10h1v1h-1zM2 9h1v1h-1zM3 8h1v1h-1zM4 7h1v1h-1zM5 6h1v1h-1zM6 5h1v1h-1zM7 4h1v1h-1zM8 3h1v1h-1zM9 2h1v1h-1zM10 1h1v1h-1zM11 0h1v1h-1zM4 11h1v1h-1zM5 10h1v1h-1zM6 9h1v1h-1zM7 8h1v1h-1zM8 7h1v1h-1zM9 6h1v1h-1zM10 5h1v1h-1zM11 4h1v1h-1zM8 11h1v1h-1zM9 10h1v1h-1zM10 9h1v1h-1zM11 8h1v1h-1z'/%3E%3C/svg%3E");
+.WinSizeGrip {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  z-index: 3;
+  width: 12px;
+  height: 12px;
+  background: $size-grip right bottom / 12px 12px no-repeat;
+  cursor: nwse-resize;
+  touch-action: none;
+}
+// Without a status bar there is no grip; the text keeps clear of it.
+.WinStatus[hidden] ~ .WinSizeGrip {
+  display: none;
+}
+.WinStatus {
+  padding-right: 16px;
+}
+.WinStatus--panes {
+  padding-right: 14px;
+}
+// Maximized windows cannot be resized.
+.WinWindow--maximized {
+  .WinResize,
+  .WinSizeGrip {
+    display: none;
+  }
+}
+// While a window moves or resizes, demos must not swallow the pointer.
+.WinWindowLayer[data-interacting] iframe {
+  pointer-events: none;
+}
+// A demo that is still loading.
+.WinWindow[data-loading] {
+  cursor: progress;
+}
+// An inactive window shields a cross-origin demo, so the first press
+// activates the window (the frame's own events are out of reach).
+.WinWindow[data-active="false"] .WinAppBody[data-shield]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+// Icons are not text: no selection or callout on a long press.
+.WinDesktopIcons,
+[data-listview] [data-list-item],
+.WinTaskbar {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+// Dialog controls: sunken fields, Win98 check boxes and etched group boxes.
+.WinField {
+  min-width: 0;
+  min-height: 32px;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 0;
+  color: #000;
+  background: #fff;
+  box-shadow: $sunken-field;
+  font: inherit;
+  &:focus {
+    outline: none;
+  }
+}
+// A drop-down list: the field with a raised arrow button inside its edge.
+.WinSelect {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  select {
+    flex: 1;
+    padding-right: 22px;
+    appearance: none;
+  }
+  select:focus-visible {
+    background: #000080;
+    color: #fff;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    bottom: 2px;
+    width: 16px;
+    background: $drop-arrow center no-repeat #c0c0c0;
+    box-shadow: $raised-window;
+    pointer-events: none;
+  }
+}
+.WinCheck {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    appearance: none;
+    background: #fff;
+    box-shadow: $sunken-field;
+    &:checked {
+      background: $menu-check center / 7px 7px no-repeat #fff;
+    }
+    &:focus {
+      outline: none;
+    }
+    &:focus-visible + span {
+      outline: 1px dotted #000;
+      outline-offset: 1px;
+    }
+    // Unavailable: a silver box and embossed grey text.
+    &:disabled {
+      background: #c0c0c0;
+    }
+    &:disabled + span {
+      color: #808080;
+      text-shadow: 1px 1px #fff;
+    }
+  }
+}
+.WinGroup {
+  min-width: 0;
+  margin: 0;
+  padding: 8px 10px 10px;
+  border: 1px solid #808080;
+  box-shadow:
+    inset 1px 1px #fff,
+    1px 1px #fff;
+  legend {
+    padding: 0 2px;
+    background: #c0c0c0;
+  }
+}
+
+// Notepad: one white, sunken, read-only edit control in a fixed-width font.
+.WinNotepadBody {
+  overflow: hidden;
+}
+.WinNotepadText {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 0;
+  resize: none;
+  color: #000;
+  background: #fff;
+  box-shadow: $sunken-field;
+  font:
+    13px/16px "Fixedsys Excelsior",
+    "Courier New",
+    monospace;
+  overflow-y: scroll;
+  &:focus {
+    outline: none;
+  }
+}
+
+// Find: Projects. The Name & Location group with the buttons on its right,
+// then the results, which the window grows to show.
+// Find never opens taller than the workspace: on short screens its form
+// scrolls, and the results keep a few rows.
+.WinWindow--find {
+  height: auto;
+  max-height: 100%;
+}
+.WinFindBody {
+  overflow: auto;
+}
+.WinFind {
+  display: flex;
+  flex-shrink: 0;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 6px 8px;
+  .WinGroup {
+    flex: 1;
+  }
+}
+.WinFindFields {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 6px 8px;
+  .WinCheck {
+    grid-column: 2;
+  }
+}
+.WinFindButtons {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+  .WinButton {
+    min-width: 75px;
+  }
+}
+// The magnifier circles while a search runs (only with animations on).
+.WinFindGlass {
+  align-self: center;
+  margin-top: 4px;
+  .Win98Icon {
+    width: 32px;
+    height: 32px;
+  }
+}
+.WinFind[data-searching] .WinFindGlass .Win98Icon {
+  animation: win-find-search 0.8s steps(4) infinite;
+}
+@keyframes win-find-search {
+  0% {
+    translate: 0 0;
+  }
+  25% {
+    translate: 3px -3px;
+  }
+  50% {
+    translate: 6px 0;
+  }
+  75% {
+    translate: 3px 3px;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+.WinFindResults {
+  flex: 1;
+  min-height: 64px;
+  margin: 0 2px;
+  overflow: auto;
+  background: #fff;
+  box-shadow: $sunken-field;
+  &[hidden] {
+    display: none;
+  }
+  &:not([data-view="details"]) {
+    padding: 6px;
+  }
+}
+.WinDetails--find {
+  .WinColName {
+    width: 26%;
+  }
+  .WinColFolder {
+    width: 30%;
+  }
+  .WinColType {
+    width: 14%;
+  }
+  .WinColStack {
+    width: 30%;
+  }
+}
+
+// Property sheets: the item's icon and name, a rule, then its properties.
+.WinProperties {
+  min-width: min(260px, 60cqw);
+  dl {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 12px;
+    margin: 0;
+  }
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+.WinPropertiesName {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #808080;
+  box-shadow: 0 1px #fff;
+  overflow-wrap: anywhere;
+}
+// Display Properties: a monitor showing the desktop, then the settings.
+.WinDisplayProperties {
+  display: grid;
+  gap: 10px;
+  min-width: min(260px, 60cqw);
+}
+.WinMonitor {
+  justify-self: center;
+  width: 132px;
+  padding: 8px 8px 14px;
+  background: #c0c0c0;
+  box-shadow: $raised-window;
+}
+.WinMonitorScreen {
+  height: 72px;
+  padding: 4px;
+  background: #008080;
+  box-shadow: $sunken-field;
+  .Win98Icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Touch screens resize with the grip only, at 24 px.
+@media (pointer: coarse) {
+  .WinResize {
+    display: none;
+  }
+  .WinSizeGrip {
+    width: 24px;
+    height: 24px;
+    background-size: 24px 24px;
+  }
+  .WinStatus {
+    padding-right: 28px;
+  }
+  .WinStatus--panes {
+    padding-right: 26px;
+  }
+}
+
+@container (max-width: 540px) {
+  .WinResize,
+  .WinSizeGrip {
+    display: none;
+  }
+  .WinStatus,
+  .WinStatus--panes {
+    padding-right: 6px;
+  }
+  .WinStatus--panes {
+    padding-right: 0;
+  }
+  // The buttons move under the fields.
+  .WinFind {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .WinFindButtons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-top: 0;
+    .WinButton {
+      flex: 1;
+    }
+  }
+  .WinFindGlass {
+    display: none;
+  }
+}
+@media (pointer: coarse) {
+  .WinMenuItem,
+  .WinMenuBarItem {
+    min-height: 40px;
+  }
+  // The Views arrow is a touch target of its own.
+  .WinToolDrop {
+    min-width: 24px;
+    width: 24px;
+  }
+}
+// Short touch screens (phones in landscape) get the wide layout but only
+// 200-300 px of workspace, so the chrome folds up: no Web View, icon-only
+// tools beside the Address field, and 30-32 px rows, still finger-sized.
+@media (pointer: coarse) and (max-height: 500px) {
+  .WinTitlebar {
+    min-height: 28px;
+    padding: 1px 3px;
+  }
+  .WinWindowControls button {
+    height: 24px;
+  }
+  .WinMenuBar {
+    padding: 0;
+  }
+  .WinMenuBarItem {
+    min-height: 30px;
+    padding: 2px 10px;
+  }
+  .WinMenuItem,
+  .WinMenu--push .WinMenuItem {
+    min-height: 32px;
+  }
+  .WinStartMenu > .WinMenuItem,
+  .WinMenu--push.WinStartMenu > .WinMenuItem {
+    min-height: 32px;
+    padding-block: 0;
+  }
+  .WinWebView {
+    display: none;
+  }
+  .WinRebar {
+    flex-direction: row;
+  }
+  .WinRebarBand {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+  .WinToolBand {
+    flex: none;
+  }
+  .WinAddressBand {
+    flex: 1;
+  }
+  .WinToolButton {
+    min-width: 36px;
+    min-height: 32px;
+  }
+  .WinToolLabel,
+  .WinAddressBand label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .WinCombo {
+    min-height: 32px;
+  }
+  .WinStatus {
+    margin-top: 2px;
+    padding-block: 2px;
+  }
+  .WinFind {
+    padding-block: 2px 4px;
+  }
+  .WinFindGlass {
+    display: none;
+  }
+}
+@media (pointer: fine) {
+  @container (min-width: 541px) {
+    .WinMenu {
+      min-width: 0;
+      font-size: 11px;
+      line-height: 14px;
+    }
+    .WinMenuItem {
+      gap: 0;
+      min-height: 18px;
+      padding: 2px 20px 2px 22px;
+    }
+    .WinMenuCheck {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 22px;
+      height: auto;
+    }
+    .WinMenuItem--icon {
+      gap: 5px;
+      padding-left: 3px;
+    }
+    .WinMenuArrow {
+      right: 6px;
+    }
+    .WinMenuShortcut {
+      padding-left: 20px;
+    }
+    .WinMenuBarItem {
+      min-height: 0;
+      padding: 2px 6px;
+      font-size: 11px;
+      line-height: 14px;
+    }
+    .WinMessageBoxButtons .WinButton {
+      min-height: 23px;
+      padding: 0 12px;
+    }
+    .WinStartMenu:not(.WinMenu--push) > .WinMenuItem {
+      gap: 8px;
+      min-height: 36px;
+      padding: 2px 20px 2px 4px;
+    }
+    .WinQuickButton {
+      width: 22px;
+      height: 22px;
+    }
+    .WinShutDown label,
+    .WinRunField {
+      min-height: 22px;
+    }
+    .WinRunField input {
+      min-height: 21px;
+    }
+    // Explorer: 75 px icon cells, 18 px rows and 22 px tool buttons.
+    .WinToolButton {
+      min-width: 0;
+      min-height: 22px;
+    }
+    .WinToolButton:not(.WinToolDrop) {
+      min-width: 42px;
+    }
+    .WinCombo {
+      min-height: 22px;
+    }
+    .WinComboButton {
+      width: 16px;
+    }
+    .WinFileList--large {
+      grid-template-columns: repeat(auto-fill, 75px);
+      gap: 4px 0;
+      .WinShortcut {
+        min-height: 0;
+        padding: 2px 1px;
+        gap: 3px;
+      }
+    }
+    .WinFileList--small {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      grid-auto-rows: 18px;
+      gap: 0 8px;
+    }
+    .WinFileList--list {
+      grid-template-rows: repeat(auto-fill, 18px);
+      gap: 0 16px;
+    }
+    .WinDetails td {
+      height: 18px;
+    }
+    .WinColumnHeader {
+      min-height: 18px;
+    }
+    .WinStatusField {
+      padding: 1px 3px;
+    }
+    // Dialog controls: 21 px fields, 13 px check boxes, 75 x 23 buttons.
+    .WinField {
+      min-height: 21px;
+    }
+    .WinCheck {
+      min-height: 20px;
+      input {
+        width: 13px;
+        height: 13px;
+      }
+    }
+    .WinFindButtons .WinButton {
+      min-height: 23px;
+      padding: 0 8px;
+    }
+    // 8 pt text (11 px), aliased where the platform allows it.
+    .Win98 {
+      font-size: 11px;
+      line-height: 13px;
+      -webkit-font-smoothing: none;
+    }
+    .WinProject:not(.WinHelp) > header h2,
+    .WinEmpty h2 {
+      font-size: 13px;
+    }
+    .WinSummary {
+      font-size: 11px;
+    }
+    // An 18 px caption: the 16 px icon 2 px from the left, bold text and
+    // 16 x 14 buttons; Minimize and Maximize touch, Close stands 2 px off.
+    .WinTitlebar {
+      min-height: 18px;
+      height: 18px;
+      padding: 0 2px;
+      gap: 3px;
+    }
+    .WinWindowControls {
+      gap: 0;
+    }
+    .WinWindowControls button {
+      width: 16px;
+      height: 14px;
+    }
+    .WinWindowControls
+      button:is([data-win-action="close"], .WinMessageBoxClose) {
+      margin-left: 2px;
+    }
+    // Push buttons are at least 75 x 23.
+    .WinButton {
+      min-width: 75px;
+      min-height: 23px;
+      padding: 0 12px;
+    }
+    // A 28 px taskbar: its 2 px top edge, 2 px of padding and 22 px buttons.
+    .WinTaskbar {
+      height: 28px;
+      min-height: 0;
+      padding: 4px 2px 2px;
+      gap: 4px;
+    }
+    .WinStart {
+      min-width: 54px;
+      min-height: 22px;
+      height: 22px;
+      padding: 0 5px 0 3px;
+      gap: 3px;
+      font-size: 11px;
+    }
+    .WinTask {
+      min-width: 40px;
+      min-height: 22px;
+      height: 22px;
+      padding: 0 4px;
+      gap: 3px;
+    }
+    .WinTray {
+      height: 22px;
+      gap: 4px;
+      padding: 0 6px 0 4px;
+    }
+    // Desktop icons sit on a 75 px grid; labels are 74 px wide at most.
+    .WinDesktopIcons {
+      inset: 2px;
+      grid-template-rows: repeat(auto-fill, 75px);
+      grid-auto-columns: 75px;
+      gap: 0;
+      .WinShortcut {
+        min-height: 0;
+        padding: 2px 0 0;
+        gap: 4px;
+      }
+    }
+    :is(.WinDesktopIcons, .WinFileList--large) .WinShortcut > span {
+      max-width: 74px;
+      padding: 0 1px;
+    }
+  }
+}
+
+// Windows 98 scrollbars on fine pointers: 16 px, a dithered track, a raised
+// thumb and raised arrow buttons with original pixel arrows. Touch screens
+// and high contrast keep the platform's own scrollbars.
+$scroll-up: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M3 0h1v1H3zM2 1h3v1H2zM1 2h5v1H1zM0 3h7v1H0z'/%3E%3C/svg%3E");
+$scroll-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='7' shape-rendering='crispEdges'%3E%3Cpath d='M3 0h1v7H3zM2 1h1v5H2zM1 2h1v3H1zM0 3h1v1H0z'/%3E%3C/svg%3E");
+@media (pointer: fine) and (forced-colors: none) {
+  .Win98 {
+    ::-webkit-scrollbar {
+      width: 16px;
+      height: 16px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--win-dither);
+    }
+    // Holding the track darkens the part being paged through.
+    ::-webkit-scrollbar-track-piece:active {
+      background: var(--win-dither-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c0c0c0;
+      box-shadow: var(--win-raised-window);
+    }
+    ::-webkit-scrollbar-button:single-button {
+      display: block;
+      width: 16px;
+      height: 16px;
+      background: #c0c0c0 no-repeat center;
+      box-shadow: var(--win-raised-window);
+    }
+    ::-webkit-scrollbar-button:single-button:active {
+      background-position: calc(50% + 1px) calc(50% + 1px);
+      box-shadow: inset 0 0 0 1px #808080;
+    }
+    ::-webkit-scrollbar-button:single-button:vertical:decrement {
+      background-image: $scroll-up;
+    }
+    ::-webkit-scrollbar-button:single-button:vertical:increment {
+      background-image: $drop-arrow;
+    }
+    ::-webkit-scrollbar-button:single-button:horizontal:decrement {
+      background-image: $scroll-left;
+    }
+    ::-webkit-scrollbar-button:single-button:horizontal:increment {
+      background-image: $menu-arrow;
+    }
+    ::-webkit-scrollbar-corner {
+      background: #c0c0c0;
+    }
+  }
+  // Firefox has no scrollbar parts to style: silver on a light track.
+  @supports not selector(::-webkit-scrollbar) {
+    .Win98 * {
+      scrollbar-color: #c0c0c0 #dfdfdf;
+    }
+  }
+}
+
+// The CRT picture's hit compensation (the [data-crt-hit] contract in
+// crt.scss) moves each marked control's hit area to where it is drawn. Its
+// pad may reach at most half way to a marked neighbour, or the later control
+// takes clicks drawn on the earlier one: flush Quick Launch buttons and the
+// touching Minimize and Maximize get none. On touch screens, controls with
+// room around them reach further; the system-menu icon only a little, so a
+// double tap beside it still maximizes rather than closes.
+.WinQuickButton {
+  --crt-hit-pad: 0px;
+}
+@media (pointer: fine) {
+  @container (min-width: 541px) {
+    .WinWindowControls
+      button:is([data-win-action="minimize"], [data-win-action="maximize"]) {
+      --crt-hit-pad: 0px;
+    }
+  }
+}
+@media (pointer: coarse) {
+  .Win98 :is(.WinStart, .WinClock, .WinMessageBoxClose) {
+    --crt-hit-pad: 6px;
+  }
+  .Win98 .WinSysMenu {
+    --crt-hit-pad: 3px;
+  }
+}
+
+// High contrast (forced colours) drops box-shadow bevels and backgrounds, so
+// frames, buttons and fields get system-colour borders, and pressed,
+// selected and active states use Highlight. Pixel art keeps its colours.
+@media (forced-colors: active) {
+  .WinWindow,
+  .WinMenu,
+  .WinMessageBox,
+  .WinMonitor {
+    border: 1px solid CanvasText;
+  }
+  .WinTaskbar {
+    border-top: 1px solid CanvasText;
+  }
+  .WinButton,
+  .WinWindowControls button,
+  .WinQuickButton,
+  .WinToolButton,
+  .WinComboButton,
+  .WinColumnHeader,
+  .WinField,
+  .WinCombo,
+  .WinRunField input,
+  .WinCheck input,
+  .WinNotepadText {
+    border: 1px solid ButtonText;
+  }
+  .WinButton--default {
+    outline: 1px solid ButtonText;
+  }
+  .WinAppBody,
+  .WinProject,
+  .WinSheetPage,
+  .WinExplorer,
+  .WinFindResults,
+  .WinStatus:not(.WinStatus--panes),
+  .WinStatusField,
+  .WinTray,
+  .WinMonitorScreen {
+    border: 1px solid GrayText;
+  }
+  .WinMenuSeparator,
+  .WinToolSeparator,
+  .WinRebarBand {
+    border-color: GrayText;
+  }
+  // Native check boxes, option buttons and lists follow the system colours
+  // themselves.
+  .WinCheck input,
+  .WinShutDown input {
+    appearance: auto;
+  }
+  .WinShutDown input {
+    width: 13px;
+    height: 13px;
+    background: none;
+  }
+  .WinSelect {
+    select {
+      appearance: auto;
+      padding-right: 4px;
+    }
+    &::after {
+      display: none;
+    }
+  }
+  // Pushed toggles, the foreground task and open menus.
+  .Win98
+    :is(
+      [aria-pressed="true"],
+      .WinButton[aria-expanded="true"],
+      .WinMenuBarItem[aria-expanded="true"]
+    ) {
+    forced-color-adjust: none;
+    color: HighlightText;
+    background: Highlight;
+  }
+  // The active caption is highlighted; inactive ones are plain text.
+  .WinTitlebar {
+    forced-color-adjust: none;
+    color: HighlightText;
+    background: Highlight;
+    .WinWindowControls button {
+      color: ButtonText;
+      background: ButtonFace;
+      &:disabled {
+        color: GrayText;
+      }
+    }
+  }
+  :is(.WinWindow, .WinMessageBox)[data-active="false"] .WinTitlebar {
+    color: GrayText;
+    background: Canvas;
+    border-bottom: 1px solid GrayText;
+  }
+  .WinCaptionGlyph {
+    filter: none !important;
+  }
+  // Selected list items and the hot menu item.
+  [data-listview] [aria-selected="true"] > span,
+  [data-listview] tr[aria-selected="true"] .WinDetailsName > span,
+  .WinMenuItem:is(:focus, [aria-expanded="true"]) {
+    forced-color-adjust: none;
+    color: HighlightText;
+    background: Highlight;
+    text-shadow: none;
+  }
+  [data-listview]:focus-within [aria-selected="true"] .Win98Icon {
+    filter: none;
+  }
+  .WinMenuItem[aria-disabled="true"],
+  .WinButton:disabled,
+  .WinToolButton[aria-disabled="true"] {
+    color: GrayText;
+    text-shadow: none;
+  }
+  // Mask-drawn glyphs paint with the (forced) text colour.
+  .WinMenuCheck,
+  .WinMenuArrow,
+  .WinMenuBack,
+  .WinToolDrop::after,
+  .WinComboButton::after {
+    forced-color-adjust: none;
+  }
+  .WinMenuBanner {
+    border-right: 1px solid CanvasText;
+  }
+  .WinSheetTabs > span {
+    border: 1px solid GrayText;
+    border-bottom: 0;
+  }
+  // Decorative pixel art and the shut-down dither keep their colours.
+  .Win98Icon,
+  .WinSizeGrip,
+  .WinDither,
+  .WinStandby {
+    forced-color-adjust: none;
+  }
 }

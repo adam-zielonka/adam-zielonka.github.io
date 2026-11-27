@@ -12,8 +12,11 @@ body {
   border-top-color: #e7e1cc;
   border-bottom-color: #716e60;
   border-radius: 32px 32px 24px 24px;
+  // Matte stippled plastic: two faint, offset dot layers.
   background:
-    repeating-linear-gradient(0deg, #fff0 0 3px, #453c2410 3px 4px),
+    radial-gradient(circle, #3a321e08 0 0.6px, transparent 1px) 0 0 / 3px 4px,
+    radial-gradient(circle, #fffbe80a 0 0.6px, transparent 1px) 1px 2px / 5px
+      3px,
     linear-gradient(125deg, #d5cfb9, #b4af9b 55%, #999582);
   box-shadow:
     inset 3px 3px 3px #f3eddc99,
@@ -23,7 +26,12 @@ body {
 }
 
 .CRTGlass {
-  --glass-rim: url("../assets/crt-rim.svg") center / 100% 100% no-repeat;
+  // The raster is underscanned inside unlit glass, so the bezel never covers
+  // the picture and the bowed edge reads against the dark tube.
+  --crt-underscan: clamp(4px, 0.8vw, 12px);
+  --crt-raster-radius: 10px;
+  --crt-gasket: 3px;
+  --crt-tube: #0a0d0b;
   --glass-reflection: radial-gradient(
     ellipse 78% 85% at 30% 8%,
     #e9ffea0e,
@@ -34,15 +42,22 @@ body {
   min-height: 0;
   isolation: isolate;
   min-width: 0;
-  border: 10px solid #484b3f;
-  border-top-color: #626355;
-  border-bottom-color: #8e8d79;
+  // Beige chamfer sloping toward the tube, in shadow at the top.
+  border: 10px solid #b0aa94;
+  border-top-color: #9d9782;
+  border-bottom-color: #c9c2aa;
   border-radius: 48px / 32px;
   overflow: hidden;
-  background: #0b160f;
+  background: var(--crt-tube);
   box-shadow:
     0 0 0 2px #8c8976,
     0 2px 1px 2px #e4ddc799;
+}
+// Whole pixels keep the picture's 1 px details on the device grid.
+@supports (inset: round(1.5px, 1px)) {
+  .CRTGlass {
+    --crt-underscan: round(clamp(4px, 0.8vw, 12px), 1px);
+  }
 }
 
 .CRTScreen {
@@ -56,15 +71,28 @@ body {
     "Courier New", Courier, "Liberation Mono", "DejaVu Sans Mono", monospace;
   --sans: var(--mono);
   position: absolute;
-  inset: 0;
+  inset: var(--crt-underscan);
   container-type: inline-size;
+  // The clip runs before the filter, so the rounded corners bend with the
+  // picture. Unlike hidden, clip keeps focus from scrolling the raster.
+  border-radius: var(--crt-raster-radius);
+  overflow: clip;
+  // src/utils/crt-curvature.ts sizes both filters for the screen and video
+  // mode, and switches to the two-sample filter on dense displays.
   filter: url(#crt-curvature);
   color: var(--text);
   background:
     radial-gradient(ellipse at 50% 45%, #203b2166, transparent 80%),
     var(--terminal);
-  box-shadow: inset 0 0 24px #000;
   text-shadow: 0 0 5px #9eea7b25;
+}
+.CRTScreen[data-crt-samples="2"] {
+  filter: url(#crt-curvature-2);
+}
+@supports not (overflow: clip) {
+  .CRTScreen {
+    overflow: hidden;
+  }
 }
 
 .CRTScreen :focus-visible {
@@ -72,14 +100,28 @@ body {
 }
 
 .CRTScreen[data-power="off"] {
-  background: #080b09;
+  background: none;
   text-shadow: none;
 }
 .CRTScreen[data-power="off"] > * {
   visibility: hidden;
 }
+// An unlit tube is one even face: no raster outline, falloff or vignette.
+.CRTScreen[data-power="off"]::after {
+  box-shadow: none;
+}
 .CRTGlass:has(> [data-power="off"])::after {
-  background: var(--glass-rim), var(--glass-reflection);
+  background: var(--glass-reflection);
+}
+// Black screens (boot, matrix, "It's now safe") are drawn in the tube colour
+// (shutdown.scss): no beam, so no falloff may darken them below the glass.
+.CRTScreen:has(
+    > .Experience:not(
+      .Experience--windows-startup,
+      .Experience--shutdown-animation
+    )
+  )::after {
+  box-shadow: none;
 }
 
 .CRTScreen::after,
@@ -91,18 +133,111 @@ body {
   pointer-events: none;
 }
 
-// The raster shares the picture's curvature and stays fixed during scrolling.
+// Scanlines and edge falloff are drawn inside the filtered layer, so they bend
+// with the picture and stay fixed during scrolling. The script snaps the
+// period to device pixels; without it, the 3 px phosphor pattern remains.
+.CRTScreen::after {
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px #0006,
+    inset 0 0 18px 2px #0007;
+}
 .CRTScreen:not([data-power="off"])::after {
-  background: repeating-linear-gradient(0deg, #0000 0 2px, #0002 2px 3px);
+  background: repeating-linear-gradient(
+    0deg,
+    #0000 0 calc(var(--scan-period, 3px) - var(--scan-line, 1px)),
+    var(--scan-color, #0002) 0 var(--scan-period, 3px)
+  );
+}
+// An SVGA desktop's scanlines were barely visible. Its controls reach into
+// the raster's corners (Start, a maximized window's Close), so the corners
+// are tighter and keep their outer bevels whole.
+.CRTScreen[data-video-mode="graphics"] {
+  --scan-color: #0000000d;
+  --crt-raster-radius: 6px;
+}
+
+// Stand by (Portfolio 98): a blank screen and an amber power LED. It looks
+// like a screen that is off. The unclipped glass layer blanks the whole tube,
+// so the picture cannot show through the antialiased raster corners.
+.CRTScreen[data-standby]::after {
+  background: var(--crt-tube, #0a0d0b);
+  box-shadow: none;
+}
+.CRTGlass:has(> [data-standby])::after {
+  background: var(--glass-reflection), var(--crt-tube);
+}
+
+// Nothing is bent while the screen is blank, so the filter can rest.
+.CRTScreen[data-power="off"],
+.CRTScreen[data-standby] {
+  filter: none;
+}
+
+// WebKit safe mode (isWebKit in src/utils/crt-curvature.ts). WebKit leaves
+// composited descendants, such as asynchronously scrolled boxes, out of a
+// reference filter, so the picture is never bent there. Hits then stay on the
+// layout, and Display effects turns only the scanlines and edge falloff on and
+// off.
+html[data-crt-curvature="off"] {
+  .CRTScreen {
+    filter: none;
+  }
+  .CRTScreen [data-crt-hit]::before {
+    translate: none;
+  }
+}
+
+// Display effects opt-out (setCrtEffects): a flat picture in the same case.
+html[data-crt="off"] {
+  .CRTScreen {
+    filter: none;
+  }
+  .CRTScreen:not([data-standby])::after {
+    background: none;
+    box-shadow: none;
+  }
 }
 
 .CRTGlass::after {
   background:
-    var(--glass-rim), var(--glass-reflection),
+    var(--glass-reflection),
     radial-gradient(ellipse at center, transparent 55%, #0004 100%);
   box-shadow:
+    inset 0 0 0 var(--crt-gasket) #2b2e26,
     inset 0 0 12px 4px #0008,
     inset 0 0 60px #0004;
+}
+
+// Hit-target compensation. The curvature moves what is drawn, but clicks
+// still land on the flat layout. Small controls near the edges opt in with
+// [data-crt-hit]: src/utils/crt-curvature.ts sets --crt-dx and --crt-dy to
+// where the element is drawn. The element itself then takes no hits; only
+// this ::before, moved there, does. Its hits go to the element, and :hover
+// and :active apply as usual. Marked neighbours shift alike, so touching
+// controls part at their drawn edge, unless a pad reaches across it: the
+// later element wins any overlap. Consumers:
+// - must not use ::before on marked elements;
+// - should mark leaf controls, because descendants take no hits either;
+// - must mark only static or relatively positioned elements that do not
+//   clip their own overflow (put text-overflow on an inner element);
+// - should keep marked elements out of clipping or scrolling containers,
+//   which cut off the moved area (scrolling does update the offsets);
+// - may set --crt-hit-pad (default 1px) to at most half the gap to a marked
+//   neighbour, and to 0 where marked controls touch.
+.CRTScreen [data-crt-hit] {
+  position: relative;
+  pointer-events: none;
+}
+.CRTScreen [data-crt-hit]::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--crt-hit-pad, 1px));
+  translate: var(--crt-dx, 0px) var(--crt-dy, 0px);
+  pointer-events: auto;
+}
+html[data-crt="off"] .CRTScreen [data-crt-hit]::before {
+  translate: none;
 }
 
 .CRTChin {
@@ -131,17 +266,21 @@ body {
   letter-spacing: 2px;
 }
 
+// A perforated speaker grille: staggered holes with a lit lower lip.
 .CRTVents {
   width: clamp(40px, 13vw, 180px);
   height: 18px;
   margin-left: auto;
-  border-radius: 2px;
-  background: repeating-linear-gradient(
-    90deg,
-    #666859 0 2px,
-    #e1dac166 2px 3px,
-    transparent 3px 6px
-  );
+  border-radius: 3px;
+  background:
+    radial-gradient(circle, #45463a 0 1.1px, transparent 1.6px) 0 0 / 6px 6px,
+    radial-gradient(circle, #45463a 0 1.1px, transparent 1.6px) 3px 3px / 6px
+      6px,
+    radial-gradient(circle, #efe8d0aa 0 1.1px, transparent 1.6px) 0.5px 0.7px /
+      6px 6px,
+    radial-gradient(circle, #efe8d0aa 0 1.1px, transparent 1.6px) 3.5px 3.7px /
+      6px 6px;
+  box-shadow: inset 0 1px 1px #4b483e33;
 }
 
 .CRTHardware {
@@ -245,6 +384,12 @@ body {
 .CRTHardware:has(.CRTPower[aria-pressed="true"]) .CRTLED--power::after {
   opacity: 1;
 }
+// Stand by keeps the computer on with the screen blanked: the LED turns amber.
+.TerminalWindow:has(.CRTScreen[data-standby]) .CRTLED--power::after {
+  opacity: 1;
+  background: radial-gradient(circle at 35% 30%, #ffedb0, #e3a244);
+  box-shadow: 0 0 6px 1px #f1b45299;
+}
 .CRTLED--disk {
   background: #574126;
 }
@@ -295,11 +440,16 @@ body {
     border-radius: 22px 22px 16px 16px;
   }
   .CRTGlass {
+    --crt-underscan: 4px;
+    --crt-raster-radius: 6px;
+    --crt-gasket: 2px;
     border-width: 6px;
     border-radius: 24px / 20px;
   }
   .CRTGlass::after {
-    box-shadow: inset 0 0 10px 2px #0006;
+    box-shadow:
+      inset 0 0 0 var(--crt-gasket) #2b2e26,
+      inset 0 0 10px 2px #0006;
   }
   .CRTChin {
     min-height: 56px;
@@ -329,12 +479,22 @@ body {
 }
 
 @media (prefers-contrast: more), (forced-colors: active) {
-  .CRTScreen {
+  .CRTScreen,
+  .CRTScreen[data-crt-samples] {
     filter: none;
     text-shadow: none;
   }
   .CRTScreen::after,
   .CRTGlass::after {
     display: none;
+  }
+  .CRTScreen [data-crt-hit]::before {
+    translate: none;
+  }
+  // Stand by still blanks the screen.
+  .CRTScreen[data-standby]::after,
+  .CRTGlass:has(> [data-standby])::after {
+    display: block;
+    forced-color-adjust: none;
   }
 }

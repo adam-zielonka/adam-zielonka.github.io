@@ -18,7 +18,7 @@ export function hashFromCommand(command: string): string | undefined {
   if (name === "project" && args.length === 1 && /^[a-z0-9-]+$/.test(args[0]))
     return `#project/${args[0]}`;
   if (args.length) return undefined;
-  if (name === "whoami" || name === "home") return "#home";
+  if (["whoami", "home", "dosmode"].includes(name)) return "#home";
   if (name === "windows" || name === "win") return "#windows";
   if (["projects", "about", "contact"].includes(name)) return `#${name}`;
   return undefined;

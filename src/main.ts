@@ -2,6 +2,7 @@ import "./terminal";
 import { store } from "./store/store";
 import { commandFromHash } from "./utils/routes";
 import { startupCommands } from "./utils/boot";
+import { initCrtCurvature } from "./utils/crt-curvature";
 
 let routeRequest = 0;
 async function runRoute() {
@@ -15,12 +16,15 @@ async function runRoute() {
     await new Promise(resolve => setTimeout(resolve, 0));
   }
   if (request !== routeRequest) return;
+  // Leaving through navigation ends the MS-DOS session's way back.
+  store.system.returnToWindows = undefined;
   await store.system.addCommand(command, { route: false });
 }
 
 window.addEventListener("hashchange", () => void runRoute());
 const hardware = document.querySelector<HTMLElement>(".CRTHardware");
 if (hardware) hardware.hidden = false;
+initCrtCurvature();
 document.addEventListener("click", event => {
   if (!(event.target instanceof Element)) return;
   if (event.target.closest("[data-toggle-power]")) {

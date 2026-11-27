@@ -20,6 +20,13 @@ export class System {
   private skipped = false;
   private focusAfterCommand = false;
   animations = !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  /**
+   * Set when Portfolio 98 hands over to the terminal (MS-DOS Prompt or
+   * Restart in MS-DOS mode): `exit` and `win` then go back to Windows, with
+   * the startup screen after MS-DOS mode and at once after the prompt.
+   * Power-off and route navigation clear it.
+   */
+  returnToWindows?: "prompt" | "dos-mode";
 
   constructor() {
     try {
@@ -124,6 +131,7 @@ export class System {
       return;
     }
     // Mark the session off before aborting, so pending commands cannot revive it.
+    this.returnToWindows = undefined;
     this.state = "off";
     this.controller.abort();
     this.animationController.abort();
@@ -137,6 +145,14 @@ export class System {
     this.state = "freeze";
   }
 
+  /** Leaves Portfolio 98 for the terminal, which says how to come back. */
+  exitToDos(kind: "prompt" | "dos-mode") {
+    if (!this.isInputAllowed) return Promise.resolve(false);
+    this.returnToWindows = kind;
+    // Like a fresh MS-DOS session: no command at the prompt, just the output.
+    return this.addCommand("dosmode", { focus: true, echo: false });
+  }
+
   async addCommand(
     command: string,
     options: {
@@ -144,26 +160,39 @@ export class System {
       startup?: boolean;
       route?: boolean;
       animateCommand?: boolean;
+      /** Show the command at the prompt first (default). */
+      echo?: boolean;
     } = {},
   ) {
     if (!this.isInputAllowed || !command.trim()) return false;
+    const [name, ...args] = parseArgs(command);
+    // After MS-DOS mode, `exit` and `win` return to Portfolio 98.
+    const returning =
+      ["exit", "win", "windows"].includes(name) && !args.length
+        ? this.returnToWindows
+        : undefined;
+    if (["win", "windows"].includes(name) || returning)
+      this.returnToWindows = undefined;
+    const run = returning ? "windows" : command;
+    // Shutting down or restarting the desktop keeps it on screen meanwhile.
     const desktopShutdown =
       window.terminal.isWindows &&
-      ["shutdown", "exit"].includes(parseArgs(command)[0]);
+      ["shutdown", "exit", "restart"].includes(parseArgs(run)[0]);
     if (!desktopShutdown) window.terminal.closeWindows();
     this.focusAfterCommand = options.focus ?? false;
     this.controller = new AbortController();
     this.animationController = new AbortController();
-    this.skipped = false;
+    // The MS-DOS Prompt hands straight back, without the startup screen.
+    this.skipped = returning === "prompt";
     const automaticBoot =
-      options.startup === true && ["boot", "windows"].includes(command);
+      options.startup === true && ["boot", "windows"].includes(run);
     if (!automaticBoot) {
       store.history.set(command);
       store.history.add();
     }
     store.completion.reset();
     this.state = "processing";
-    const hash = hashFromCommand(command);
+    const hash = hashFromCommand(run);
     if (hash && options.route !== false && location.hash !== hash) {
       if (options.startup) window.history.replaceState(null, "", hash);
       else window.history.pushState(null, "", hash);
@@ -172,12 +201,12 @@ export class System {
     let completed = false;
     try {
       // A power-on starts the boot screen immediately, without a shell prompt.
-      if (!automaticBoot && !desktopShutdown)
+      if (!automaticBoot && !desktopShutdown && options.echo !== false)
         await store.output.processCommandLine(
           command,
           options.animateCommand ?? true,
         );
-      if (this.isProcessing) await process(command);
+      if (this.isProcessing) await process(run);
       // Reduced motion shows every message at once, until the visitor dismisses it.
       if (this.isProcessing && window.terminal.isStaticMatrix) {
         await new Promise<void>(resolve => {
@@ -198,6 +227,15 @@ export class System {
       });
     } finally {
       window.terminal.finishExperience();
+      // An interrupted restart never reaches its new desktop: the old,
+      // dimmed one goes too, as an interrupted `windows` leaves the prompt.
+      if (
+        desktopShutdown &&
+        !completed &&
+        !this.isPoweredOff &&
+        parseArgs(run)[0] === "restart"
+      )
+        window.terminal.closeWindows();
       if (["processing", "interrupted"].includes(this.state)) this.state = "";
       if (!this.isPoweredOff)
         window.terminal.announce(

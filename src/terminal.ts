@@ -6,6 +6,11 @@ import { useBreakDetection } from "./hooks/use-break-detection";
 import { OutputLine } from "./types/line";
 import { isCommandLine } from "./utils/line";
 import { fitHomeProjects } from "./utils/home-layout";
+import {
+  crtEffectsForcedOff,
+  getCrtEffects,
+  setCrtEffects,
+} from "./utils/crt-curvature";
 
 export class Terminal {
   private lines = document.createElement("ul");
@@ -178,13 +183,17 @@ export class Terminal {
       .map(element => ({ element, inert: element.inert }));
     for (const { element } of this.desktopBackground) element.inert = true;
     this.desktop = WindowsDesktop(
-      () => {
-        void window.store.system.addCommand("whoami", { focus: true });
+      kind => void window.store.system.exitToDos(kind),
+      kind => {
+        void window.store.system.addCommand(kind, { animateCommand: false });
       },
-      () => {
-        void window.store.system.addCommand("shutdown", {
-          animateCommand: false,
-        });
+      // Start ▸ Settings and Display Properties switch the CRT picture.
+      {
+        displayEffects: {
+          get: getCrtEffects,
+          set: setCrtEffects,
+          forcedOff: crtEffectsForcedOff,
+        },
       },
     );
     screen.append(this.desktop.element);
@@ -192,11 +201,21 @@ export class Terminal {
   }
 
   closeWindows() {
+    // Back/Forward can remove the desktop while it has the keyboard, or
+    // while an experience over it gave the keyboard up (it could not
+    // return it to the inert terminal).
+    const focused = document.activeElement;
+    const hadFocus =
+      !!this.desktop &&
+      (this.desktop.element.contains(focused) ||
+        !focused ||
+        focused === document.body);
     this.desktop?.dispose();
     this.desktop = undefined;
     for (const { element, inert } of this.desktopBackground)
       element.inert = inert;
     this.desktopBackground = [];
+    if (hadFocus) this.output.focus({ preventScroll: true });
   }
 
   enterMatrix() {

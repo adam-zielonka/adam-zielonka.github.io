@@ -10,7 +10,9 @@
   padding: 0;
   border: 0;
   border-radius: 0;
-  background: #000;
+  // Black is no beam: the unlit tube (crt.scss), never darker than the
+  // glass around the picture.
+  background: var(--crt-tube, #000);
   color: #6ca391;
   overflow: auto;
   overscroll-behavior: contain;
@@ -40,14 +42,18 @@
   padding: 48px 24px;
   text-align: center;
 }
+// A proportional face: inside the CRT, --sans is the terminal's monospace.
 .Shutdown h2 {
   margin: 0;
-  color: #ff8d22;
+  color: #ff8000;
   font:
-    700 clamp(24px, 4.8cqi, 68px)/1.2 "MS Sans Serif",
-    Tahoma,
-    var(--sans);
+    700 clamp(24px, 4.8cqi, 68px)/1.2 Tahoma,
+    "Microsoft Sans Serif",
+    Arial,
+    Helvetica,
+    sans-serif;
   letter-spacing: 0;
+  text-wrap: balance;
 }
 
 .Experience--shutdown-animation,
@@ -57,7 +63,7 @@
   text-shadow: none;
   font:
     13px/1.5 Tahoma,
-    "MS Sans Serif",
+    "Microsoft Sans Serif",
     Arial,
     sans-serif;
   overflow: hidden;
@@ -72,15 +78,25 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  // A checkerboard veil, like the classic desktop shutdown transition.
-  background: conic-gradient(
-      #0009 25%,
-      transparent 0 50%,
-      #0009 0 75%,
-      transparent 0
-    )
-    0 0 / 2px 2px;
+  // A solid 50% checkerboard veil, like the classic shutdown transition.
+  --dither: conic-gradient(#000 25%, #0000 0 50%, #000 0 75%, #0000 0) 0 0 / 2px
+    2px;
+  background: var(--dither);
   animation: shutdown-dim 650ms steps(5, end) both;
+}
+// Under the CRT filter the checkerboard would beat into moiré waves, so it is
+// drawn as an even 50% dim while the filter is on (see .WinDither).
+html:not([data-crt="off"]) .CRTScreen .ShutdownDesktop {
+  background: #00000080;
+}
+@media (prefers-contrast: more), (forced-colors: active) {
+  html:not([data-crt="off"]) .CRTScreen .ShutdownDesktop {
+    background: var(--dither);
+  }
+}
+// WebKit never gets the filter (crt.scss), so the checkerboard stays there.
+html[data-crt-curvature="off"] .CRTScreen .ShutdownDesktop {
+  background: var(--dither);
 }
 .WindowsSplash {
   display: grid;
@@ -139,7 +155,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: clamp(5px, 1.7cqh, 12px);
+  height: clamp(6px, 2cqh, 16px);
   background: repeating-linear-gradient(
     90deg,
     #4163a5 0,
@@ -176,4 +192,11 @@
   to {
     background-position: 320px 0;
   }
+}
+// Shut Down… already dimmed the desktop; do not dim it twice.
+.Win98[data-shutdown-dither]
+  ~ .Experience--shutdown-animation
+  .ShutdownDesktop {
+  background: none;
+  animation: none;
 }

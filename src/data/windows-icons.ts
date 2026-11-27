@@ -94,6 +94,85 @@ function pixels(
     .join("");
 }
 
+/**
+ * A 16 x 16 sprite on the 32-unit grid (2-unit cells), so it stays crisp at
+ * 16 px. Each character picks a palette colour; "." is transparent. Runs of
+ * one colour become one rect. Toolbar art, small icons and overlays use
+ * 1-unit cells, optionally placed at (left, top).
+ */
+function sprite(
+  rows: readonly string[],
+  colors: Readonly<Record<string, string>>,
+  cell = 2,
+  left = 0,
+  top = 0,
+) {
+  return rows
+    .flatMap((row, y) => {
+      const runs: string[] = [];
+      for (let x = 0; x < row.length;) {
+        const color = row[x];
+        let end = x + 1;
+        while (row[end] === color) end++;
+        if (Object.hasOwn(colors, color))
+          runs.push(
+            rect(
+              left + x * cell,
+              top + y * cell,
+              (end - x) * cell,
+              cell,
+              colors[color],
+            ),
+          );
+        x = end;
+      }
+      return runs;
+    })
+    .join("");
+}
+
+/** One letter per palette colour, for sprites; "." is transparent. */
+const ink: Readonly<Record<string, string>> = {
+  K: p.black,
+  D: p.charcoal,
+  G: p.gray,
+  S: p.silver,
+  L: p.light,
+  W: p.white,
+  N: p.navy,
+  B: p.blue,
+  T: p.teal,
+  C: p.cyan,
+  E: p.green,
+  V: p.lime,
+  M: p.maroon,
+  R: p.red,
+  O: p.olive,
+  Y: p.yellow,
+  P: p.purple,
+  F: p.magenta,
+};
+
+/** 1-unit pixel art at (left, top), in the shared palette letters. */
+const pixelArt = (rows: readonly string[], left = 0, top = 0) =>
+  sprite(rows, ink, 1, left, top);
+
+/** The folder, optionally with a picture over its front (Start, folders). */
+function folderIcon(...overlays: string[]) {
+  return art(
+    path("M4 9h12v3h15v17H4Z", p.charcoal),
+    path("M2 5h11v1h2v3h14v18H2Z", p.black),
+    path("M3 6h9v1h2v3h14v15H3Z", p.olive),
+    path("M3 6h9v1h1v4H3Z", p.yellow),
+    rect(4, 12, 23, 2, p.yellow),
+    path("M1 13h23v-1h7v5h-1v5h-1v5H1Z", p.black),
+    path("M2 14h23v-1h5v3h-1v5h-1v5H2Z", p.yellow),
+    rect(3, 14, 21, 1, p.white),
+    rect(2, 25, 26, 1, p.olive),
+    ...overlays,
+  );
+}
+
 const documentIcon = art(
   path("M8 4h13v1h2v2h2v2h2v22H8Z", p.charcoal),
   path("M5 1h14v2h2v2h2v2h2v22H5Z", p.black),
@@ -105,6 +184,427 @@ const documentIcon = art(
   rect(9, 19, 10, 1, p.gray),
   rect(9, 22, 12, 1, p.gray),
 );
+
+// Explorer's Standard Buttons: original 20 x 20 art, crisp at 20 px.
+const backArrow = [
+  "....................",
+  "....................",
+  "........K...........",
+  ".......KK...........",
+  "......KLK...........",
+  ".....KLGK...........",
+  "....KLGGKKKKKKKKKK..",
+  "...KLGGGLLLLLLLLLK..",
+  "..KLGGGGGGGGGGGGGK..",
+  ".KLGGGGGGGGGGGGGGK..",
+  ".KGGGGGGGGGGGGGGGK..",
+  "..KGGGGGGGGGGGGGGK..",
+  "...KGGGGGGGGGGGGGK..",
+  "....KGGGKKKKKKKKKK..",
+  ".....KGGK...........",
+  "......KGK...........",
+  ".......KK...........",
+  "........K...........",
+  "....................",
+  "....................",
+];
+const arrowColors = { K: p.black, G: p.green, L: p.lime };
+const toolIcons: Readonly<Record<string, string>> = {
+  back: sprite(backArrow, arrowColors, 1),
+  forward: sprite(
+    backArrow.map(row => [...row].reverse().join("")),
+    arrowColors,
+    1,
+  ),
+  // A folder with an arrow pointing to its parent.
+  "folder-up": sprite(
+    [
+      "....................",
+      "....................",
+      "..KKKKK.............",
+      ".KYYYYYK............",
+      "KWYYYYYYKKKKKKKKK...",
+      "KWWWWWWWWWWWWWWWWK..",
+      "KWYYYYYYYKYYYYYYOK..",
+      "KWYYYYYYKKKYYYYYOK..",
+      "KWYYYYYKKKKKYYYYOK..",
+      "KWYYYYKKKKKKKYYYOK..",
+      "KWYYYYYYKKKYYYYYOK..",
+      "KWYYYYYYKKKYYYYYOK..",
+      "KWYYYYYYKKKYYYYYOK..",
+      "KWYYYYYYKKKYYYYYOK..",
+      "KWYYYYYYYYYYYYYYOK..",
+      "KOOOOOOOOOOOOOOOOK..",
+      "KKKKKKKKKKKKKKKKKK..",
+      "....................",
+      "....................",
+      "....................",
+    ],
+    { K: p.black, W: p.white, Y: p.yellow, O: p.olive },
+    1,
+  ),
+  // A window of four icons with their labels.
+  views: sprite(
+    [
+      "....................",
+      "....................",
+      ".KKKKKKKKKKKKKKKKK..",
+      ".KNNNNNNNNNNNNNNNK..",
+      ".KWWWWWWWWWWWWWWWK..",
+      ".KWWTTTWWWWYYYWWWK..",
+      ".KWWTTTWWWWYYYWWWK..",
+      ".KWWTTTWWWWYYYWWWK..",
+      ".KWWWWWWWWWWWWWWWK..",
+      ".KWGGGGGWWGGGGGWWK..",
+      ".KWWWWWWWWWWWWWWWK..",
+      ".KWWRRRWWWWBBBWWWK..",
+      ".KWWRRRWWWWBBBWWWK..",
+      ".KWWRRRWWWWBBBWWWK..",
+      ".KWWWWWWWWWWWWWWWK..",
+      ".KWGGGGGWWGGGGGWWK..",
+      ".KWWWWWWWWWWWWWWWK..",
+      ".KKKKKKKKKKKKKKKKK..",
+      "....................",
+      "....................",
+    ],
+    {
+      K: p.black,
+      N: p.navy,
+      W: p.white,
+      T: p.teal,
+      Y: p.yellow,
+      R: p.red,
+      B: p.blue,
+      G: p.gray,
+    },
+    1,
+  ),
+};
+
+/**
+ * A 20 px toolbar glyph, as an image (one element instead of dozens of
+ * rects); the button supplies its accessible label.
+ */
+export function windowsToolIcon(name: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" shape-rendering="crispEdges">${toolIcons[name] ?? ""}</svg>`;
+  return `<img class="Win98Icon Win98Icon--tool" src="data:image/svg+xml,${encodeURIComponent(svg)}" width="20" height="20" alt="" draggable="false">`;
+}
+
+// Hand-drawn 16 x 16 variants (16-unit grid, same palette) for title bars,
+// taskbar buttons, small-icon lists and menus; 32 px art is never shrunk
+// where one exists. Names match the 32 px icons below.
+const smallFolder = [
+  "................",
+  "................",
+  ".KKKKK..........",
+  "KWYYYWK.........",
+  "KWYYYYYKKKKKKKK.",
+  "KWYYYYYYYYYYYYOK",
+  "KWYYYYYYYYYYYYOK",
+  "KWYYYYYYYYYYYYOK",
+  "KWYYYYYYYYYYYYOK",
+  "KWYYYYYYYYYYYYOK",
+  "KWYYYYYYYYYYYYOK",
+  "KWYYYYYYYYYYYYOK",
+  "KWYYYYYYYYYYYYOK",
+  "KOOOOOOOOOOOOOOK",
+  "KKKKKKKKKKKKKKKK",
+  "................",
+];
+const smallIcons: Readonly<Record<string, string>> = {
+  folder: pixelArt(smallFolder),
+  "folder-open": pixelArt([
+    "................",
+    "................",
+    ".KKKKK..........",
+    "KWYYYWK.........",
+    "KWYYYYYKKKKKKK..",
+    "KWYYYYYYYYYYYOK.",
+    "KWYYKKKKKKKKKKKK",
+    "KWYKWWWWWWWWWWYK",
+    "KWYKWYYYYYYYYYOK",
+    "KWKWYYYYYYYYYOK.",
+    "KWKWYYYYYYYYYOK.",
+    "KKWYYYYYYYYYOK..",
+    "KKWYYYYYYYYYOK..",
+    "KWOOOOOOOOOOK...",
+    "KKKKKKKKKKKKK...",
+    "................",
+  ]),
+  // Experiments & Learning: a folder holding a flask.
+  experiments: pixelArt([
+    "................",
+    "................",
+    ".KKKKK..........",
+    "KWYYYWK.........",
+    "KWYYYYYKKKKKKKK.",
+    "KWYYYYYYYKKKKYOK",
+    "KWYYYYYYYKWLKYOK",
+    "KWYYYYYYYKWLKYOK",
+    "KWYYYYYYKWWLGKOK",
+    "KWYYYYYKWCCCCGKK",
+    "KWYYYYKWCCVCCCGK",
+    "KWYYYYKCCCCCVCCK",
+    "KWYYYYKCVCCCCCCK",
+    "KOOOOOOKKKKKKKKK",
+    "KKKKKKKKKKKKKKKK",
+    "................",
+  ]),
+  computer: pixelArt([
+    "................",
+    ".KKKKKKKKKKKKKK.",
+    ".KWWWWWWWWWWWSK.",
+    ".KWGGGGGGGGGWSK.",
+    ".KWGKTTTTTTKWSK.",
+    ".KWGTCTTTTTTWSK.",
+    ".KWGTTTTTTTTWSK.",
+    ".KWGTTTTTTTTWSK.",
+    ".KWGWWWWWWWWWSK.",
+    ".KWSSSSSSSSVSSK.",
+    ".KGGGGGGGGGGGGK.",
+    ".KKKKKKKKKKKKKK.",
+    "......KSSK......",
+    "..KKKKKKKKKKKK..",
+    "..KWSSSSSSSSGK..",
+    "..KKKKKKKKKKKK..",
+  ]),
+  drive: pixelArt([
+    "................",
+    "................",
+    "................",
+    "................",
+    "..KKKKKKKKKKKK..",
+    ".KLLLLLLLLLLLLK.",
+    "KWWWWWWWWWWWWWWK",
+    "KWSSSSSSSSSSSSGK",
+    "KWSKKKKKKSSSVSGK",
+    "KWSSSSSSSSSSSSGK",
+    "KGGGGGGGGGGGGGGK",
+    "KKKKKKKKKKKKKKKK",
+    "................",
+    "................",
+    "................",
+    "................",
+  ]),
+  document: pixelArt([
+    "................",
+    "...KKKKKKKK.....",
+    "...KWWWWWWKK....",
+    "...KWWWWWWKWK...",
+    "...KWWWWWWKKKK..",
+    "...KWWWWWWWWWK..",
+    "...KWNNNNNNWWK..",
+    "...KWWWWWWWWWK..",
+    "...KWGGGGGGGWK..",
+    "...KWWWWWWWWWK..",
+    "...KWGGGGGGGWK..",
+    "...KWWWWWWWWWK..",
+    "...KWGGGGGWWWK..",
+    "...KWWWWWWWWWK..",
+    "...KKKKKKKKKKK..",
+    "................",
+  ]),
+  notepad: pixelArt([
+    "................",
+    "....K..K..K.....",
+    "..KKSKKSKKSKKK..",
+    "..KTSTTSTTSTTK..",
+    "..KNNNNNNNNNNK..",
+    "..KWWWWWWWWWWK..",
+    "..KWNNNNNNNWWK..",
+    "..KWWWWWWWWWWK..",
+    "..KWGGGGGGGGWK..",
+    "..KWWWWWWWWWWK..",
+    "..KWGGGGGGGGWK..",
+    "..KWWWWWWWWWWK..",
+    "..KWGGGGGWWWWK..",
+    "..KSSSSSSSSSSK..",
+    "..KKKKKKKKKKKK..",
+    "................",
+  ]),
+  info: pixelArt([
+    "................",
+    ".....KKKKK......",
+    "...KKNNNNNKK....",
+    "..KCNNWWNNNNK...",
+    "..KCNNWWNNNNK...",
+    ".KCNNNNNNNNNNK..",
+    ".KNNNWWWNNNNNK..",
+    ".KNNNNWWNNNNNK..",
+    ".KNNNNWWNNNNNK..",
+    ".KNNNNWWNNNNNK..",
+    "..KNNNWWNNNNK...",
+    "..KNNWWWWNNNK...",
+    "...KKNNNNNKK....",
+    ".....KKKKK......",
+    "................",
+    "................",
+  ]),
+  // Help: a closed book with a question mark.
+  help: pixelArt([
+    "................",
+    "..KKKKKKKKKKKK..",
+    "..KCKBBBBBBBBK..",
+    "..KCKNNYYYNNBK..",
+    "..KCKNYNNNYNBK..",
+    "..KCKNNNNNYNBK..",
+    "..KCKNNNNYNNBK..",
+    "..KCKNNNYNNNBK..",
+    "..KCKNNNYNNNBK..",
+    "..KCKNNNNNNNBK..",
+    "..KCKNNNYNNNBK..",
+    "..KCKKKKKKKKKK..",
+    "..KCKWWWWWWWGK..",
+    "..KCKLLLLLLLGK..",
+    "..KKKKKKKKKKKK..",
+    "................",
+  ]),
+  // A black handle with a light core reads on navy captions and highlights.
+  find: pixelArt([
+    "................",
+    "...KKKKK........",
+    "..KCWWCCK.......",
+    ".KCWCCCCCK......",
+    ".KCWCCCCCK......",
+    ".KCCCCCCCK......",
+    ".KCCCCCCCK......",
+    "..KCCCCCK.......",
+    "...KKKKKKK......",
+    "........KLK.....",
+    ".........KLK....",
+    "..........KLK...",
+    "...........KLK..",
+    "............KK..",
+    "................",
+    "................",
+  ]),
+  mail: pixelArt([
+    "................",
+    "................",
+    "................",
+    "KKKKKKKKKKKKKKKK",
+    "KNWWWWWWWWWWWWNK",
+    "KWNWWWWWWWWWWNWK",
+    "KWWNWWWWWWWWNWWK",
+    "KWWWNNWWWWNNWWWK",
+    "KWWWWWNNNNWWWWWK",
+    "KWWWWWWWWWWWWWWK",
+    "KWWGWWWWWWWWGWWK",
+    "KWGWWWWWWWWWWGWK",
+    "KGWWWWWWWWWWWWGK",
+    "KKKKKKKKKKKKKKKK",
+    "................",
+    "................",
+  ]),
+  recycle: pixelArt([
+    "................",
+    "......KKKK......",
+    "..KKKKKSSKKKKK..",
+    ".KWWWWWWWWWWWSK.",
+    ".KSSSSSSSSSSSGK.",
+    ".KKKKKKKKKKKKKK.",
+    "..KWWWWWWWWWGK..",
+    "..KWWWWEWWWWGK..",
+    "..KWWWEEEWWWGK..",
+    "..KWWEWWWEWWGK..",
+    "..KWEEWWWEEWGK..",
+    "...KWWWWWWWGK...",
+    "...KWWWWWWWGK...",
+    "...KSSSSSSSGK...",
+    "...KKKKKKKKKK...",
+    "................",
+  ]),
+  terminal: pixelArt([
+    "................",
+    "KKKKKKKKKKKKKKKK",
+    "KWNNNNNNNNNNSWGK",
+    "KWNNNNNNNNNNNNGK",
+    "KWKKKKKKKKKKKKGK",
+    "KWKKKKKKKKKKKKGK",
+    "KWKVKKKKKKKKKKGK",
+    "KWKKVKKKKKKKKKGK",
+    "KWKKKVKKKKKKKKGK",
+    "KWKKVKKKKKKKKKGK",
+    "KWKVKKVVVVKKKKGK",
+    "KWKKKKKKKKKKKKGK",
+    "KWKKKKKKKKKKKKGK",
+    "KGGGGGGGGGGGGGGK",
+    "KKKKKKKKKKKKKKKK",
+    "................",
+  ]),
+  shutdown: pixelArt([
+    "................",
+    "KKKKKKKKKKKK....",
+    "KWWWWWWWWWSK....",
+    "KWGGGGGGGWSK....",
+    "KWGNNNNNNWSK....",
+    "KWGNNNNNNWSK....",
+    "KWGNNNNNNWSK....",
+    "KWGNNNNKKKKKKKK.",
+    "KWWWWWWKRRRWRRRK",
+    "KSSSSSSKRWRWRWRK",
+    "KKKKKKKKWRRWRRWK",
+    "..KSSSKKWRRRRRWK",
+    ".KKKKKKKWRRRRRWK",
+    ".KWSSSSKRWRRRWRK",
+    ".KKKKKKKRRWWWRRK",
+    "........KKKKKKKK",
+  ]),
+  games: pixelArt([
+    "................",
+    ".....KKKK.......",
+    "....KRWRRK......",
+    "....KWRRRK......",
+    "....KRRRMK......",
+    ".....KMMK.......",
+    "......KGK.......",
+    "......KGK.......",
+    "......KGK.......",
+    "......KGK.......",
+    "..KKKKKGKKKKK...",
+    ".KWWWWWWWWWRRK..",
+    "KWSSSSSSSSRRRMK.",
+    "KSSSSSSSSSSMMGK.",
+    "KKKKKKKKKKKKKKK.",
+    "................",
+  ]),
+  tools: pixelArt([
+    "................",
+    ".KK.........KKK.",
+    "KSSK.......KSSK.",
+    "KSSSK.....KSSK..",
+    ".KSSSK....KSSKKK",
+    "..KSSSK...KSSSSK",
+    "...KSSSK.KSSSSK.",
+    "....KSGSKSSSKK..",
+    ".....KGSSSSKK...",
+    "......KSSSKK....",
+    ".....KSSKYYK....",
+    "....KSSK.KYYK...",
+    "...KSSK...KYYKK.",
+    "..KSSK.....KYOOK",
+    ".KWSK.......KOOK",
+    ".KKK.........KK.",
+  ]),
+  web: pixelArt([
+    "................",
+    ".....KKKKKK.....",
+    "...KKBBEEBBKK...",
+    "..KCBBBEEEBBBK..",
+    "..KCEEBBEEEBBK..",
+    ".KCEEEEBBEBBBBK.",
+    ".KBEEEEEBBBBBBK.",
+    ".KBBEEEBBBBEEBK.",
+    ".KBBBEEBBBEEEEK.",
+    ".KBBBEBBBBEEEBK.",
+    ".KBBBBBBBBBEEBK.",
+    "..KBBBBBBBBEBK..",
+    "..KBBBBBBBBBBK..",
+    "...KKBBBBBBKK...",
+    ".....KKKKKK.....",
+    "................",
+  ]),
+};
 
 const icons: Readonly<Record<string, string>> = {
   find: art(
@@ -136,17 +636,7 @@ const icons: Readonly<Record<string, string>> = {
     rect(4, 28, 13, 1, p.gray),
     rect(21, 28, 5, 1, p.black),
   ),
-  folder: art(
-    path("M4 9h12v3h15v17H4Z", p.charcoal),
-    path("M2 5h11v1h2v3h14v18H2Z", p.black),
-    path("M3 6h9v1h2v3h14v15H3Z", p.olive),
-    path("M3 6h9v1h1v4H3Z", p.yellow),
-    rect(4, 12, 23, 2, p.yellow),
-    path("M1 13h23v-1h7v5h-1v5h-1v5H1Z", p.black),
-    path("M2 14h23v-1h5v3h-1v5h-1v5H2Z", p.yellow),
-    rect(3, 14, 21, 1, p.white),
-    rect(2, 25, 26, 1, p.olive),
-  ),
+  folder: folderIcon(),
   games: art(
     path("M5 22h22v2h4v6H5Z", p.charcoal),
     path("M5 18h20v2h3v2h2v7H2v-7h1v-2h2Z", p.black),
@@ -254,20 +744,6 @@ const icons: Readonly<Record<string, string>> = {
     rect(13, 6, 5, 4, p.white),
     path("M11 13h7v10h3v2H10v-2h3v-8h-2Z", p.white),
   ),
-  start: art(
-    path("M4 5h10V3h6v2h10v22H20v2h-6v-2H4Z", p.charcoal),
-    path("M2 3h10V1h6v2h11v23H18v2h-6v-2H2Z", p.black),
-    path("M3 4h9V3h2v10h-2v1H3Z", p.red),
-    path("M16 2h1v2h11v9H18v-1h-2Z", p.green),
-    path("M3 16h10v-1h1v11h-1v-1H3Z", p.blue),
-    path("M16 15h2v1h10v9H18v1h-2Z", p.yellow),
-    rect(4, 5, 6, 1, p.white),
-    rect(18, 5, 8, 1, p.lime),
-    rect(4, 17, 7, 1, p.cyan),
-    rect(18, 17, 8, 1, p.white),
-    rect(4, 23, 7, 1, p.navy),
-    rect(19, 23, 8, 1, p.olive),
-  ),
   recycle: art(
     path("M6 10h24v5h-2v10h-2v5H10v-3H8V16H6Z", p.charcoal),
     path("M3 7h25v6h-2v10h-2v6H8v-3H6V13H3Z", p.black),
@@ -282,6 +758,230 @@ const icons: Readonly<Record<string, string>> = {
     path(
       "M14 12h4v2h2v3h-4v-2h-1v2h-3v-2h2Zm7 7v4h-6v-3h2v1h2v-2Zm-10-1h3v3h1v3h-4v-2H9v-2h2Z",
       p.green,
+    ),
+  ),
+  // Start: a tiny terminal with a lime prompt over a folder tab.
+  "portfolio-start": sprite(
+    [
+      "................",
+      ".OOOOO..........",
+      "OYYYYYO.........",
+      "OYYYYYYOOOOOOO..",
+      "OYYYYYYYYYYYYYO.",
+      "OYYKKKKKKKKKKKKK",
+      "OYYKNNNNNNNNNNNK",
+      "OYYKSSSSSSSSSSSK",
+      "OYYKSKKKKKKKKKSK",
+      "OYYKSKLKKKKKKKSK",
+      "OYYKSKKLKKKKKKSK",
+      "OYYKSKLKLLLKKKSK",
+      "OYYKSKKKKKKKKKSK",
+      "OOOKSSSSSSSSSSSK",
+      "...KKKKKKKKKKKKK",
+      "................",
+    ],
+    { K: p.black, O: p.olive, Y: p.yellow, N: p.navy, S: p.silver, L: p.lime },
+  ),
+  // Show Desktop: a teal desktop with two icons and a taskbar.
+  desktop: sprite(
+    [
+      "................",
+      "KKKKKKKKKKKKKKKK",
+      "KTTTTTTTTTTTTTTK",
+      "KTWWTTTTTTTTTTTK",
+      "KTWWTTTTTTTTTTTK",
+      "KTTTTTTTTTTTTTTK",
+      "KTYYTTTTTTTTTTTK",
+      "KTYYTTTTTTTTTTTK",
+      "KTTTTTTTTTTTTTTK",
+      "KTTTTTTTTTTTTTTK",
+      "KTTTTTTTTTTTTTTK",
+      "KWWWWWWWWWWWWWWK",
+      "KSGGSSSSSSSSSGSK",
+      "KKKKKKKKKKKKKKKK",
+      "................",
+      "................",
+    ],
+    { K: p.black, T: p.teal, W: p.white, Y: p.yellow, S: p.silver, G: p.gray },
+  ),
+  // A red stop sign with a white cross, for "Cannot find" messages.
+  error: art(
+    path("M12 3h10v2h5v4h3v15h-3v4h-5v3H12v-2H7v-4H4V11h3V6h5Z", p.charcoal),
+    path("M10 1h11v2h5v4h3v16h-3v4h-5v3H10v-3H5v-4H2V7h3V3h5Z", p.black),
+    path("M10 2h11v2h5v4h2v14h-3v4h-5v3h-9v-3H6v-4H3V8h3V4h4Z", p.red),
+    path("M10 2h11v1H10v2H6v4H4v13H3V8h3V4h4Z", p.white),
+    pixels(
+      [
+        "##......##",
+        "###....###",
+        ".###..###.",
+        "..######..",
+        "...####...",
+        "...####...",
+        "..######..",
+        ".###..###.",
+        "###....###",
+        "##......##",
+      ],
+      11,
+      10,
+      p.white,
+    ),
+  ),
+  // Notepad: a spiral-bound pad with ruled lines, for text documents.
+  notepad: art(
+    rect(8, 6, 21, 25, p.charcoal),
+    rect(5, 4, 21, 25, p.black),
+    rect(6, 5, 19, 23, p.white),
+    rect(6, 5, 19, 4, p.teal),
+    rect(6, 8, 19, 1, p.navy),
+    ...[8, 12, 16, 20].map(x =>
+      art(rect(x, 2, 2, 5, p.black), rect(x, 3, 1, 3, p.silver)),
+    ),
+    rect(9, 12, 13, 1, p.navy),
+    rect(9, 15, 13, 1, p.gray),
+    rect(9, 18, 13, 1, p.gray),
+    rect(9, 21, 13, 1, p.gray),
+    rect(9, 24, 8, 1, p.gray),
+    rect(7, 26, 18, 2, p.silver),
+  ),
+  // A text document; also the fallback for unknown names.
+  document: documentIcon,
+  // Experiments & Learning: a folder holding a flask.
+  experiments: folderIcon(
+    pixelArt(
+      [
+        "....KKKKKK....",
+        "....KWLLGK....",
+        ".....KWGK.....",
+        ".....KWGK.....",
+        ".....KWGK.....",
+        "....KWWLGK....",
+        "...KWLLLLGK...",
+        "..KWLLLLLLGK..",
+        "..KCCCCCCCCK..",
+        ".KCWCCCVCCCCK.",
+        ".KCCCCCCCCVCK.",
+        "KCWCCVCCCCCCCK",
+        "KCCCCCCCCVCCCK",
+        "KCCCVCCCCCCCCK",
+        ".KKKKKKKKKKKK.",
+      ],
+      17,
+      13,
+    ),
+  ),
+  // Start ▸ Programs: a folder with a program window.
+  programs: folderIcon(
+    windowFrame(13, 12, 17, 15),
+    rect(16, 19, 4, 3, p.teal),
+    rect(22, 19, 5, 1, p.gray),
+    rect(22, 21, 4, 1, p.gray),
+  ),
+  // Start ▸ Documents: a folder with a page.
+  documents: folderIcon(
+    pixelArt(
+      [
+        "KKKKKKKKK....",
+        "KWWWWWWWKK...",
+        "KWWWWWWWKWK..",
+        "KWWWWWWWKWWK.",
+        "KWWWWWWWKKKKK",
+        "KWNNNNNNNNWWK",
+        "KWWWWWWWWWWWK",
+        "KWGGGGGGGGGWK",
+        "KWWWWWWWWWWWK",
+        "KWGGGGGGGGGWK",
+        "KWWWWWWWWWWWK",
+        "KWGGGGGGWWWWK",
+        "KWWWWWWWWWWWK",
+        "KKKKKKKKKKKKK",
+      ],
+      17,
+      12,
+    ),
+  ),
+  // Start ▸ Settings: a folder with a cog.
+  settings: folderIcon(
+    pixelArt(
+      [
+        "......KKK......",
+        "......KWK......",
+        "..KK..KSK..KK..",
+        "..KWKKKSKKKSK..",
+        "...KSSSSSSSK...",
+        "...KSSKKKSGK...",
+        "KKKKSK...KGKKKK",
+        "KWSSSK...KSSSGK",
+        "KKKKSK...KGKKKK",
+        "...KSSKKKGGK...",
+        "...KSSSSSSGK...",
+        "..KSKKKSKKKGK..",
+        "..KK..KSK..KK..",
+        "......KGK......",
+        "......KKK......",
+      ],
+      16,
+      13,
+    ),
+  ),
+  // Help: a closed book with a question mark.
+  help: art(
+    rect(8, 5, 22, 25, p.charcoal),
+    pixelArt(
+      [
+        ".....KKKKKKKKKKKKKKKKKKKKKKK",
+        ".....KCBKBBBBBBBBBBBBBBBBBBK",
+        ".....KCBKNNNNNNNNNNNNNNNNNBK",
+        ".....KCBKNNNNNNNNNNNNNNNNNBK",
+        ".....KCBKNNNNNNYYYYYNNNNNNBK",
+        ".....KCBKNNNNNYYYYYYYNNNNNBK",
+        ".....KCBKNNNNYYNNNNNYYNNNNBK",
+        ".....KCBKNNNNYYNNNNNYYNNNNBK",
+        ".....KCBKNNNNNNNNNNNYYNNNNBK",
+        ".....KCBKNNNNNNNNNYYYNNNNNBK",
+        ".....KCBKNNNNNNNNYYYNNNNNNBK",
+        ".....KCBKNNNNNNNYYNNNNNNNNBK",
+        ".....KCBKNNNNNNNYYNNNNNNNNBK",
+        ".....KCBKNNNNNNNNNNNNNNNNNBK",
+        ".....KCBKNNNNNNNYYNNNNNNNNBK",
+        ".....KCBKNNNNNNNYYNNNNNNNNBK",
+        ".....KCBKNNNNNNNNNNNNNNNNNBK",
+        ".....KCBKNNNNNNNNNNNNNNNNNBK",
+        ".....KCBKNNNNNNNNNNNNNNNNNBK",
+        ".....KCBKBBBBBBBBBBBBBBBBBBK",
+        ".....KCBKKKKKKKKKKKKKKKKKKKK",
+        ".....KCBKWWWWWWWWWWWWWWWWWWK",
+        ".....KCBKLLLLLLLLLLLLLLLLLGK",
+        ".....KCBKWWWWWWWWWWWWWWWWWGK",
+        ".....KKKKKKKKKKKKKKKKKKKKKKK",
+      ],
+      0,
+      3,
+    ),
+  ),
+  // Start ▸ Run: a program window and an arrow pointing into it.
+  run: art(
+    windowFrame(10, 3, 20, 20),
+    rect(14, 12, 4, 4, p.teal),
+    rect(20, 12, 6, 1, p.gray),
+    rect(20, 15, 5, 1, p.gray),
+    pixelArt(
+      [
+        "........K.....",
+        "........KK....",
+        "........KVK...",
+        "KKKKKKKKKVVK..",
+        "KVVVVVVVVVVVK.",
+        "KVVVVVVVVVVVVK",
+        "KEEEEEEEEEEEK.",
+        "KKKKKKKKKEEK..",
+        "........KEK...",
+        "........KK....",
+        "........K.....",
+      ],
+      2,
+      17,
     ),
   ),
   "server-status": art(
@@ -596,7 +1296,20 @@ const icons: Readonly<Record<string, string>> = {
 };
 
 /** Decorative artwork: the containing control supplies its accessible label. */
-export function windowsIcon(name: string): string {
-  const body = Object.hasOwn(icons, name) ? icons[name] : documentIcon;
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="Win98Icon" width="32" height="32" viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true" focusable="false">${body}</svg>`;
+export function windowsIcon(name: string, size: 16 | 32 = 32): string {
+  // Small places use the hand-drawn 16 px art; other icons are shrunk.
+  // Unknown names are documents.
+  const known = Object.hasOwn(icons, name) || Object.hasOwn(smallIcons, name);
+  const key = known ? name : "document";
+  const small =
+    Object.hasOwn(smallIcons, key) &&
+    (size === 16 || !Object.hasOwn(icons, key));
+  const body = small ? smallIcons[key] : icons[key];
+  const grid = small ? 16 : 32;
+  return `<svg xmlns="http://www.w3.org/2000/svg" class="Win98Icon${size === 16 ? " Win98Icon--small" : ""}" width="${size}" height="${size}" viewBox="0 0 ${grid} ${grid}" shape-rendering="crispEdges" aria-hidden="true" focusable="false">${body}</svg>`;
 }
+
+/** Every icon name (32 px and 16 px art), for tests and galleries. */
+export const windowsIconNames = () => [
+  ...new Set([...Object.keys(icons), ...Object.keys(smallIcons)]),
+];

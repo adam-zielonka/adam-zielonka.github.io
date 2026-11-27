@@ -18,6 +18,8 @@ export async function process(commandArgs: string): Promise<void> {
   store.output.context = { command, args, pwd: store.path.pwd };
 
   const style: Partial<CSSStyleDeclaration> = {};
+  // Restart typed in the terminal has no desktop to close: start at once.
+  let skipSleep = false;
 
   main: for (const line of store.commands.getLines(command)) {
     let animate = false;
@@ -27,10 +29,15 @@ export async function process(commandArgs: string): Promise<void> {
     for (const action of line.actions) {
       switch (action.namespace) {
         case "sleep":
-          await store.system.wait(+action.key);
+          if (skipSleep) skipSleep = false;
+          else await store.system.wait(+action.key);
           continue;
         case "system":
           if (!store.system.isProcessing) return;
+          if (action.key === "restart-start" && !window.terminal.isWindows) {
+            skipSleep = true;
+            continue;
+          }
           if (action.key === "shutdown-start" && !window.terminal.isWindows) {
             // The terminal keeps its text-only shutdown. Only the desktop
             // continues through the graphical shutdown actions below.
@@ -86,6 +93,15 @@ function system(sysCommand: string, args: string[]): SystemOutput[] {
       return [];
     case "shutdown-splash":
       window.terminal.showShutdownSplash();
+      return [];
+    case "restart-start":
+      // Restart skips the dimmed desktop: the dialog already dimmed it.
+      window.terminal.enterShutdownAnimation();
+      window.terminal.showShutdownSplash();
+      return [];
+    case "dos-mode":
+      // Typed directly, `dosmode` promises EXIT too, so keep that promise.
+      store.system.returnToWindows ??= "dos-mode";
       return [];
     case "shutdown":
       store.system.setShutdown();

@@ -83,17 +83,23 @@
   background: transparent;
   color: var(--text);
 }
-.QuickCommands a::before,
-.QuickCommands button::before,
+// The shortcuts keep ::before free for the CRT hit area (crt.scss), so their
+// brackets belong to the label inside.
+.QuickCommands :is(a, button) > span::before,
 .Count::before,
 .DetailLinks > a::before {
   content: "[";
 }
-.QuickCommands a::after,
-.QuickCommands button::after,
+.QuickCommands :is(a, button) > span::after,
 .Count::after,
 .DetailLinks > a::after {
   content: "]";
+}
+.QuickCommands button > span::before {
+  content: "[ ";
+}
+.QuickCommands button > span::after {
+  content: " ]";
 }
 .QuickCommands a:hover,
 .QuickCommands button:hover,
@@ -104,9 +110,6 @@
 }
 .QuickCommands button {
   margin-left: auto;
-}
-.QuickCommands button span {
-  display: none;
 }
 .Terminal {
   font-family: var(--mono);
@@ -459,9 +462,6 @@ kbd {
   .QuickCommands a,
   .QuickCommands button {
     padding: 9px 2px;
-  }
-  .QuickCommands button span {
-    display: none;
   }
   .TerminalOutput {
     padding: 20px 16px 22px;

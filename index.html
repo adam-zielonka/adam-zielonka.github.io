@@ -23,6 +23,20 @@
     <link rel="canonical" href="https://adam-zielonka.github.io/" />
     <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="stylesheet" href="/src/styles/index.scss" />
+    <script>
+      // Display effects switched off stay off from the first paint.
+      try {
+        if (localStorage.getItem("portfolio-crt") === "off")
+          document.documentElement.dataset.crt = "off";
+      } catch {}
+      // WebKit never gets the curvature filter, not even for the first paint.
+      // This is the same check as isWebKit in src/utils/crt-curvature.ts.
+      if (
+        /AppleWebKit\//.test(navigator.userAgent) &&
+        !/Chrom(e|ium)\//.test(navigator.userAgent)
+      )
+        document.documentElement.dataset.crtCurvature = "off";
+    </script>
   </head>
   <body>
     <noscript
@@ -45,10 +59,12 @@
           height="100%"
           color-interpolation-filters="sRGB"
         >
-          <!-- In normalized coordinates (-1 to 1), R encodes x*y² and G
-               encodes y*x². The axes stay straight and the corners bend inward. -->
+          <!-- The map samples normalized coordinates (-1 to 1) at pixel centres:
+               R encodes 0.5 + 0.5·x·y² and G encodes 0.5 + 0.5·y·x², so the
+               axes stay straight and the corners bend inward. Regenerate both
+               copies with `node scripts/crt-map.mjs --write`. -->
           <feImage
-            href="./crt-displacement.png"
+            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAIAAAC0D9CtAAACQUlEQVR42pXSv0rrYBjH8e9NeAO9AHHs0qU4tTgJVdpFhUhLBJvQlDSJb/KafySSVmhpMaAuFVtwKu0kLi6O4gX0BryKgzlwnA98t9/z2R52dijtsrdPpUFN4VhDGaALPI9MkA941tgovDf43Ge7y/cO7JYol6nWOWhx1OZUR7UwCpMKJhYPOos2qxZvdT7KfJVgf496lcNDmiecXdDpodmYhYkFQ5tpj/sLnk54OWRd5XUPGhVaB5w0OT9HvaTbx7CxChMKUptRn8kld+c8NpkfsKyAUqN9xMUZlyq6Tt9k4OC4P8Z3iRwSk0znVmV8xuyIvAbaMfopvQ79LmYfy8K5QhRGuvhXhBZxn6TLTYfslOExDBQsFVvDNnAGXDkIgVsYz0UKrh38AYFBoBGqRAoIHWEgTISF6+AW4J/5SeA5SAtpIg2kTrH9Z4gMkSJiRIjr40pc76ffI4nnI0NkjEyRGQxyrAn2EDvFibjyEfLXSMm1jx8RpARDwglRDtoz+gO9Kf0RZoIV4lwj/gIP/5owJE5IRtxMyR4YPoOyob3g4p7LCXpGP2bg4xTG94h8kpgs43bC+J7ZgnwDjXdaK06eOL9DvaWbYARYsvgDSRowSpjccnfH4xPzFct32P+k/sbhC81HzsZ0btACzMLEkmHA9Ib7MU+PvLywfuP1E3a3lD+orjmYczTjNEMNMQqTSiYhDxmLGas5b2s+Pvjaws43pS/2XqksqeUcD1Ei9MJkkjziecgm533J5yvbL76/+QPuvCAQdfsXTwAAAABJRU5ErkJggg=="
             x="0"
             y="0"
             width="100%"
@@ -58,7 +74,10 @@
           />
           <!-- Displacement may sample whole pixels. Average four subpixel
                phases so thin borders keep their coverage as they bend.
-               Channel intercepts are pixel offsets divided by the scale (18). -->
+               Intercepts are 0.5·(1 − slope) plus a device-pixel offset
+               divided by scale × devicePixelRatio. src/utils/crt-curvature.ts
+               sets scale, slopes and intercepts for the screen; these values
+               (a 9 px bow at DPR 1) apply until it runs. -->
           <feComponentTransfer in="bend" result="mapA">
             <feFuncR type="linear" intercept="-0.020833" />
             <feFuncG type="linear" intercept="-0.006944" />
@@ -132,6 +151,57 @@
             result="picture"
           />
         </filter>
+        <!-- On dense displays two diagonal phases are enough. -->
+        <filter
+          id="crt-curvature-2"
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          color-interpolation-filters="sRGB"
+        >
+          <feImage
+            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAIAAAC0D9CtAAACQUlEQVR42pXSv0rrYBjH8e9NeAO9AHHs0qU4tTgJVdpFhUhLBJvQlDSJb/KafySSVmhpMaAuFVtwKu0kLi6O4gX0BryKgzlwnA98t9/z2R52dijtsrdPpUFN4VhDGaALPI9MkA941tgovDf43Ge7y/cO7JYol6nWOWhx1OZUR7UwCpMKJhYPOos2qxZvdT7KfJVgf496lcNDmiecXdDpodmYhYkFQ5tpj/sLnk54OWRd5XUPGhVaB5w0OT9HvaTbx7CxChMKUptRn8kld+c8NpkfsKyAUqN9xMUZlyq6Tt9k4OC4P8Z3iRwSk0znVmV8xuyIvAbaMfopvQ79LmYfy8K5QhRGuvhXhBZxn6TLTYfslOExDBQsFVvDNnAGXDkIgVsYz0UKrh38AYFBoBGqRAoIHWEgTISF6+AW4J/5SeA5SAtpIg2kTrH9Z4gMkSJiRIjr40pc76ffI4nnI0NkjEyRGQxyrAn2EDvFibjyEfLXSMm1jx8RpARDwglRDtoz+gO9Kf0RZoIV4lwj/gIP/5owJE5IRtxMyR4YPoOyob3g4p7LCXpGP2bg4xTG94h8kpgs43bC+J7ZgnwDjXdaK06eOL9DvaWbYARYsvgDSRowSpjccnfH4xPzFct32P+k/sbhC81HzsZ0btACzMLEkmHA9Ib7MU+PvLywfuP1E3a3lD+orjmYczTjNEMNMQqTSiYhDxmLGas5b2s+Pvjaws43pS/2XqksqeUcD1Ei9MJkkjziecgm533J5yvbL76/+QPuvCAQdfsXTwAAAABJRU5ErkJggg=="
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+            preserveAspectRatio="none"
+            result="bend"
+          />
+          <feComponentTransfer in="bend" result="mapA">
+            <feFuncR type="linear" intercept="-0.013889" />
+            <feFuncG type="linear" intercept="-0.013889" />
+          </feComponentTransfer>
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="mapA"
+            scale="18"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="sampleA"
+          />
+          <feComponentTransfer in="bend" result="mapB">
+            <feFuncR type="linear" intercept="0.013889" />
+            <feFuncG type="linear" intercept="0.013889" />
+          </feComponentTransfer>
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="mapB"
+            scale="18"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="sampleB"
+          />
+          <feComposite
+            in="sampleA"
+            in2="sampleB"
+            operator="arithmetic"
+            k2=".5"
+            k3=".5"
+            result="picture"
+          />
+        </filter>
       </defs>
     </svg>
     <div class="SiteShell">
@@ -149,21 +219,32 @@
                   >adam@portfolio <span>~/</span></span
                 >
                 <div class="TerminalControls">
-                  <button type="button" data-skip-animation hidden>
+                  <button type="button" data-skip-animation data-crt-hit hidden>
                     Skip animation</button
-                  ><button type="button" data-toggle-motion aria-pressed="true">
+                  ><button
+                    type="button"
+                    data-toggle-motion
+                    data-crt-hit
+                    aria-pressed="true"
+                  >
                     Animations: on
                   </button>
                 </div>
               </header>
               <nav class="QuickCommands" aria-label="Command shortcuts">
-                <span>try</span><a href="#home" data-command="whoami">whoami</a
-                ><a href="#projects" data-command="projects">projects</a
-                ><a href="#about" data-command="about">about</a
-                ><a href="#contact" data-command="contact">contact</a
-                ><a href="#windows" data-command="windows">windows</a
-                ><button type="button" data-command="help">
-                  help <span aria-hidden="true">?</span>
+                <span>try</span
+                ><a href="#home" data-command="whoami" data-crt-hit
+                  ><span>whoami</span></a
+                ><a href="#projects" data-command="projects" data-crt-hit
+                  ><span>projects</span></a
+                ><a href="#about" data-command="about" data-crt-hit
+                  ><span>about</span></a
+                ><a href="#contact" data-command="contact" data-crt-hit
+                  ><span>contact</span></a
+                ><a href="#windows" data-command="windows" data-crt-hit
+                  ><span>windows</span></a
+                ><button type="button" data-command="help" data-crt-hit>
+                  <span>help</span>
                 </button>
               </nav>
               <div id="fallback"><portfolio-fallback /></div>
@@ -243,6 +324,60 @@
             </div>
           </div>
         </section>
+        <script data-crt-bootstrap>
+          // The first paint bends the text-mode picture for this screen, so
+          // nothing jumps when src/utils/crt-curvature.ts takes over. Same
+          // formulas as its bendAmplitude, filterParams and scanlines.
+          (function () {
+            var screen = document.querySelector(".CRTScreen");
+            var width = screen && screen.offsetWidth;
+            var height = screen && screen.offsetHeight;
+            if (!width || !height) return;
+            // WebKit keeps a flat picture (the head script): scanlines only.
+            var curved =
+              document.documentElement.getAttribute("data-crt-curvature") !== "off";
+            var dpr = window.devicePixelRatio || 1;
+            var round = function (value, digits) {
+              var factor = Math.pow(10, digits);
+              return String(Math.round(value * factor) / factor);
+            };
+            var bow = function (size) {
+              return Math.min(8, Math.max(2, 0.008 * size));
+            };
+            var ax = bow(height);
+            var ay = bow(width);
+            var max = Math.max(ax, ay);
+            var scale = 2 * max;
+            var slopes = [ax / max, ay / max];
+            var filters = [
+              ["crt-curvature", [[-0.375, -0.125], [-0.125, 0.375], [0.125, -0.375], [0.375, 0.125]]],
+              ["crt-curvature-2", [[-0.25, -0.25], [0.25, 0.25]]],
+            ];
+            filters.forEach(function (entry) {
+              var filter = curved && document.getElementById(entry[0]);
+              if (!filter) return;
+              filter.querySelectorAll("feDisplacementMap").forEach(function (map) {
+                map.setAttribute("scale", round(scale, 3));
+              });
+              filter.querySelectorAll("feComponentTransfer").forEach(function (transfer, index) {
+                var offset = entry[1][index];
+                if (!offset) return;
+                ["feFuncR", "feFuncG"].forEach(function (channel, axis) {
+                  var func = transfer.querySelector(channel);
+                  if (!func) return;
+                  var slope = slopes[axis];
+                  func.setAttribute("type", "linear");
+                  func.setAttribute("slope", round(slope, 6));
+                  func.setAttribute("intercept", round(0.5 * (1 - slope) + offset[axis] / (scale * dpr), 6));
+                });
+              });
+            });
+            screen.setAttribute("data-video-mode", "text");
+            if (curved && dpr >= 2) screen.setAttribute("data-crt-samples", "2");
+            screen.style.setProperty("--scan-period", round(Math.max(1, Math.round(3 * dpr)) / dpr, 4) + "px");
+            screen.style.setProperty("--scan-line", round(Math.max(1, Math.round(dpr)) / dpr, 4) + "px");
+          })();
+        </script>
         <p
           id="command-status"
           class="VisuallyHidden"
