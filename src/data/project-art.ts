@@ -145,18 +145,6 @@ O O O . .  -->  . O O . .
             |
        [ view: 1 ]`,
   },
-  "svelte-example": {
-    description:
-      "Svelte counter components with increment buttons and a computed sum",
-    drawing: String.raw` .----------------------.
- |  <Counter />   [+]   |
- |  <Counter />   [+]   |
- |                      |
- |       SUM = 2        |
- |                      |
- |   <App /> -> update  |
- '----------------------'`,
-  },
   deska: {
     description: "Breakout-style bricks above a ball and a paddle",
     drawing: String.raw` .----------------------.

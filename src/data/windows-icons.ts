@@ -1168,18 +1168,6 @@ const icons: Readonly<Record<string, string>> = {
     rect(5, 24, 5, 1, p.gray),
     rect(20, 24, 5, 1, p.gray),
   ),
-  "svelte-example": art(
-    windowFrame(1, 2, 28, 26),
-    bevel(4, 10, 7, 8, p.red, p.white, p.maroon),
-    bevel(12, 10, 7, 8, p.yellow, p.white, p.olive),
-    bevel(20, 10, 6, 8, p.cyan, p.white, p.teal),
-    rect(7, 13, 1, 2, p.white),
-    rect(15, 13, 1, 2, p.black),
-    rect(22, 13, 1, 2, p.navy),
-    path("M7 19h1v1h7v-1h1v1h7v-1h1v2h-8v1h-1v-1H7Z", p.gray),
-    rect(11, 22, 9, 3, p.navy),
-    rect(13, 23, 5, 1, p.white),
-  ),
   deska: art(
     windowFrame(1, 1, 28, 28, p.navy),
     bevel(4, 9, 7, 4, p.red, p.white, p.maroon),
